@@ -1,19 +1,27 @@
-[tool.poetry]
-name = "xmrig"
-version = "1.1.2"
-description = "A python package for easy in line interfacing with XMRig Miner HTTP API"
-authors = ["CoulterStutz <coultercash@gmail.com>", "hreikin <hreikin@gmail.com>"]
-readme = "README.md"
+[project]
+name = "xmrig-api"
+version = "0.0.1"
+authors = [
+  { name="hreikin", email="hreikin@gmail.com" },
+]
+description = "Allows interacting with the XMRig API."
+readme = "docs/README.md"
+requires-python = ">=3.8"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+dependencies = [
+    "requests",
+    "mkdocs-material",
+    "mkdocstrings[python]",
+]
 
-[tool.poetry.dependencies]
-python = "^3.9"
-requests = "^2.32.3"
-
-
-[tool.poetry.group.dev.dependencies]
-twine = "^5.1.1"
+[project.urls]
+Homepage = "https://github.com/hreikin/xmrig-api"
+Issues = "https://github.com/hreikin/xmrig-api/issues"
 
 [build-system]
-requires = ["poetry-core"]
-build-backend = "poetry.core.masonry.api"
-
+requires = ["hatchling"]
+build-backend = "hatchling.build"
