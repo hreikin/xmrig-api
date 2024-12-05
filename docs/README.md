@@ -1,5 +1,4 @@
 # XMRig-API
-[![PyPi](https://img.shields.io/badge/PyPi-0.0.1-green?labelColor=026ab5&style=flat-square&logo=pypi&logoColor=ffffff&link=https://pypi.org/project/xmrig-api/)](https://pypi.org/project/xmrig-api/)
 ![PyPI - Downloads](https://img.shields.io/pypi/dm/xmrig-api?label=PyPI%20Downloads)
 ![License](https://img.shields.io/github/license/hreikin/xmrig-api?label=License&color=green)
 
