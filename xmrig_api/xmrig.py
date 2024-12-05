@@ -5,6 +5,13 @@ Provides classes and methods to interact with the XMRig miner API for tasks such
 as fetching status, managing configurations, and controlling the mining process.
 """
 
+# // TODO: check all summaries/backends to ensure all data is available
+# // TODO: check all uptimes have a readable counterpart if one not provided by api
+# // TODO: change all if statements to try/except blocks in properties
+# TODO: check all return types are correct
+# TODO: check docstrings match return types
+# TODO: check docstrings text
+
 import requests, logging
 from datetime import timedelta
 
@@ -1040,7 +1047,7 @@ class XMRigAPI:
             return False
 
     @property
-    def sum_cpu_aes(self) -> int | bool:
+    def sum_cpu_aes(self) -> bool | None:
         """
         Retrieves the cached CPU aes information from the summary data.
 
@@ -1052,10 +1059,10 @@ class XMRigAPI:
             return self._summary_response["cpu"]["aes"]
         except Exception as e:
             log.error(f"An error occurred fetching the cached CPU aes data: {e}")
-            return False
+            return None
 
     @property
-    def sum_cpu_avx2(self) -> int | bool:
+    def sum_cpu_avx2(self) -> bool | None:
         """
         Retrieves the cached CPU avx2 information from the summary data.
 
@@ -1067,10 +1074,10 @@ class XMRigAPI:
             return self._summary_response["cpu"]["avx2"]
         except Exception as e:
             log.error(f"An error occurred fetching the cached CPU avx2 data: {e}")
-            return False
+            return None
 
     @property
-    def sum_cpu_x64(self) -> int | bool:
+    def sum_cpu_x64(self) -> bool | None:
         """
         Retrieves the cached CPU x64 information from the summary data.
 
@@ -1082,10 +1089,10 @@ class XMRigAPI:
             return self._summary_response["cpu"]["x64"]
         except Exception as e:
             log.error(f"An error occurred fetching the cached CPU x64 data: {e}")
-            return False
+            return None
 
     @property
-    def sum_cpu_64_bit(self) -> int | bool:
+    def sum_cpu_64_bit(self) -> bool | None:
         """
         Retrieves the cached CPU 64-bit information from the summary data.
 
@@ -1097,7 +1104,7 @@ class XMRigAPI:
             return self._summary_response["cpu"]["64_bit"]
         except Exception as e:
             log.error(f"An error occurred fetching the cached CPU x64-bit data: {e}")
-            return False
+            return None
 
     @property
     def sum_cpu_l2(self) -> int | bool:
@@ -1280,7 +1287,7 @@ class XMRigAPI:
             return False
 
     @property
-    def sum_paused(self) -> int | bool:
+    def sum_paused(self) -> bool | None:
         """
         Retrieves the cached paused status of the miner from the summary data.
 
@@ -1292,7 +1299,7 @@ class XMRigAPI:
             return self._summary_response["paused"]
         except Exception as e:
             log.error(f"An error occurred fetching the cached paused status data: {e}")
-            return False
+            return None
 
     @property
     def sum_algorithms(self) -> list | bool:
@@ -1421,7 +1428,7 @@ class XMRigAPI:
             return False
     
     @property
-    def be_cpu_type(self) -> bool | None:
+    def be_cpu_type(self) -> str | bool:
         """
         Retrieves the cached CPU type status value from the backends data.
 
@@ -1433,7 +1440,7 @@ class XMRigAPI:
             return self._backends_response[0]["type"]
         except Exception as e:
             log.error(f"An error occurred fetching the cached CPU type status data: {e}")
-            return None
+            return False
 
     @property
     def be_cpu_enabled(self) -> bool | None:
@@ -1649,7 +1656,7 @@ class XMRigAPI:
             return False
     
     @property
-    def be_cpu_threads(self) -> int | bool:
+    def be_cpu_threads(self) -> list | bool:
         """
         Retrieves the cached CPU threads information from the backends data.
 
@@ -1664,7 +1671,7 @@ class XMRigAPI:
             return False
 
     @property
-    def be_cpu_threads_intensity(self) -> int | bool:
+    def be_cpu_threads_intensity(self) -> list | bool:
         """
         Retrieves the cached CPU threads intensity information from the backends data.
 
@@ -1682,7 +1689,7 @@ class XMRigAPI:
             return False
     
     @property
-    def be_cpu_threads_affinity(self) -> int | bool:
+    def be_cpu_threads_affinity(self) -> list | bool:
         """
         Retrieves the cached CPU threads affinity information from the backends data.
 
@@ -1700,7 +1707,7 @@ class XMRigAPI:
             return False
     
     @property
-    def be_cpu_threads_av(self) -> int | bool:
+    def be_cpu_threads_av(self) -> list | bool:
         """
         Retrieves the cached CPU threads av information from the backends data.
 
@@ -1718,7 +1725,7 @@ class XMRigAPI:
             return False
     
     @property
-    def be_cpu_threads_hashrates_10s(self) -> int | bool:
+    def be_cpu_threads_hashrates_10s(self) -> list | bool:
         """
         Retrieves the cached CPU threads hashrates (10s) information from the backends data.
 
@@ -1736,7 +1743,7 @@ class XMRigAPI:
             return False
     
     @property
-    def be_cpu_threads_hashrates_1m(self) -> int | bool:
+    def be_cpu_threads_hashrates_1m(self) -> list | bool:
         """
         Retrieves the cached CPU threads hashrates (1m) information from the backends data.
 
@@ -1754,7 +1761,7 @@ class XMRigAPI:
             return False
     
     @property
-    def be_cpu_threads_hashrates_15m(self) -> int | bool:
+    def be_cpu_threads_hashrates_15m(self) -> list | bool:
         """
         Retrieves the cached CPU threads hashrates (15m) information from the backends data.
 
@@ -1772,7 +1779,7 @@ class XMRigAPI:
             return False
 
     @property
-    def be_opencl_type(self) -> bool | None:
+    def be_opencl_type(self) -> str | bool:
         """
         Retrieves the cached OpenCL type information from the backends data.
 
@@ -1997,7 +2004,7 @@ class XMRigAPI:
             return False
 
     @property
-    def be_opencl_threads(self) -> list | bool:
+    def be_opencl_threads(self) -> dict | bool:
         """
         Retrieves the cached OpenCL threads information from the backends data.
 
@@ -2005,14 +2012,14 @@ class XMRigAPI:
             str: Bool representing threads information, or False if not available.
         """
         try:
-            log.debug(self._backends_response[1]["threads"])
-            return self._backends_response[1]["threads"]
+            log.debug(self._backends_response[1]["threads"][0])
+            return self._backends_response[1]["threads"][0]
         except Exception as e:
             log.error(f"An error occurred fetching the cached OpenCL threads data: {e}")
             return False
 
     @property
-    def be_opencl_threads_index(self) -> list | bool:
+    def be_opencl_threads_index(self) -> int | bool:
         """
         Retrieves the cached OpenCL threads index information from the backends data.
 
@@ -2027,7 +2034,7 @@ class XMRigAPI:
             return False
     
     @property
-    def be_opencl_threads_intensity(self) -> list | bool:
+    def be_opencl_threads_intensity(self) -> int | bool:
         """
         Retrieves the cached OpenCL threads intensity information from the backends data.
 
@@ -2042,7 +2049,7 @@ class XMRigAPI:
             return False
     
     @property
-    def be_opencl_threads_worksize(self) -> list | bool:
+    def be_opencl_threads_worksize(self) -> int | bool:
         """
         Retrieves the cached OpenCL threads worksize information from the backends data.
 
@@ -2072,7 +2079,7 @@ class XMRigAPI:
             return False
     
     @property
-    def be_opencl_threads_unroll(self) -> list | bool:
+    def be_opencl_threads_unroll(self) -> int | bool:
         """
         Retrieves the cached OpenCL threads unroll information from the backends data.
 
@@ -2087,7 +2094,7 @@ class XMRigAPI:
             return False
     
     @property
-    def be_opencl_threads_affinity(self) -> list | bool:
+    def be_opencl_threads_affinity(self) -> int | bool:
         """
         Retrieves the cached OpenCL threads affinity information from the backends data.
 
@@ -2117,7 +2124,7 @@ class XMRigAPI:
             return False
     
     @property
-    def be_opencl_threads_hashrates_10s(self) -> list | bool:
+    def be_opencl_threads_hashrates_10s(self) -> int | bool:
         """
         Retrieves the cached OpenCL threads hashrates (10s) information from the backends data.
 
@@ -2132,7 +2139,7 @@ class XMRigAPI:
             return False
     
     @property
-    def be_opencl_threads_hashrates_1m(self) -> list | bool:
+    def be_opencl_threads_hashrates_1m(self) -> int | bool:
         """
         Retrieves the cached OpenCL threads hashrates (1m) information from the backends data.
 
@@ -2147,7 +2154,7 @@ class XMRigAPI:
             return False
     
     @property
-    def be_opencl_threads_hashrates_15m(self) -> list | bool:
+    def be_opencl_threads_hashrates_15m(self) -> int | bool:
         """
         Retrieves the cached OpenCL threads hashrates (15m) information from the backends data.
 
@@ -2162,7 +2169,7 @@ class XMRigAPI:
             return False
     
     @property
-    def be_opencl_threads_board(self) -> list | bool:
+    def be_opencl_threads_board(self) -> str | bool:
         """
         Retrieves the cached OpenCL threads board information from the backends data.
 
@@ -2177,7 +2184,7 @@ class XMRigAPI:
             return False
     
     @property
-    def be_opencl_threads_name(self) -> list | bool:
+    def be_opencl_threads_name(self) -> str | bool:
         """
         Retrieves the cached OpenCL threads name information from the backends data.
 
@@ -2192,7 +2199,7 @@ class XMRigAPI:
             return False
     
     @property
-    def be_opencl_threads_bus_id(self) -> list | bool:
+    def be_opencl_threads_bus_id(self) -> str | bool:
         """
         Retrieves the cached OpenCL threads bus ID information from the backends data.
 
@@ -2207,7 +2214,7 @@ class XMRigAPI:
             return False
     
     @property
-    def be_opencl_threads_cu(self) -> list | bool:
+    def be_opencl_threads_cu(self) -> int | bool:
         """
         Retrieves the cached OpenCL threads cu information from the backends data.
 
@@ -2222,7 +2229,7 @@ class XMRigAPI:
             return False
     
     @property
-    def be_opencl_threads_global_mem(self) -> list | bool:
+    def be_opencl_threads_global_mem(self) -> int | bool:
         """
         Retrieves the cached OpenCL threads global memory information from the backends data.
 
@@ -2237,7 +2244,7 @@ class XMRigAPI:
             return False
     
     @property
-    def be_opencl_threads_health(self) -> list | bool:
+    def be_opencl_threads_health(self) -> dict | bool:
         """
         Retrieves the cached OpenCL threads health information from the backends data.
 
@@ -2252,7 +2259,7 @@ class XMRigAPI:
             return False
     
     @property
-    def be_opencl_threads_health_temp(self) -> list | bool:
+    def be_opencl_threads_health_temp(self) -> int | bool:
         """
         Retrieves the cached OpenCL threads health temperature information from the backends data.
 
@@ -2267,7 +2274,7 @@ class XMRigAPI:
             return False
     
     @property
-    def be_opencl_threads_health_power(self) -> list | bool:
+    def be_opencl_threads_health_power(self) -> int | bool:
         """
         Retrieves the cached OpenCL threads health power information from the backends data.
 
@@ -2282,7 +2289,7 @@ class XMRigAPI:
             return False
     
     @property
-    def be_opencl_threads_health_clock(self) -> list | bool:
+    def be_opencl_threads_health_clock(self) -> int | bool:
         """
         Retrieves the cached OpenCL threads health clock information from the backends data.
 
@@ -2297,7 +2304,7 @@ class XMRigAPI:
             return False
     
     @property
-    def be_opencl_threads_health_mem_clock(self) -> list | bool:
+    def be_opencl_threads_health_mem_clock(self) -> int | bool:
         """
         Retrieves the cached OpenCL threads health memory clock information from the backends data.
 
@@ -2312,7 +2319,7 @@ class XMRigAPI:
             return False
     
     @property
-    def be_opencl_threads_health_rpm(self) -> list | bool:
+    def be_opencl_threads_health_rpm(self) -> int | bool:
         """
         Retrieves the cached OpenCL threads health rpm information from the backends data.
 
