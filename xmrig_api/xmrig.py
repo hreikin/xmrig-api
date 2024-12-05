@@ -8,8 +8,8 @@ as fetching status, managing configurations, and controlling the mining process.
 # // TODO: check all summaries/backends to ensure all data is available
 # // TODO: check all uptimes have a readable counterpart if one not provided by api
 # // TODO: change all if statements to try/except blocks in properties
-# TODO: check all return types are correct
-# TODO: check docstrings match return types
+# // TODO: check all return types are correct
+# // TODO: check docstrings match return types
 # TODO: check docstrings text
 
 import requests, logging
@@ -295,7 +295,7 @@ class XMRigAPI:
             return False
 
     @property
-    def summary(self) -> dict |bool:
+    def summary(self) -> dict | bool:
         """
         Retrieves the entire cached summary endpoint data.
 
@@ -1052,7 +1052,7 @@ class XMRigAPI:
         Retrieves the cached CPU aes information from the summary data.
 
         Returns:
-            int: CPU aes information, or False if not available.
+            bool: CPU aes information, or False if not available.
         """
         try:
             log.debug(self._summary_response["cpu"]["aes"])
@@ -1067,7 +1067,7 @@ class XMRigAPI:
         Retrieves the cached CPU avx2 information from the summary data.
 
         Returns:
-            int: CPU avx2 information, or False if not available.
+            bool: CPU avx2 information, or False if not available.
         """
         try:
             log.debug(self._summary_response["cpu"]["avx2"])
@@ -1082,7 +1082,7 @@ class XMRigAPI:
         Retrieves the cached CPU x64 information from the summary data.
 
         Returns:
-            int: CPU x64 information, or False if not available.
+            bool: CPU x64 information, or False if not available.
         """
         try:
             log.debug(self._summary_response["cpu"]["x64"])
@@ -1097,7 +1097,7 @@ class XMRigAPI:
         Retrieves the cached CPU 64-bit information from the summary data.
 
         Returns:
-            int: CPU 64-bit information, or False if not available.
+            bool: CPU 64-bit information, or False if not available.
         """
         try:
             log.debug(self._summary_response["cpu"]["64_bit"])
@@ -1292,7 +1292,7 @@ class XMRigAPI:
         Retrieves the cached paused status of the miner from the summary data.
 
         Returns:
-            int: True if the miner is paused, False otherwise, or False if not available.
+            bool: True if the miner is paused, False otherwise, or False if not available.
         """
         try:
             log.debug(self._summary_response["paused"])
@@ -1433,7 +1433,7 @@ class XMRigAPI:
         Retrieves the cached CPU type status value from the backends data.
 
         Returns:
-            bool: Bool representing type status, or None if not available.
+            str: Bool representing type status, or None if not available.
         """
         try:
             log.debug(self._backends_response[0]["type"])
@@ -1661,7 +1661,7 @@ class XMRigAPI:
         Retrieves the cached CPU threads information from the backends data.
 
         Returns:
-            int: Bool representing threads information, or False if not available.
+            list: Bool representing threads information, or False if not available.
         """
         try:
             log.debug(self._backends_response[0]["threads"])
@@ -1676,7 +1676,7 @@ class XMRigAPI:
         Retrieves the cached CPU threads intensity information from the backends data.
 
         Returns:
-            int: Bool representing threads intensity information, or False if not available.
+            list: Bool representing threads intensity information, or False if not available.
         """
         intensities = []
         try:
@@ -1694,7 +1694,7 @@ class XMRigAPI:
         Retrieves the cached CPU threads affinity information from the backends data.
 
         Returns:
-            int: Bool representing threads affinity information, or False if not available.
+            list: Bool representing threads affinity information, or False if not available.
         """
         affinities = []
         try:
@@ -1712,7 +1712,7 @@ class XMRigAPI:
         Retrieves the cached CPU threads av information from the backends data.
 
         Returns:
-            int: Bool representing threads av information, or False if not available.
+            list: Bool representing threads av information, or False if not available.
         """
         avs = []
         try:
@@ -1730,7 +1730,7 @@ class XMRigAPI:
         Retrieves the cached CPU threads hashrates (10s) information from the backends data.
 
         Returns:
-            int: Bool representing threads hashrates (10s) information, or False if not available.
+            list: Bool representing threads hashrates (10s) information, or False if not available.
         """
         hashrates_10s = []
         try:
@@ -1748,7 +1748,7 @@ class XMRigAPI:
         Retrieves the cached CPU threads hashrates (1m) information from the backends data.
 
         Returns:
-            int: Bool representing threads hashrates (1m) information, or False if not available.
+            list: Bool representing threads hashrates (1m) information, or False if not available.
         """
         hashrates_1m = []
         try:
@@ -1766,7 +1766,7 @@ class XMRigAPI:
         Retrieves the cached CPU threads hashrates (15m) information from the backends data.
 
         Returns:
-            int: Bool representing threads hashrates (15m) information, or False if not available.
+            list: Bool representing threads hashrates (15m) information, or False if not available.
         """
         hashrates_15m = []
         try:
@@ -1784,7 +1784,7 @@ class XMRigAPI:
         Retrieves the cached OpenCL type information from the backends data.
 
         Returns:
-            bool: Bool representing type information, or None if not available.
+            str: Bool representing type information, or None if not available.
         """
         try:
             log.debug(self._backends_response[1]["type"])
@@ -1844,7 +1844,7 @@ class XMRigAPI:
         Retrieves the cached OpenCL platform information from the backends data.
 
         Returns:
-            str: Bool representing platform information, or False if not available.
+            dict: Bool representing platform information, or False if not available.
         """
         try:
             log.debug(self._backends_response[1]["platform"])
@@ -1859,7 +1859,7 @@ class XMRigAPI:
         Retrieves the cached OpenCL platform index information from the backends data.
 
         Returns:
-            str: Bool representing platform index information, or False if not available.
+            int: Bool representing platform index information, or False if not available.
         """
         try:
             log.debug(self._backends_response[1]["platform"]["index"])
@@ -1949,7 +1949,7 @@ class XMRigAPI:
         Retrieves the cached OpenCL hashrates information from the backends data.
 
         Returns:
-            str: Bool representing hashrates information, or False if not available.
+            list: Bool representing hashrates information, or False if not available.
         """
         try:
             log.debug(self._backends_response[1]["hashrate"])
@@ -1964,7 +1964,7 @@ class XMRigAPI:
         Retrieves the cached OpenCL hashrate (10s) information from the backends data.
 
         Returns:
-            str: Bool representing hashrate (10s) information, or False if not available.
+            int: Bool representing hashrate (10s) information, or False if not available.
         """
         try:
             log.debug(self._backends_response[1]["hashrate"][0])
@@ -1979,7 +1979,7 @@ class XMRigAPI:
         Retrieves the cached OpenCL hashrate (1m) information from the backends data.
 
         Returns:
-            str: Bool representing hashrate (1m) information, or False if not available.
+            int: Bool representing hashrate (1m) information, or False if not available.
         """
         try:
             log.debug(self._backends_response[1]["hashrate"][1])
@@ -1994,7 +1994,7 @@ class XMRigAPI:
         Retrieves the cached OpenCL hashrate (15m) information from the backends data.
 
         Returns:
-            str: Bool representing hashrate (15m) information, or False if not available.
+            int: Bool representing hashrate (15m) information, or False if not available.
         """
         try:
             log.debug(self._backends_response[1]["hashrate"][2])
@@ -2009,7 +2009,7 @@ class XMRigAPI:
         Retrieves the cached OpenCL threads information from the backends data.
 
         Returns:
-            str: Bool representing threads information, or False if not available.
+            dict: Bool representing threads information, or False if not available.
         """
         try:
             log.debug(self._backends_response[1]["threads"][0])
@@ -2024,7 +2024,7 @@ class XMRigAPI:
         Retrieves the cached OpenCL threads index information from the backends data.
 
         Returns:
-            str: Bool representing threads index information, or False if not available.
+            int: Bool representing threads index information, or False if not available.
         """
         try:
             log.debug(self._backends_response[1]["threads"][0]["index"])
@@ -2039,7 +2039,7 @@ class XMRigAPI:
         Retrieves the cached OpenCL threads intensity information from the backends data.
 
         Returns:
-            str: Bool representing threads intensity information, or False if not available.
+            int: Bool representing threads intensity information, or False if not available.
         """
         try:
             log.debug(self._backends_response[1]["threads"][0]["intensity"])
@@ -2054,7 +2054,7 @@ class XMRigAPI:
         Retrieves the cached OpenCL threads worksize information from the backends data.
 
         Returns:
-            str: Bool representing threads worksize information, or False if not available.
+            int: Bool representing threads worksize information, or False if not available.
         """
         try:
             log.debug(self._backends_response[1]["threads"][0]["worksize"])
@@ -2069,7 +2069,7 @@ class XMRigAPI:
         Retrieves the cached OpenCL threads amount information from the backends data.
 
         Returns:
-            str: Bool representing threads amount information, or False if not available.
+            list: Bool representing threads amount information, or False if not available.
         """
         try:
             log.debug(self._backends_response[1]["threads"][0]["threads"])
@@ -2084,7 +2084,7 @@ class XMRigAPI:
         Retrieves the cached OpenCL threads unroll information from the backends data.
 
         Returns:
-            str: Bool representing threads unroll information, or False if not available.
+            int: Bool representing threads unroll information, or False if not available.
         """
         try:
             log.debug(self._backends_response[1]["threads"][0]["unroll"])
@@ -2099,7 +2099,7 @@ class XMRigAPI:
         Retrieves the cached OpenCL threads affinity information from the backends data.
 
         Returns:
-            str: Bool representing threads affinity information, or False if not available.
+            int: Bool representing threads affinity information, or False if not available.
         """
         try:
             log.debug(self._backends_response[1]["threads"][0]["affinity"])
@@ -2114,7 +2114,7 @@ class XMRigAPI:
         Retrieves the cached OpenCL threads hashrates information from the backends data.
 
         Returns:
-            str: Bool representing threads hashrates information, or False if not available.
+            list: Bool representing threads hashrates information, or False if not available.
         """
         try:
             log.debug(self._backends_response[1]["threads"][0]["hashrate"])
@@ -2129,7 +2129,7 @@ class XMRigAPI:
         Retrieves the cached OpenCL threads hashrates (10s) information from the backends data.
 
         Returns:
-            str: Bool representing threads hashrates (10s) information, or False if not available.
+            int: Bool representing threads hashrates (10s) information, or False if not available.
         """
         try:
             log.debug(self._backends_response[1]["threads"][0]["hashrate"][0])
@@ -2144,7 +2144,7 @@ class XMRigAPI:
         Retrieves the cached OpenCL threads hashrates (1m) information from the backends data.
 
         Returns:
-            str: Bool representing threads hashrates (1m) information, or False if not available.
+            int: Bool representing threads hashrates (1m) information, or False if not available.
         """
         try:
             log.debug(self._backends_response[1]["threads"][0]["hashrate"][1])
@@ -2159,7 +2159,7 @@ class XMRigAPI:
         Retrieves the cached OpenCL threads hashrates (15m) information from the backends data.
 
         Returns:
-            str: Bool representing threads hashrates (15m) information, or False if not available.
+            int: Bool representing threads hashrates (15m) information, or False if not available.
         """
         try:
             log.debug(self._backends_response[1]["threads"][0]["hashrate"][2])
@@ -2219,7 +2219,7 @@ class XMRigAPI:
         Retrieves the cached OpenCL threads cu information from the backends data.
 
         Returns:
-            str: Bool representing threads cu information, or False if not available.
+            int: Bool representing threads cu information, or False if not available.
         """
         try:
             log.debug(self._backends_response[1]["threads"][0]["cu"])
@@ -2234,7 +2234,7 @@ class XMRigAPI:
         Retrieves the cached OpenCL threads global memory information from the backends data.
 
         Returns:
-            str: Bool representing threads global memory information, or False if not available.
+            int: Bool representing threads global memory information, or False if not available.
         """
         try:
             log.debug(self._backends_response[1]["threads"][0]["global_mem"])
@@ -2249,7 +2249,7 @@ class XMRigAPI:
         Retrieves the cached OpenCL threads health information from the backends data.
 
         Returns:
-            str: Bool representing threads health information, or False if not available.
+            dict: Bool representing threads health information, or False if not available.
         """
         try:
             log.debug(self._backends_response[1]["threads"][0]["health"])
@@ -2264,7 +2264,7 @@ class XMRigAPI:
         Retrieves the cached OpenCL threads health temperature information from the backends data.
 
         Returns:
-            str: Bool representing threads health temperature information, or False if not available.
+            int: Bool representing threads health temperature information, or False if not available.
         """
         try:
             log.debug(self._backends_response[1]["threads"][0]["health"]["temperature"])
@@ -2279,7 +2279,7 @@ class XMRigAPI:
         Retrieves the cached OpenCL threads health power information from the backends data.
 
         Returns:
-            str: Bool representing threads health power information, or False if not available.
+            int: Bool representing threads health power information, or False if not available.
         """
         try:
             log.debug(self._backends_response[1]["threads"][0]["health"]["power"])
@@ -2294,7 +2294,7 @@ class XMRigAPI:
         Retrieves the cached OpenCL threads health clock information from the backends data.
 
         Returns:
-            str: Bool representing threads health clock information, or False if not available.
+            int: Bool representing threads health clock information, or False if not available.
         """
         try:
             log.debug(self._backends_response[1]["threads"][0]["health"]["clock"])
@@ -2309,7 +2309,7 @@ class XMRigAPI:
         Retrieves the cached OpenCL threads health memory clock information from the backends data.
 
         Returns:
-            str: Bool representing threads health memory clock information, or False if not available.
+            int: Bool representing threads health memory clock information, or False if not available.
         """
         try:
             log.debug(self._backends_response[1]["threads"][0]["health"]["mem_clock"])
@@ -2324,7 +2324,7 @@ class XMRigAPI:
         Retrieves the cached OpenCL threads health rpm information from the backends data.
 
         Returns:
-            str: Bool representing threads health rpm information, or False if not available.
+            int: Bool representing threads health rpm information, or False if not available.
         """
         try:
             log.debug(self._backends_response[1]["threads"][0]["health"]["rpm"])
