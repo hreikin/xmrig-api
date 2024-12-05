@@ -1587,6 +1587,190 @@ class XMRigAPI:
         except Exception as e:
             log.error(f"An error occurred fetching the cached CPU memory data: {e}")
             return False
+    
+    @property
+    def be_cpu_hashrates(self) -> int | bool:
+        """
+        Retrieves the cached CPU hashrates information from the backends data.
+
+        Returns:
+            int: Bool representing hashrates information, or False if not available.
+        """
+        try:
+            log.debug(self._backends_response[0]["hashrate"])
+            return self._backends_response[0]["hashrate"]
+        except Exception as e:
+            log.error(f"An error occurred fetching the cached CPU hashrates data: {e}")
+            return False
+    
+    @property
+    def be_cpu_hashrate_10s(self) -> int | bool:
+        """
+        Retrieves the cached CPU hashrate (10s) information from the backends data.
+
+        Returns:
+            int: Bool representing hashrate (10s) information, or False if not available.
+        """
+        try:
+            log.debug(self._backends_response[0]["hashrate"][0])
+            return self._backends_response[0]["hashrate"][0]
+        except Exception as e:
+            log.error(f"An error occurred fetching the cached CPU hashrate (10s) data: {e}")
+            return False
+    
+    @property
+    def be_cpu_hashrate_1m(self) -> int | bool:
+        """
+        Retrieves the cached CPU hashrate (1m) information from the backends data.
+
+        Returns:
+            int: Bool representing hashrate (1m) information, or False if not available.
+        """
+        try:
+            log.debug(self._backends_response[0]["hashrate"][1])
+            return self._backends_response[0]["hashrate"][1]
+        except Exception as e:
+            log.error(f"An error occurred fetching the cached CPU hashrate (1m) data: {e}")
+            return False
+    
+    @property
+    def be_cpu_hashrate_15m(self) -> int | bool:
+        """
+        Retrieves the cached CPU hashrate (15m) information from the backends data.
+
+        Returns:
+            int: Bool representing hashrate (15m) information, or False if not available.
+        """
+        try:
+            log.debug(self._backends_response[0]["hashrate"][2])
+            return self._backends_response[0]["hashrate"][2]
+        except Exception as e:
+            log.error(f"An error occurred fetching the cached CPU hashrate (15m) data: {e}")
+            return False
+    
+    @property
+    def be_cpu_threads(self) -> int | bool:
+        """
+        Retrieves the cached CPU threads information from the backends data.
+
+        Returns:
+            int: Bool representing threads information, or False if not available.
+        """
+        try:
+            log.debug(self._backends_response[0]["threads"])
+            return self._backends_response[0]["threads"]
+        except Exception as e:
+            log.error(f"An error occurred fetching the cached CPU threads data: {e}")
+            return False
+
+    @property
+    def be_cpu_threads_intensity(self) -> int | bool:
+        """
+        Retrieves the cached CPU threads intensity information from the backends data.
+
+        Returns:
+            int: Bool representing threads intensity information, or False if not available.
+        """
+        intensities = []
+        try:
+            for i in self._backends_response[0]["threads"]:
+                intensities.append(i["intensity"])
+            log.debug(intensities)
+            return intensities
+        except Exception as e:
+            log.error(f"An error occurred fetching the cached CPU threads intensity data: {e}")
+            return False
+    
+    @property
+    def be_cpu_threads_affinity(self) -> int | bool:
+        """
+        Retrieves the cached CPU threads affinity information from the backends data.
+
+        Returns:
+            int: Bool representing threads affinity information, or False if not available.
+        """
+        affinities = []
+        try:
+            for i in self._backends_response[0]["threads"]:
+                affinities.append(i["affinity"])
+            log.debug(affinities)
+            return affinities
+        except Exception as e:
+            log.error(f"An error occurred fetching the cached CPU threads affinity data: {e}")
+            return False
+    
+    @property
+    def be_cpu_threads_av(self) -> int | bool:
+        """
+        Retrieves the cached CPU threads av information from the backends data.
+
+        Returns:
+            int: Bool representing threads av information, or False if not available.
+        """
+        avs = []
+        try:
+            for i in self._backends_response[0]["threads"]:
+                avs.append(i["av"])
+            log.debug(avs)
+            return avs
+        except Exception as e:
+            log.error(f"An error occurred fetching the cached CPU threads av data: {e}")
+            return False
+    
+    @property
+    def be_cpu_threads_hashrates_10s(self) -> int | bool:
+        """
+        Retrieves the cached CPU threads hashrates (10s) information from the backends data.
+
+        Returns:
+            int: Bool representing threads hashrates (10s) information, or False if not available.
+        """
+        hashrates_10s = []
+        try:
+            for i in self._backends_response[0]["threads"]:
+                hashrates_10s.append(i["hashrate"][0])
+            log.debug(hashrates_10s)
+            return hashrates_10s
+        except Exception as e:
+            log.error(f"An error occurred fetching the cached CPU threads hashrates (10s) data: {e}")
+            return False
+    
+    @property
+    def be_cpu_threads_hashrates_1m(self) -> int | bool:
+        """
+        Retrieves the cached CPU threads hashrates (1m) information from the backends data.
+
+        Returns:
+            int: Bool representing threads hashrates (1m) information, or False if not available.
+        """
+        hashrates_1m = []
+        try:
+            for i in self._backends_response[0]["threads"]:
+                hashrates_1m.append(i["hashrate"][1])
+            log.debug(hashrates_1m)
+            return hashrates_1m
+        except Exception as e:
+            log.error(f"An error occurred fetching the cached CPU threads hashrates (1m) data: {e}")
+            return False
+    
+    @property
+    def be_cpu_threads_hashrates_15m(self) -> int | bool:
+        """
+        Retrieves the cached CPU threads hashrates (15m) information from the backends data.
+
+        Returns:
+            int: Bool representing threads hashrates (15m) information, or False if not available.
+        """
+        hashrates_15m = []
+        try:
+            for i in self._backends_response[0]["threads"]:
+                hashrates_15m.append(i["hashrate"][0])
+            log.debug(hashrates_15m)
+            return hashrates_15m
+        except Exception as e:
+            log.error(f"An error occurred fetching the cached CPU threads hashrates (15m) data: {e}")
+            return False
+
     @property
     def be_opencl_type(self) -> bool | None:
         """
