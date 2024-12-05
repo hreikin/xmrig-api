@@ -1587,6 +1587,20 @@ class XMRigAPI:
         except Exception as e:
             log.error(f"An error occurred fetching the cached CPU memory data: {e}")
             return False
+    @property
+    def be_opencl_type(self) -> bool | None:
+        """
+        Retrieves the cached OpenCL type information from the backends data.
+
+        Returns:
+            bool: Bool representing type information, or None if not available.
+        """
+        try:
+            log.debug(self._backends_response[1]["type"])
+            return self._backends_response[1]["type"]
+        except Exception as e:
+            log.error(f"An error occurred fetching the cached OpenCL type data: {e}")
+            return None
 
     @property
     def be_opencl_enabled(self) -> bool | None:
@@ -1646,6 +1660,486 @@ class XMRigAPI:
             return self._backends_response[1]["platform"]
         except Exception as e:
             log.error(f"An error occurred fetching the cached OpenCL platform data: {e}")
+            return False
+    
+    @property
+    def be_opencl_platform_index(self) -> int | bool:
+        """
+        Retrieves the cached OpenCL platform index information from the backends data.
+
+        Returns:
+            str: Bool representing platform index information, or False if not available.
+        """
+        try:
+            log.debug(self._backends_response[1]["platform"]["index"])
+            return self._backends_response[1]["platform"]["index"]
+        except Exception as e:
+            log.error(f"An error occurred fetching the cached OpenCL platform index data: {e}")
+            return False
+    
+    @property
+    def be_opencl_platform_profile(self) -> str | bool:
+        """
+        Retrieves the cached OpenCL platform profile information from the backends data.
+
+        Returns:
+            str: Bool representing platform profile information, or False if not available.
+        """
+        try:
+            log.debug(self._backends_response[1]["platform"]["profile"])
+            return self._backends_response[1]["platform"]["profile"]
+        except Exception as e:
+            log.error(f"An error occurred fetching the cached OpenCL platform profile data: {e}")
+            return False
+    
+    @property
+    def be_opencl_platform_version(self) -> str | bool:
+        """
+        Retrieves the cached OpenCL platform version information from the backends data.
+
+        Returns:
+            str: Bool representing platform version information, or False if not available.
+        """
+        try:
+            log.debug(self._backends_response[1]["platform"]["version"])
+            return self._backends_response[1]["platform"]["version"]
+        except Exception as e:
+            log.error(f"An error occurred fetching the cached OpenCL platform version data: {e}")
+            return False
+    
+    @property
+    def be_opencl_platform_name(self) -> str | bool:
+        """
+        Retrieves the cached OpenCL platform name information from the backends data.
+
+        Returns:
+            str: Bool representing platform name information, or False if not available.
+        """
+        try:
+            log.debug(self._backends_response[1]["platform"]["name"])
+            return self._backends_response[1]["platform"]["name"]
+        except Exception as e:
+            log.error(f"An error occurred fetching the cached OpenCL platform name data: {e}")
+            return False
+    
+    @property
+    def be_opencl_platform_vendor(self) -> str | bool:
+        """
+        Retrieves the cached OpenCL platform vendor information from the backends data.
+
+        Returns:
+            str: Bool representing platform vendor information, or False if not available.
+        """
+        try:
+            log.debug(self._backends_response[1]["platform"]["vendor"])
+            return self._backends_response[1]["platform"]["vendor"]
+        except Exception as e:
+            log.error(f"An error occurred fetching the cached OpenCL platform vendor data: {e}")
+            return False
+    
+    @property
+    def be_opencl_platform_extensions(self) -> str | bool:
+        """
+        Retrieves the cached OpenCL platform extensions information from the backends data.
+
+        Returns:
+            str: Bool representing platform extensions information, or False if not available.
+        """
+        try:
+            log.debug(self._backends_response[1]["platform"]["extensions"])
+            return self._backends_response[1]["platform"]["extensions"]
+        except Exception as e:
+            log.error(f"An error occurred fetching the cached OpenCL platform extensions data: {e}")
+            return False
+    
+    @property
+    def be_opencl_hashrates(self) -> list | bool:
+        """
+        Retrieves the cached OpenCL hashrates information from the backends data.
+
+        Returns:
+            str: Bool representing hashrates information, or False if not available.
+        """
+        try:
+            log.debug(self._backends_response[1]["hashrate"])
+            return self._backends_response[1]["hashrate"]
+        except Exception as e:
+            log.error(f"An error occurred fetching the cached OpenCL hashrates data: {e}")
+            return False
+    
+    @property
+    def be_opencl_hashrate_10s(self) -> int | bool:
+        """
+        Retrieves the cached OpenCL hashrate (10s) information from the backends data.
+
+        Returns:
+            str: Bool representing hashrate (10s) information, or False if not available.
+        """
+        try:
+            log.debug(self._backends_response[1]["hashrate"][0])
+            return self._backends_response[1]["hashrate"][0]
+        except Exception as e:
+            log.error(f"An error occurred fetching the cached OpenCL hashrate (10s) data: {e}")
+            return False
+    
+    @property
+    def be_opencl_hashrate_1m(self) -> int | bool:
+        """
+        Retrieves the cached OpenCL hashrate (1m) information from the backends data.
+
+        Returns:
+            str: Bool representing hashrate (1m) information, or False if not available.
+        """
+        try:
+            log.debug(self._backends_response[1]["hashrate"][1])
+            return self._backends_response[1]["hashrate"][1]
+        except Exception as e:
+            log.error(f"An error occurred fetching the cached OpenCL hashrate (1m) data: {e}")
+            return False
+    
+    @property
+    def be_opencl_hashrate_15m(self) -> int | bool:
+        """
+        Retrieves the cached OpenCL hashrate (15m) information from the backends data.
+
+        Returns:
+            str: Bool representing hashrate (15m) information, or False if not available.
+        """
+        try:
+            log.debug(self._backends_response[1]["hashrate"][2])
+            return self._backends_response[1]["hashrate"][2]
+        except Exception as e:
+            log.error(f"An error occurred fetching the cached OpenCL hashrate (15m) data: {e}")
+            return False
+
+    @property
+    def be_opencl_threads(self) -> list | bool:
+        """
+        Retrieves the cached OpenCL threads information from the backends data.
+
+        Returns:
+            str: Bool representing threads information, or False if not available.
+        """
+        try:
+            log.debug(self._backends_response[1]["threads"])
+            return self._backends_response[1]["threads"]
+        except Exception as e:
+            log.error(f"An error occurred fetching the cached OpenCL threads data: {e}")
+            return False
+
+    @property
+    def be_opencl_threads_index(self) -> list | bool:
+        """
+        Retrieves the cached OpenCL threads index information from the backends data.
+
+        Returns:
+            str: Bool representing threads index information, or False if not available.
+        """
+        try:
+            log.debug(self._backends_response[1]["threads"][0]["index"])
+            return self._backends_response[1]["threads"][0]["index"]
+        except Exception as e:
+            log.error(f"An error occurred fetching the cached OpenCL threads index data: {e}")
+            return False
+    
+    @property
+    def be_opencl_threads_intensity(self) -> list | bool:
+        """
+        Retrieves the cached OpenCL threads intensity information from the backends data.
+
+        Returns:
+            str: Bool representing threads intensity information, or False if not available.
+        """
+        try:
+            log.debug(self._backends_response[1]["threads"][0]["intensity"])
+            return self._backends_response[1]["threads"][0]["intensity"]
+        except Exception as e:
+            log.error(f"An error occurred fetching the cached OpenCL threads intensity data: {e}")
+            return False
+    
+    @property
+    def be_opencl_threads_worksize(self) -> list | bool:
+        """
+        Retrieves the cached OpenCL threads worksize information from the backends data.
+
+        Returns:
+            str: Bool representing threads worksize information, or False if not available.
+        """
+        try:
+            log.debug(self._backends_response[1]["threads"][0]["worksize"])
+            return self._backends_response[1]["threads"][0]["worksize"]
+        except Exception as e:
+            log.error(f"An error occurred fetching the cached OpenCL threads worksize data: {e}")
+            return False
+    
+    @property
+    def be_opencl_threads_amount(self) -> list | bool:
+        """
+        Retrieves the cached OpenCL threads amount information from the backends data.
+
+        Returns:
+            str: Bool representing threads amount information, or False if not available.
+        """
+        try:
+            log.debug(self._backends_response[1]["threads"][0]["threads"])
+            return self._backends_response[1]["threads"][0]["threads"]
+        except Exception as e:
+            log.error(f"An error occurred fetching the cached OpenCL threads amount data: {e}")
+            return False
+    
+    @property
+    def be_opencl_threads_unroll(self) -> list | bool:
+        """
+        Retrieves the cached OpenCL threads unroll information from the backends data.
+
+        Returns:
+            str: Bool representing threads unroll information, or False if not available.
+        """
+        try:
+            log.debug(self._backends_response[1]["threads"][0]["unroll"])
+            return self._backends_response[1]["threads"][0]["unroll"]
+        except Exception as e:
+            log.error(f"An error occurred fetching the cached OpenCL threads unroll data: {e}")
+            return False
+    
+    @property
+    def be_opencl_threads_affinity(self) -> list | bool:
+        """
+        Retrieves the cached OpenCL threads affinity information from the backends data.
+
+        Returns:
+            str: Bool representing threads affinity information, or False if not available.
+        """
+        try:
+            log.debug(self._backends_response[1]["threads"][0]["affinity"])
+            return self._backends_response[1]["threads"][0]["affinity"]
+        except Exception as e:
+            log.error(f"An error occurred fetching the cached OpenCL threads affinity data: {e}")
+            return False
+    
+    @property
+    def be_opencl_threads_hashrates(self) -> list | bool:
+        """
+        Retrieves the cached OpenCL threads hashrates information from the backends data.
+
+        Returns:
+            str: Bool representing threads hashrates information, or False if not available.
+        """
+        try:
+            log.debug(self._backends_response[1]["threads"][0]["hashrate"])
+            return self._backends_response[1]["threads"][0]["hashrate"]
+        except Exception as e:
+            log.error(f"An error occurred fetching the cached OpenCL threads hashrates data: {e}")
+            return False
+    
+    @property
+    def be_opencl_threads_hashrates_10s(self) -> list | bool:
+        """
+        Retrieves the cached OpenCL threads hashrates (10s) information from the backends data.
+
+        Returns:
+            str: Bool representing threads hashrates (10s) information, or False if not available.
+        """
+        try:
+            log.debug(self._backends_response[1]["threads"][0]["hashrate"][0])
+            return self._backends_response[1]["threads"][0]["hashrate"][0]
+        except Exception as e:
+            log.error(f"An error occurred fetching the cached OpenCL threads hashrates (10s) data: {e}")
+            return False
+    
+    @property
+    def be_opencl_threads_hashrates_1m(self) -> list | bool:
+        """
+        Retrieves the cached OpenCL threads hashrates (1m) information from the backends data.
+
+        Returns:
+            str: Bool representing threads hashrates (1m) information, or False if not available.
+        """
+        try:
+            log.debug(self._backends_response[1]["threads"][0]["hashrate"][1])
+            return self._backends_response[1]["threads"][0]["hashrate"][1]
+        except Exception as e:
+            log.error(f"An error occurred fetching the cached OpenCL threads hashrates (1m) data: {e}")
+            return False
+    
+    @property
+    def be_opencl_threads_hashrates_15m(self) -> list | bool:
+        """
+        Retrieves the cached OpenCL threads hashrates (15m) information from the backends data.
+
+        Returns:
+            str: Bool representing threads hashrates (15m) information, or False if not available.
+        """
+        try:
+            log.debug(self._backends_response[1]["threads"][0]["hashrate"][2])
+            return self._backends_response[1]["threads"][0]["hashrate"][2]
+        except Exception as e:
+            log.error(f"An error occurred fetching the cached OpenCL threads hashrates (15m) data: {e}")
+            return False
+    
+    @property
+    def be_opencl_threads_board(self) -> list | bool:
+        """
+        Retrieves the cached OpenCL threads board information from the backends data.
+
+        Returns:
+            str: Bool representing threads board information, or False if not available.
+        """
+        try:
+            log.debug(self._backends_response[1]["threads"][0]["board"])
+            return self._backends_response[1]["threads"][0]["board"]
+        except Exception as e:
+            log.error(f"An error occurred fetching the cached OpenCL threads board data: {e}")
+            return False
+    
+    @property
+    def be_opencl_threads_name(self) -> list | bool:
+        """
+        Retrieves the cached OpenCL threads name information from the backends data.
+
+        Returns:
+            str: Bool representing threads name information, or False if not available.
+        """
+        try:
+            log.debug(self._backends_response[1]["threads"][0]["name"])
+            return self._backends_response[1]["threads"][0]["name"]
+        except Exception as e:
+            log.error(f"An error occurred fetching the cached OpenCL threads name data: {e}")
+            return False
+    
+    @property
+    def be_opencl_threads_bus_id(self) -> list | bool:
+        """
+        Retrieves the cached OpenCL threads bus ID information from the backends data.
+
+        Returns:
+            str: Bool representing threads bus ID information, or False if not available.
+        """
+        try:
+            log.debug(self._backends_response[1]["threads"][0]["bus_id"])
+            return self._backends_response[1]["threads"][0]["bus_id"]
+        except Exception as e:
+            log.error(f"An error occurred fetching the cached OpenCL threads bus ID data: {e}")
+            return False
+    
+    @property
+    def be_opencl_threads_cu(self) -> list | bool:
+        """
+        Retrieves the cached OpenCL threads cu information from the backends data.
+
+        Returns:
+            str: Bool representing threads cu information, or False if not available.
+        """
+        try:
+            log.debug(self._backends_response[1]["threads"][0]["cu"])
+            return self._backends_response[1]["threads"][0]["cu"]
+        except Exception as e:
+            log.error(f"An error occurred fetching the cached OpenCL threads cu data: {e}")
+            return False
+    
+    @property
+    def be_opencl_threads_global_mem(self) -> list | bool:
+        """
+        Retrieves the cached OpenCL threads global memory information from the backends data.
+
+        Returns:
+            str: Bool representing threads global memory information, or False if not available.
+        """
+        try:
+            log.debug(self._backends_response[1]["threads"][0]["global_mem"])
+            return self._backends_response[1]["threads"][0]["global_mem"]
+        except Exception as e:
+            log.error(f"An error occurred fetching the cached OpenCL threads global memory data: {e}")
+            return False
+    
+    @property
+    def be_opencl_threads_health(self) -> list | bool:
+        """
+        Retrieves the cached OpenCL threads health information from the backends data.
+
+        Returns:
+            str: Bool representing threads health information, or False if not available.
+        """
+        try:
+            log.debug(self._backends_response[1]["threads"][0]["health"])
+            return self._backends_response[1]["threads"][0]["health"]
+        except Exception as e:
+            log.error(f"An error occurred fetching the cached OpenCL threads health data: {e}")
+            return False
+    
+    @property
+    def be_opencl_threads_health_temp(self) -> list | bool:
+        """
+        Retrieves the cached OpenCL threads health temperature information from the backends data.
+
+        Returns:
+            str: Bool representing threads health temperature information, or False if not available.
+        """
+        try:
+            log.debug(self._backends_response[1]["threads"][0]["health"]["temperature"])
+            return self._backends_response[1]["threads"][0]["health"]["temperature"]
+        except Exception as e:
+            log.error(f"An error occurred fetching the cached OpenCL threads health temperature data: {e}")
+            return False
+    
+    @property
+    def be_opencl_threads_health_power(self) -> list | bool:
+        """
+        Retrieves the cached OpenCL threads health power information from the backends data.
+
+        Returns:
+            str: Bool representing threads health power information, or False if not available.
+        """
+        try:
+            log.debug(self._backends_response[1]["threads"][0]["health"]["power"])
+            return self._backends_response[1]["threads"][0]["health"]["power"]
+        except Exception as e:
+            log.error(f"An error occurred fetching the cached OpenCL threads health power data: {e}")
+            return False
+    
+    @property
+    def be_opencl_threads_health_clock(self) -> list | bool:
+        """
+        Retrieves the cached OpenCL threads health clock information from the backends data.
+
+        Returns:
+            str: Bool representing threads health clock information, or False if not available.
+        """
+        try:
+            log.debug(self._backends_response[1]["threads"][0]["health"]["clock"])
+            return self._backends_response[1]["threads"][0]["health"]["clock"]
+        except Exception as e:
+            log.error(f"An error occurred fetching the cached OpenCL threads health clock data: {e}")
+            return False
+    
+    @property
+    def be_opencl_threads_health_mem_clock(self) -> list | bool:
+        """
+        Retrieves the cached OpenCL threads health memory clock information from the backends data.
+
+        Returns:
+            str: Bool representing threads health memory clock information, or False if not available.
+        """
+        try:
+            log.debug(self._backends_response[1]["threads"][0]["health"]["mem_clock"])
+            return self._backends_response[1]["threads"][0]["health"]["mem_clock"]
+        except Exception as e:
+            log.error(f"An error occurred fetching the cached OpenCL threads health memory clock data: {e}")
+            return False
+    
+    @property
+    def be_opencl_threads_health_rpm(self) -> list | bool:
+        """
+        Retrieves the cached OpenCL threads health rpm information from the backends data.
+
+        Returns:
+            str: Bool representing threads health rpm information, or False if not available.
+        """
+        try:
+            log.debug(self._backends_response[1]["threads"][0]["health"]["rpm"])
+            return self._backends_response[1]["threads"][0]["health"]["rpm"]
+        except Exception as e:
+            log.error(f"An error occurred fetching the cached OpenCL threads health rpm data: {e}")
             return False
 
     @property
