@@ -1,6 +1,4 @@
 # XMRig-API
-![PyPI - Downloads](https://img.shields.io/pypi/dm/xmrig-api?label=PyPI%20Downloads)
-![License](https://img.shields.io/github/license/hreikin/xmrig-api?label=License&color=green)
 
 This module provides the `XMRigAPI` object to allow interacting with the XMRig API. Documentation is available [here](https://hreikin.co.uk/xmrig-api/) and can also be built locally if required.
 
