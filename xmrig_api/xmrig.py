@@ -8,6 +8,13 @@ as fetching status, managing configurations, and controlling the mining process.
 import requests, logging
 from datetime import timedelta
 
+# // TODO: Double check all return types are correct for list/dicts, compare with json
+# TODO: Test coverage with mock and real data
+# TODO: Ability to store collected data in a database to avoid data loss/errors upon API/miner restarts ??
+# TODO: Ability to configure/use multiple miners
+# TODO: Multiple examples to help you get started
+# TODO: Comprehensive documentation
+
 log = logging.getLogger("XMRigAPI")
 
 class XMRigAuthorizationError(Exception):
@@ -303,12 +310,12 @@ class XMRigAPI:
             return False
 
     @property
-    def backends(self) -> dict | bool:
+    def backends(self) -> list | bool:
         """
         Retrieves the entire cached backends endpoint data.
 
         Returns:
-            dict: Current backends response, or False if not available.
+            list: Current backends response, or False if not available.
         """
         try:
             log.debug(self._backends_response)
@@ -523,8 +530,8 @@ class XMRigAPI:
             list: Supported features information, or False if not available.
         """
         try:
-            log.debug(self._summary_response["resources"]["features"])
-            return self._summary_response["resources"]["features"]
+            log.debug(self._summary_response["features"])
+            return self._summary_response["features"]
         except Exception as e:
             log.error(f"An error occurred fetching the cached features data: {e}")
             return False
@@ -782,7 +789,7 @@ class XMRigAPI:
             return self._summary_response["connection"]["tls"]
         except Exception as e:
             log.error(f"An error occurred fetching the cached pool tls data: {e}")
-            return None
+            return False
 
     @property
     def sum_pool_tls_fingerprint(self) -> str | bool:
