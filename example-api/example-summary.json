@@ -1,0 +1,76 @@
+{
+    "id": "dbcc59f40da05777",
+    "worker_id": "win11-cpu",
+    "uptime": 260195,
+    "restricted": false,
+    "resources": {
+        "memory": {
+            "free": 7575433216,
+            "total": 17089245184,
+            "resident_set_memory": 19771392
+        },
+        "load_average": [0.0, 0.0, 0.0],
+        "hardware_concurrency": 16
+    },
+    "features": ["api", "asm", "http", "hwloc", "tls", "opencl", "cuda"],
+    "results": {
+        "diff_current": 139505,
+        "shares_good": 8650,
+        "shares_total": 8658,
+        "avg_time": 29,
+        "avg_time_ms": 29641,
+        "hashes_total": 1230578601,
+        "best": [2427050317, 1866403980, 619182860, 322371508, 216063653, 142140911, 129338778, 126420963, 112693691, 111212248]
+    },
+    "algo": "rx/0",
+    "connection": {
+        "pool": "gulf.moneroocean.stream:10032",
+        "ip": "149.102.143.109",
+        "uptime": 75051,
+        "uptime_ms": 75051566,
+        "ping": 122,
+        "failures": 9,
+        "tls": null,
+        "tls-fingerprint": null,
+        "algo": "rx/0",
+        "diff": 139505,
+        "accepted": 8650,
+        "rejected": 8,
+        "avg_time": 29,
+        "avg_time_ms": 29641,
+        "hashes_total": 1230578601
+    },
+    "version": "6.22.1",
+    "kind": "miner",
+    "ua": "XMRig/6.22.1 (Windows NT 10.0; Win64; x64) libuv/1.49.2 msvc/2019",
+    "cpu": {
+        "brand": "Intel(R) Core(TM) i7-5960X CPU @ 3.00GHz",
+        "family": 6,
+        "model": 63,
+        "stepping": 2,
+        "proc_info": 198386,
+        "aes": true,
+        "avx2": true,
+        "x64": true,
+        "64_bit": true,
+        "l2": 2097152,
+        "l3": 20971520,
+        "cores": 8,
+        "threads": 16,
+        "packages": 1,
+        "nodes": 1,
+        "backend": "hwloc/2.11.2",
+        "msr": "intel",
+        "assembly": "intel",
+        "arch": "x86_64",
+        "flags": ["aes", "avx", "avx2", "bmi2", "osxsave", "pdpe1gb", "sse2", "ssse3", "sse4.1", "popcnt", "vm"]
+    },
+    "donate_level": 1,
+    "paused": false,
+    "algorithms": ["cn/1", "cn/2", "cn/r", "cn/fast", "cn/half", "cn/xao", "cn/rto", "cn/rwz", "cn/zls", "cn/double", "cn/ccx", "cn-lite/1", "cn-heavy/0", "cn-heavy/tube", "cn-heavy/xhv", "cn-pico", "cn-pico/tlo", "cn/upx2", "rx/0", "rx/wow", "rx/arq", "rx/graft", "rx/sfx", "rx/yada", "argon2/chukwa", "argon2/chukwav2", "argon2/ninja", "ghostrider"],
+    "hashrate": {
+        "total": [4884.25, 4833.63, 4754.45],
+        "highest": 5024.95
+    },
+    "hugepages": [1176, 1176]
+}

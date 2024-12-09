@@ -1,0 +1,135 @@
+[
+    {
+        "type": "cpu",
+        "enabled": true,
+        "algo": "rx/0",
+        "profile": "rx",
+        "hw-aes": true,
+        "priority": -1,
+        "msr": true,
+        "asm": "intel",
+        "argon2-impl": "AVX2",
+        "hugepages": [1176, 1176],
+        "memory": 16777216,
+        "hashrate": [4824.39, 4836.56, 4754.29],
+        "threads": [
+            {
+                "intensity": 1,
+                "affinity": 0,
+                "av": 1,
+                "hashrate": [593.57, 593.42, 580.85]
+            },
+            {
+                "intensity": 1,
+                "affinity": 2,
+                "av": 1,
+                "hashrate": [594.51, 597.24, 584.54]
+            },
+            {
+                "intensity": 1,
+                "affinity": 4,
+                "av": 1,
+                "hashrate": [593.88, 607.76, 597.86]
+            },
+            {
+                "intensity": 1,
+                "affinity": 6,
+                "av": 1,
+                "hashrate": [610.62, 608.23, 597.72]
+            },
+            {
+                "intensity": 1,
+                "affinity": 8,
+                "av": 1,
+                "hashrate": [610.3, 611.16, 600.39]
+            },
+            {
+                "intensity": 1,
+                "affinity": 10,
+                "av": 1,
+                "hashrate": [604.28, 604.37, 595.25]
+            },
+            {
+                "intensity": 1,
+                "affinity": 12,
+                "av": 1,
+                "hashrate": [602.72, 602.24, 594.52]
+            },
+            {
+                "intensity": 1,
+                "affinity": 14,
+                "av": 1,
+                "hashrate": [614.98, 612.18, 603.12]
+            }
+        ]
+    },
+    {
+        "type": "opencl",
+        "enabled": true,
+        "algo": "kawpow",
+        "profile": "kawpow",
+        "platform": {
+            "index": 0,
+            "profile": "FULL_PROFILE",
+            "version": "OpenCL 2.1 AMD-APP (3628.0)",
+            "name": "AMD Accelerated Parallel Processing",
+            "vendor": "Advanced Micro Devices, Inc.",
+            "extensions": "cl_khr_icd cl_khr_d3d10_sharing cl_khr_d3d11_sharing cl_khr_dx9_media_sharing cl_amd_event_callback cl_amd_offline_devices "
+        },
+        "hashrate": [37019648.800000004, 37021588.230000004, 36869826.53],
+        "threads": [
+            {
+                "index": 0,
+                "intensity": 7864320,
+                "worksize": 256,
+                "threads": [-1],
+                "unroll": 1,
+                "affinity": -1,
+                "hashrate": [37022612.99, 37020943.97, 36869389.19],
+                "board": "AMD Radeon RX 7800 XT",
+                "name": "gfx1101",
+                "bus_id": "03:00.0",
+                "cu": 30,
+                "global_mem": 17163091968,
+                "health": {
+                    "temperature": 72,
+                    "power": 0,
+                    "clock": 2181,
+                    "mem_clock": 2425,
+                    "rpm": 2907
+                }
+            }
+        ]
+    },
+    {
+        "type": "cuda",
+        "enabled": true,
+        "algo": "cn-pico",
+        "profile": "cn-pico",
+        "versions": {
+            "cuda-runtime": "12.6",
+            "cuda-driver": "12.7",
+            "plugin": "6.22.0"
+        },
+        "hashrate": [2233.97, 2233.87, 2233.99],
+        "threads": [
+            {
+                "index": 0,
+                "threads": 128,
+                "blocks": 15,
+                "bfactor": 0,
+                "bsleep": 0,
+                "affinity": -1,
+                "dataset_host": false,
+                "hashrate": [2233.97, 2233.83, 2233.99],
+                "name": "NVIDIA GeForce GTX 1050",
+                "bus_id": "01:00.0",
+                "smx": 5,
+                "arch": 61,
+                "global_mem": 4227727360,
+                "clock": 1493,
+                "memory_clock": 3504
+            }
+        ]
+    }
+]
