@@ -5,17 +5,17 @@ Provides classes and methods to interact with the XMRig miner API for tasks such
 as fetching status, managing configurations, and controlling the mining process.
 """
 
-import requests, logging
+import requests
 from datetime import timedelta
+from logger import log
 
 # // TODO: Double check all return types are correct for list/dicts, compare with json
-# TODO: Test coverage with mock and real data
-# TODO: Ability to store collected data in a database to avoid data loss/errors upon API/miner restarts ??
+# // TODO: Test coverage with mock and/or real data for properties
+# // TODO: Docstrings for tests
 # TODO: Ability to configure/use multiple miners
+# TODO: Ability to store collected data in a database to avoid data loss/errors upon API/miner restarts ??
 # TODO: Multiple examples to help you get started
 # TODO: Comprehensive documentation
-
-log = logging.getLogger("XMRigAPI")
 
 class XMRigAuthorizationError(Exception):
     """
