@@ -1,5 +1,5 @@
-import xmrig_api, logging
-x = xmrig_api.XMRigAPI(ip="127.0.0.1", port="5555", access_token="example")
+import xmrig, logging
+x = xmrig.XMRigAPI(ip="127.0.0.1", port="5555", access_token="example")
 logging.basicConfig()
 logging.getLogger("XMRigAPI").setLevel(logging.INFO)            # Change to DEBUG to print out all responses when their methods are called
 log = logging.getLogger("MyLOG")
