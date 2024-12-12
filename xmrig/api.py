@@ -292,7 +292,7 @@ class XMRigAPI:
         """
         try:
             self.update_config()
-            self.post_config()
+            self.post_config(self._config_response)
             log.debug(f"Miner successfully started.")
             return True
         except requests.exceptions.RequestException as e:
