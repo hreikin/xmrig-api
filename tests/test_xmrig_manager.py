@@ -1,6 +1,6 @@
 import unittest
-from unittest.mock import MagicMock, patch
-from xmrig import XMRigManager, XMRigAPI
+from unittest.mock import MagicMock
+from xmrig import XMRigManager
 
 class TestXMRigManager(unittest.TestCase):
     def setUp(self):
