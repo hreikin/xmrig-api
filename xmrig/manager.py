@@ -6,11 +6,15 @@ class XMRigManager:
     A class to manage multiple XMRig miners via their APIs.
     """
 
-    def __init__(self):
+    def __init__(self, api_factory=XMRigAPI):
         """
         Initializes the manager with an empty collection of miners.
+
+        Args:
+            api_factory (callable): Factory for creating XMRigAPI instances.
         """
         self._miners = {}
+        self._api_factory = api_factory
 
     def add_miner(self, miner_name: str, ip: str, port: str, access_token: str = None, tls_enabled: bool = False):
         """
@@ -25,8 +29,9 @@ class XMRigManager:
         """
         if miner_name in self._miners:
             raise ValueError(f"Miner with name '{miner_name}' already exists.")
-        
-        self._miners[miner_name] = XMRigAPI(ip, port, access_token, tls_enabled)
+
+        # Use the injected factory to create the API instance
+        self._miners[miner_name] = self._api_factory(ip, port, access_token, tls_enabled)
         log.info(f"Miner '{miner_name}' added to manager.")
 
     def remove_miner(self, miner_name: str):
