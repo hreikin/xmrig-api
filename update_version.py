@@ -57,9 +57,10 @@ def main():
             print(f"Updating pyproject.toml to version {new_version}...")
             update_version_in_file(PYPROJECT_FILE_PATH, TOML_VERSION_PATTERN, new_version)
 
-        # Commit changes
-        subprocess.run(["git", "add", INIT_FILE_PATH, PYPROJECT_FILE_PATH], check=True)
-        subprocess.run(["git", "commit", "-m", f"Bump version to {new_version}"], check=True)
+        if init_version != new_version or toml_version != new_version:
+            # Commit changes
+            subprocess.run(["git", "add", INIT_FILE_PATH, PYPROJECT_FILE_PATH], check=True)
+            subprocess.run(["git", "commit", "-m", f"Bump version to {new_version}"], check=True)
 
         # Create git tag
         subprocess.run(["git", "tag", new_version], check=True)
