@@ -12,7 +12,12 @@ from xmrig.logger import log
 # // TODO: Double check all return types are correct for list/dicts, compare with json
 # // TODO: Test coverage with mock and/or real data for properties
 # // TODO: Docstrings for tests
-# TODO: Ability to configure/use multiple miners
+# // TODO: Ability to configure/use multiple miners
+# // TODO: Test coverage for XMRigManager methods
+# TODO: Update current test coverage for XMRigAPI methods to use the new XMRigManager class - mock it like in test_xmrig_manager.py
+# TODO: Check version numbers and other metadata is correct
+# TODO: Research pre-commit/push-hooks to update version numbers in all relevant files when running `git tag x.x.x`
+# TODO: Workflow to build and publish to pypi on new tag
 # TODO: Ability to store collected data in a database to avoid data loss/errors upon API/miner restarts ??
 # TODO: Multiple examples to help you get started
 # TODO: Comprehensive documentation
