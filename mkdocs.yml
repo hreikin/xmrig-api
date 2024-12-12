@@ -27,7 +27,10 @@ theme:
 nav:
   - "Home": "README.md"
   - "Usage": "usage.md"
-  - "Reference": "reference.md"
+  - "Reference":
+    - "XMRigAPI": "reference/XMRigAPI.md"
+    - "XMRigAuthorizationError": "reference/XMRigAuthorizationError.md"
+    - "XMRigManager": "reference/XMRigManager.md"
   - "Contributing": "CONTRIBUTING.md"
 
 plugins:
