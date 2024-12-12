@@ -25,8 +25,8 @@ jobs:
 
           # Commit the changes if any files were updated
           if [[ -n $(git status --porcelain) ]]; then
-            git config --global user.name "github-actions[bot]"
-            git config --global user.email "github-actions[bot]@users.noreply.github.com"
+            git config --global user.name "hreikin"
+            git config --global user.email "hreikin@gmail.com"
             git add xmrig/__init__.py pyproject.toml
             git commit -m "Synchronize version to ${{ github.event.release.tag_name }}"
             git push
