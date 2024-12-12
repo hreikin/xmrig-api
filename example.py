@@ -21,7 +21,7 @@ manager.add_miner("Miner2", "127.0.0.1", "37842", "SECRET", tls_enabled=False)
 manager.perform_action_on_all("pause")
 manager.perform_action_on_all("resume")
 
-# Resume a specific miner
+# Start/stop a specific miner
 miner = manager.get_miner("Miner1")
 miner.stop_miner()
 miner.start_miner()
