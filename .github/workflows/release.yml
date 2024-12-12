@@ -1,12 +1,3 @@
-# This workflow uses actions that are not certified by GitHub.
-# They are provided by a third-party and are governed by
-# separate terms of service, privacy policy, and support
-# documentation.
-
-# GitHub recommends pinning actions to a commit SHA.
-# To get a newer version, you will need to update the SHA.
-# You can also reference a tag or branch, but the action may change without warning.
-
 name: Upload Python Package
 
 on:
@@ -26,6 +17,21 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.x"
+
+      - name: Check and synchronize version
+        run: |
+          echo "Synchronizing version with tag ${{ github.event.release.tag_name }}"
+          python -m pip install -r requirements.txt
+          python update_version.py ${{ github.event.release.tag_name }}
+
+          # Commit the changes if any files were updated
+          if [[ -n $(git status --porcelain) ]]; then
+            git config --global user.name "github-actions[bot]"
+            git config --global user.email "github-actions[bot]@users.noreply.github.com"
+            git add xmrig/__init__.py pyproject.toml
+            git commit -m "Synchronize version to ${{ github.event.release.tag_name }}"
+            git push
+          fi
 
       - name: Build release distributions
         run: |
@@ -53,7 +59,7 @@ jobs:
     environment:
       name: pypi
       # OPTIONAL: uncomment and update to include your PyPI project URL in the deployment status:
-      url: https://pypi.org/p/xmrig-api
+      url: https://pypi.org/project/xmrig-api
 
     steps:
       - name: Retrieve release distributions
