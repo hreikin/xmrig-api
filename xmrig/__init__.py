@@ -9,11 +9,10 @@ from .manager import XMRigManager
 
 __name__ = "xmrig"
 __version__ = "0.0.3"
-__author__ = "Michael Haslam"
+__author__ = "hreikin"
 __email__ = "hreikin@gmail.com"
 __license__ = "MIT"
 __description__ = "This module provides objects to interact with the XMRig miner API."
 __url__ = "https://hreikin.co.uk/xmrig-api"
 
-
-__all__ = ["XMRigAPI", "XMRigManager"]
+__all__ = ["XMRigAPI", "XMRigAuthorizationError", "XMRigManager"]
