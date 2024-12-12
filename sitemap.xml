@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+    <url>
+         <loc>https://hreikin.github.io/xmrig-api/</loc>
+         <lastmod>2024-12-12</lastmod>
+    </url>
+    <url>
+         <loc>https://hreikin.github.io/xmrig-api/CONTRIBUTING/</loc>
+         <lastmod>2024-12-12</lastmod>
+    </url>
+    <url>
+         <loc>https://hreikin.github.io/xmrig-api/usage/</loc>
+         <lastmod>2024-12-12</lastmod>
+    </url>
+    <url>
+         <loc>https://hreikin.github.io/xmrig-api/reference/XMRigAPI/</loc>
+         <lastmod>2024-12-12</lastmod>
+    </url>
+    <url>
+         <loc>https://hreikin.github.io/xmrig-api/reference/XMRigAuthorizationError/</loc>
+         <lastmod>2024-12-12</lastmod>
+    </url>
+    <url>
+         <loc>https://hreikin.github.io/xmrig-api/reference/XMRigManager/</loc>
+         <lastmod>2024-12-12</lastmod>
+    </url>
+</urlset>
