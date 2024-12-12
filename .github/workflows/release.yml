@@ -21,7 +21,6 @@ jobs:
       - name: Check and synchronize version
         run: |
           echo "Synchronizing version with tag ${{ github.event.release.tag_name }}"
-          python -m pip install -r requirements.txt
           python update_version.py ${{ github.event.release.tag_name }}
 
           # Commit the changes if any files were updated
@@ -32,6 +31,8 @@ jobs:
             git commit -m "Synchronize version to ${{ github.event.release.tag_name }}"
             git push
           fi
+        env:
+          GITHUB_TOKEN: ${{ secrets.WORKFLOW_TOKEN }}
 
       - name: Build release distributions
         run: |
