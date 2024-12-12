@@ -7,7 +7,7 @@ as fetching status, managing configurations, and controlling the mining process.
 
 import requests
 from datetime import timedelta
-from logger import log
+from xmrig.logger import log
 
 # // TODO: Double check all return types are correct for list/dicts, compare with json
 # // TODO: Test coverage with mock and/or real data for properties
