@@ -1,5 +1,5 @@
-from api import XMRigAPI
-from logger import log
+from xmrig.api import XMRigAPI
+from xmrig.logger import log
 
 class XMRigManager:
     """
