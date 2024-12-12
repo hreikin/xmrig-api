@@ -34,7 +34,7 @@ miner.update_summary()
 miner = manager.get_miner("Miner1")
 miner.update_config()                                                 # This updates the cached data
 config = miner.config                                                 # Use the `config` property to access the data
-config["api"]["worker-id"] = "ubuntu-cpu"                          # Change something
+config["api"]["worker-id"] = "NEW_WORKER_ID"                          # Change something
 miner.post_config(config)                                             # Post new config to change it
 
 # Update data for all miners
