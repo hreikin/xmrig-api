@@ -4,11 +4,12 @@
 
 ## Getting Started
 
-To get started with `XMRig-API`, visit the [Usage](usage.md) page for a quick installation and usage guide. For an in-depth overview of the module’s capabilities, consult the [Reference](reference.md) page.  
+To get started with `XMRig-API`, visit the [Usage](usage.md) page for a quick installation and usage guide. For an in-depth overview of the module’s capabilities, consult the reference pages available at the documentation site.  
 
 ## Features
 
-`XMRig-API` includes several powerful features:  
+`XMRig-API` includes several powerful features:
+
 - **Support for Multiple Miners**: Configure and manage multiple miners from a single instance.  
 - **Data Persistence (Planned)**: Upcoming database support to ensure resilience and prevent data loss during API or miner restarts.  
 - **Comprehensive Test Coverage**: A robust test suite for enhanced reliability and easier development.  
