@@ -18,22 +18,6 @@ jobs:
         with:
           python-version: "3.x"
 
-      - name: Check and synchronize version
-        run: |
-          echo "Synchronizing version with tag ${{ github.event.release.tag_name }}"
-          python update_version.py ${{ github.event.release.tag_name }}
-
-          # Commit the changes if any files were updated
-          if [[ -n $(git status --porcelain) ]]; then
-            git config --global user.name "hreikin"
-            git config --global user.email "hreikin@gmail.com"
-            git add xmrig/__init__.py pyproject.toml
-            git commit -m "Synchronize version to ${{ github.event.release.tag_name }}"
-            git push
-          fi
-        env:
-          GITHUB_TOKEN: ${{ secrets.WORKFLOW_TOKEN }}
-
       - name: Build release distributions
         run: |
           python -m pip install -r requirements.txt
