@@ -106,7 +106,7 @@ class XMRigAPI:
         self.update_all_responses()
         log.info(f"XMRigAPI initialized for {self._base_url}")
 
-    def _set_auth_header(self) -> bool:
+    def set_auth_header(self) -> bool:
         """
         Update the Authorization header for the HTTP requests.
 
