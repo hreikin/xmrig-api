@@ -1,8 +1,14 @@
 """
 XMRig Helpers module.
 
-This module configures logging for the XMRig API interactions and operations, 
-and handles database initialization and operations for storing and managing miner data.
+This module provides helper functions and classes for the XMRig API interactions and operations.
+It includes:
+
+- Logging configuration for the XMRig API.
+- Custom exception classes for handling specific API errors.
+- Database initialization and operations for storing and managing miner data.
+- Functions for inserting data into the database.
+- Functions for deleting miner-related tables from the database.
 """
 
 import logging

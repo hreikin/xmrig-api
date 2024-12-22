@@ -2,8 +2,11 @@
 XMRig module initializer.
 
 This module provides objects to interact with the XMRig miner API, manage multiple miners, 
-and store collected data in a database. It includes functionalities for fetching status, 
-managing configurations, controlling the mining process, and performing actions on all miners.
+and store collected data in a database. It includes functionalities for:
+
+- Fetching status and managing configurations.
+- Controlling the mining process.
+- Performing actions on all miners.
 
 Classes:
     XMRigAPI: Interacts with the XMRig miner API.

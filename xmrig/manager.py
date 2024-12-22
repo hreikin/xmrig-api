@@ -2,7 +2,14 @@
 XMRig Manager module.
 
 This module provides the XMRigManager class to manage multiple XMRig miners via their APIs.
-It includes functionalities for adding, removing, retrieving, and performing actions on miners.
+It includes functionalities for:
+
+- Adding new miners to the manager.
+- Removing miners from the manager.
+- Retrieving a specific miner's API instance.
+- Performing actions (e.g., pause, resume, stop) on all managed miners.
+- Updating all miners' cached data.
+- Listing all managed miners.
 """
 import requests
 from xmrig.api import XMRigAPI
