@@ -29,7 +29,9 @@ nav:
   - "Usage": "usage.md"
   - "Reference":
     - "XMRigAPI": "reference/XMRigAPI.md"
+    - "XMRigAPIError": "reference/XMRigAPIError.md"
     - "XMRigAuthorizationError": "reference/XMRigAuthorizationError.md"
+    - "XMRigConnectionError": "reference/XMRigConnectionError.md"
     - "XMRigManager": "reference/XMRigManager.md"
   - "Contributing": "CONTRIBUTING.md"
 
