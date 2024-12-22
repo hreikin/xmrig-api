@@ -2,7 +2,8 @@
 XMRig API interaction library.
 
 Provides classes and methods to interact with the XMRig miner API for tasks such 
-as fetching status, managing configurations, and controlling the mining process.
+as fetching status, managing configurations, controlling the mining process, 
+and storing collected data in a database.
 """
 
 import requests
