@@ -8,7 +8,7 @@ class XMRigManager:
     A class to manage multiple XMRig miners via their APIs.
     """
 
-    def __init__(self, api_factory = XMRigAPI, db_url: str = 'sqlite:///xmrig-api.db'):
+    def __init__(self, api_factory: callable = XMRigAPI, db_url: str = 'sqlite:///xmrig-api.db'):
         """
         Initializes the manager with an empty collection of miners.
 
@@ -22,7 +22,7 @@ class XMRigManager:
         if self._db_url is not None:
             self._db_engine = init_db(self._db_url)
 
-    def add_miner(self, miner_name: str, ip: str, port: str, access_token: str=None, tls_enabled: bool=False):
+    def add_miner(self, miner_name: str, ip: str, port: str, access_token: str = None, tls_enabled: bool = False) -> None:
         """
         Adds a new miner to the manager.
 
@@ -41,7 +41,7 @@ class XMRigManager:
         self._miners[miner_name] = self._api_factory(miner_name, ip, port, access_token, tls_enabled, self._db_engine)
         log.info(f"Miner '{miner_name}' added to manager.")
 
-    def remove_miner(self, miner_name: str):
+    def remove_miner(self, miner_name: str) -> None:
         """
         Removes a miner from the manager.
 
@@ -71,7 +71,7 @@ class XMRigManager:
         
         return self._miners[miner_name]
 
-    def perform_action_on_all(self, action: str):
+    def perform_action_on_all(self, action: str) -> None:
         """
         Performs the specified action on all miners.
 
@@ -89,7 +89,7 @@ class XMRigManager:
             else:
                 log.error(f"Action '{action}' is not a valid method for miner API.")
 
-    def update_all_miners(self):
+    def update_all_miners(self) -> None:
         """
         Updates all miners' cached data.
         """
@@ -100,7 +100,7 @@ class XMRigManager:
             else:
                 log.warning(f"Failed to update miner '{miner_name}'.")
 
-    def list_miners(self) -> list:
+    def list_miners(self) -> list[str]:
         """
         Lists all managed miners.
 
