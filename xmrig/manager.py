@@ -1,12 +1,14 @@
 from xmrig.api import XMRigAPI
+from xmrig.db import init_db, delete_miner_from_db
 from xmrig.logger import log
+from sqlalchemy.engine import Engine
 
 class XMRigManager:
     """
     A class to manage multiple XMRig miners via their APIs.
     """
 
-    def __init__(self, api_factory=XMRigAPI):
+    def __init__(self, api_factory = XMRigAPI, db_url: str = 'sqlite:///xmrig-api.db'):
         """
         Initializes the manager with an empty collection of miners.
 
@@ -15,6 +17,9 @@ class XMRigManager:
         """
         self._miners = {}
         self._api_factory = api_factory
+        self._db_url = db_url
+        if self._db_url is not None:
+            self._db_engine = init_db(self._db_url)
 
     def add_miner(self, miner_name: str, ip: str, port: str, access_token: str = None, tls_enabled: bool = False):
         """
@@ -27,11 +32,12 @@ class XMRigManager:
             access_token (str, optional): Access token for authorization. Defaults to None.
             tls_enabled (bool, optional): TLS status of the miner/API. Defaults to False.
         """
+
         if miner_name in self._miners:
             raise ValueError(f"Miner with name '{miner_name}' already exists.")
 
         # Use the injected factory to create the API instance
-        self._miners[miner_name] = self._api_factory(ip, port, access_token, tls_enabled)
+        self._miners[miner_name] = self._api_factory(miner_name, ip, port, access_token, tls_enabled, self._db_engine)
         log.info(f"Miner '{miner_name}' added to manager.")
 
     def remove_miner(self, miner_name: str):
@@ -44,6 +50,8 @@ class XMRigManager:
         if miner_name not in self._miners:
             raise ValueError(f"Miner with name '{miner_name}' does not exist.")
         
+        if self._db_url is not None:
+            delete_miner_from_db(miner_name, self._db_engine)
         del self._miners[miner_name]
         log.info(f"Miner '{miner_name}' removed from manager.")
 
