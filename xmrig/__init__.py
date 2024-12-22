@@ -13,8 +13,7 @@ Classes:
 Modules:
     api: Contains the XMRigAPI class and related functionalities.
     manager: Contains the XMRigManager class for managing multiple miners.
-    db: Handles database initialization and operations.
-    logger: Configures logging for the module.
+    helpers: Configures logging and handles database operations for the module.
 
 Public Functions:
     XMRigAPI:
@@ -203,7 +202,7 @@ Public Functions:
         - list_miners
 
 Private Functions:
-    db:
+    helpers:
         - _init_db
         - _insert_data_to_db
         - _delete_miner_from_db
