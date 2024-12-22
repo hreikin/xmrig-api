@@ -218,7 +218,7 @@ from .manager import XMRigManager
 from .helpers import XMRigAPIError, XMRigAuthorizationError, XMRigConnectionError
 
 __name__ = "xmrig"
-__version__ = "0.0.4"
+__version__ = "0.0.5"
 __author__ = "hreikin"
 __email__ = "hreikin@gmail.com"
 __license__ = "MIT"
