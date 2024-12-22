@@ -47,8 +47,9 @@ def _insert_data_to_db(json_data: dict, table_name: str, engine: Engine) -> None
         if df[column].apply(lambda x: isinstance(x, list)).any():
             df[column] = df[column].apply(json.dumps)
 
-    # Add a timestamp column
+    # Add a timestamp column and a column for a copy of the full unflattened json data
     df.insert(0, 'timestamp', datetime.now())
+    df.insert(1, 'full_json', json.dumps(json_data))
 
     # Insert data into the database
     df.to_sql(table_name, engine, if_exists='append', index=False)
