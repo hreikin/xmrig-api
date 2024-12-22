@@ -16,6 +16,24 @@ log = logging.getLogger("XMRigAPI")
 
 _engines = {}
 
+class XMRigAPIError(Exception):
+    """
+    Exception raised when a general error occurs with the XMRig API.
+
+    Attributes:
+        message (str): Error message explaining the API issue.
+    """
+
+    def __init__(self, message: str = "An error occurred with the XMRig API."):
+        """
+        Initialize the API error.
+
+        Args:
+            message (str): Error message. Defaults to a generic API error message.
+        """
+        self.message = message
+        super().__init__(self.message)
+
 class XMRigAuthorizationError(Exception):
     """
     Exception raised when an authorization error occurs with the XMRig API.
@@ -48,24 +66,6 @@ class XMRigConnectionError(Exception):
 
         Args:
             message (str): Error message. Defaults to a generic connection error message.
-        """
-        self.message = message
-        super().__init__(self.message)
-
-class XMRigAPIError(Exception):
-    """
-    Exception raised when a general error occurs with the XMRig API.
-
-    Attributes:
-        message (str): Error message explaining the API issue.
-    """
-
-    def __init__(self, message: str = "An error occurred with the XMRig API."):
-        """
-        Initialize the API error.
-
-        Args:
-            message (str): Error message. Defaults to a generic API error message.
         """
         self.message = message
         super().__init__(self.message)
