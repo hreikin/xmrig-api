@@ -6,8 +6,7 @@ It includes functionalities for adding, removing, retrieving, and performing act
 """
 
 from xmrig.api import XMRigAPI
-from xmrig.db import init_db, delete_miner_from_db
-from xmrig.logger import log
+from xmrig.helpers import init_db, delete_miner_from_db, log
 from sqlalchemy.engine import Engine
 
 class XMRigManager:
