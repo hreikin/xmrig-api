@@ -8,31 +8,13 @@ and storing collected data in a database.
 
 import requests
 from datetime import timedelta
-from xmrig.helpers import log, _insert_data_to_db
+from xmrig.helpers import log, _insert_data_to_db, XMRigAPIError, XMRigConnectionError, XMRigAuthorizationError
 from sqlalchemy.engine import Engine
 
 # TODO: Handle errors more gracefully, possibly with a custom exception class
+# TODO: Handle JSONDecodeError when the response is malformed so the program doesn't crash/raise an exception and continues running
 # TODO: Multiple examples to help you get started
 # TODO: Comprehensive documentation
-
-class XMRigAuthorizationError(Exception):
-    """
-    Exception raised when an authorization error occurs with the XMRig API.
-
-    Attributes:
-        message (str): Error message explaining the authorization issue.
-    """
-
-    def __init__(self, message: str = "Access token is required but not provided. Please provide a valid access token."):
-        """
-        Initialize the authorization error.
-
-        Args:
-            message (str): Error message. Defaults to a generic authorization error message.
-        """
-        self.message = message
-        super().__init__(self.message)
-
 
 class XMRigAPI:
     """
@@ -102,7 +84,7 @@ class XMRigAPI:
             "jsonrpc": "2.0",
             "id": 1,
         }
-        self.update_all_responses()
+        self.get_all_responses()
         log.info(f"XMRigAPI initialized for {self._base_url}")
 
     def set_auth_header(self) -> bool:
@@ -120,7 +102,7 @@ class XMRigAPI:
             log.error(f"An error occurred setting the Authorization Header: {e}")
             return False
 
-    def update_summary(self) -> bool:
+    def get_summary(self) -> bool:
         """
         Updates the cached summary data from the XMRig API.
 
@@ -141,9 +123,12 @@ class XMRigAPI:
             return True
         except requests.exceptions.RequestException as e:
             log.error(f"An error occurred while connecting to {self._summary_url}: {e}")
-            return False
+            raise XMRigConnectionError() from e
+        except Exception as e:
+            log.error(f"An error occurred updating the summary: {e}")
+            raise XMRigAPIError() from e
 
-    def update_backends(self) -> bool:
+    def get_backends(self) -> bool:
         """
         Updates the cached backends data from the XMRig API.
 
@@ -166,9 +151,12 @@ class XMRigAPI:
             return True
         except requests.exceptions.RequestException as e:
             log.error(f"An error occurred while connecting to {self._backends_url}: {e}")
-            return False
+            raise XMRigConnectionError() from e
+        except Exception as e:
+            log.error(f"An error occurred updating the backends: {e}")
+            raise XMRigAPIError() from e
 
-    def update_config(self) -> bool:
+    def get_config(self) -> bool:
         """
         Updates the cached config data from the XMRig API.
 
@@ -189,7 +177,10 @@ class XMRigAPI:
             return True
         except requests.exceptions.RequestException as e:
             log.error(f"An error occurred while connecting to {self._config_url}: {e}")
-            return False
+            raise XMRigConnectionError() from e
+        except Exception as e:
+            log.error(f"An error occurred updating the config: {e}")
+            raise XMRigAPIError() from e
 
     def post_config(self, config: dict) -> bool:
         """
@@ -212,9 +203,12 @@ class XMRigAPI:
             return True
         except requests.exceptions.RequestException as e:
             log.error(f"An error occurred while connecting to {self._config_url}: {e}")
-            return False
+            raise XMRigConnectionError() from e
+        except Exception as e:
+            log.error(f"An error occurred posting the config: {e}")
+            raise XMRigAPIError() from e
 
-    def update_all_responses(self) -> bool:
+    def get_all_responses(self) -> bool:
         """
         Retrieves all responses from the API.
 
@@ -222,15 +216,15 @@ class XMRigAPI:
             bool: True if successful, or False if an error occurred.
         """
         try:
-            self.update_summary()
-            self.update_backends()
+            self.get_summary()
+            self.get_backends()
             if self._access_token != None:
-                self.update_config()
+                self.get_config()
             log.debug(f"All endpoints successfully fetched.")
             return True
         except Exception as e:
             log.error(f"An error occurred fetching all the API endpoints: {e}")
-            return False
+            raise XMRigAPIError() from e
 
     def pause_miner(self) -> bool:
         """
@@ -249,7 +243,10 @@ class XMRigAPI:
             return True
         except requests.exceptions.RequestException as e:
             log.error(f"An error occurred pausing the miner: {e}")
-            return False
+            raise XMRigConnectionError() from e
+        except Exception as e:
+            log.error(f"An error occurred pausing the miner: {e}")
+            raise XMRigAPIError() from e
 
     def resume_miner(self) -> bool:
         """
@@ -267,8 +264,11 @@ class XMRigAPI:
             log.debug(f"Miner successfully resumed.")
             return True
         except requests.exceptions.RequestException as e:
-            log.error(f"An error occurred restarting the miner: {e}")
-            return False
+            log.error(f"An error occurred resuming the miner: {e}")
+            raise XMRigConnectionError() from e
+        except Exception as e:
+            log.error(f"An error occurred resuming the miner: {e}")
+            raise XMRigAPIError() from e
 
     def stop_miner(self) -> bool:
         """
@@ -287,7 +287,10 @@ class XMRigAPI:
             return True
         except requests.exceptions.RequestException as e:
             log.error(f"An error occurred stopping the miner: {e}")
-            return False
+            raise XMRigConnectionError() from e
+        except Exception as e:
+            log.error(f"An error occurred stopping the miner: {e}")
+            raise XMRigAPIError() from e
 
     # TODO: The `start` json RPC method is not implemented by XMRig yet, use alternative function below until PR 3030 is 
     # TODO: merged see https://github.com/xmrig/xmrig/issues/2826#issuecomment-1146465641
@@ -301,13 +304,16 @@ class XMRigAPI:
             bool: True if the miner was successfully started, or False if an error occurred.
         """
         try:
-            self.update_config()
+            self.get_config()
             self.post_config(self._config_response)
             log.debug(f"Miner successfully started.")
             return True
         except requests.exceptions.RequestException as e:
             log.error(f"An error occurred starting the miner: {e}")
-            return False
+            raise XMRigConnectionError() from e
+        except Exception as e:
+            log.error(f"An error occurred starting the miner: {e}")
+            raise XMRigAPIError() from e
 
     @property
     def summary(self) -> dict | bool:
@@ -322,7 +328,7 @@ class XMRigAPI:
             return self._summary_response
         except Exception as e:
             log.error(f"An error occurred fetching the cached summary data: {e}")
-            return False
+            raise XMRigAPIError() from e
 
     @property
     def backends(self) -> list | bool:
@@ -337,7 +343,7 @@ class XMRigAPI:
             return self._backends_response
         except Exception as e:
             log.error(f"An error occurred fetching the cached backends data: {e}")
-            return False
+            raise XMRigAPIError() from e
 
     @property
     def config(self) -> dict | bool:
@@ -352,9 +358,7 @@ class XMRigAPI:
             return self._config_response
         except Exception as e:
             log.error(f"An error occurred fetching the cached config data: {e}")
-            return False
-
-    # ***** data provided by summary endpoint
+            raise XMRigAPIError() from e
 
     @property
     def sum_id(self) -> str | bool:
