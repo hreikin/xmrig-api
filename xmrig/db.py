@@ -1,3 +1,10 @@
+"""
+XMRig Database module.
+
+This module handles database initialization and operations for storing and managing miner data.
+It includes functions for initializing the database, inserting data, and deleting miner-related tables.
+"""
+
 import json
 import pandas as pd
 from sqlalchemy import create_engine, text
