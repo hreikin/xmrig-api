@@ -7,7 +7,9 @@ managing configurations, controlling the mining process, and performing actions 
 
 Classes:
     XMRigAPI: Interacts with the XMRig miner API.
+    XMRigAPIError: Custom exception for general API errors.
     XMRigAuthorizationError: Custom exception for authorization errors.
+    XMRigConnectionError: Custom exception for connection errors.
     XMRigManager: Manages multiple XMRig miners via their APIs.
 
 Modules:
@@ -18,11 +20,11 @@ Modules:
 Public Functions:
     XMRigAPI:
         - set_auth_header
-        - update_summary
-        - update_backends
-        - update_config
+        - get_summary
+        - get_backends
+        - get_config
         - post_config
-        - update_all_responses
+        - get_all_responses
         - pause_miner
         - resume_miner
         - stop_miner
@@ -198,7 +200,7 @@ Public Functions:
         - remove_miner
         - get_miner
         - perform_action_on_all
-        - update_all_miners
+        - get_all_miners_endpoints
         - list_miners
 
 Private Functions:
