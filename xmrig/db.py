@@ -7,7 +7,7 @@ from xmrig.logger import log
 
 _engines = {}
 
-def init_db(db_url: str) -> Engine:
+def _init_db(db_url: str) -> Engine:
     """
     Initializes the database engine.
 
@@ -21,7 +21,7 @@ def init_db(db_url: str) -> Engine:
         _engines[db_url] = create_engine(db_url)
     return _engines[db_url]
 
-def insert_data_to_db(json_data: dict, table_name: str, engine: Engine) -> None:
+def _insert_data_to_db(json_data: dict, table_name: str, engine: Engine) -> None:
     """
     Inserts JSON data into the specified database table.
 
@@ -46,7 +46,7 @@ def insert_data_to_db(json_data: dict, table_name: str, engine: Engine) -> None:
 
     log.debug("Data inserted successfully")
 
-def delete_miner_from_db(miner_name: str, engine: Engine) -> None:
+def _delete_miner_from_db(miner_name: str, engine: Engine) -> None:
     """
     Deletes all tables related to a specific miner from the database.
 
