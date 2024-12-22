@@ -11,8 +11,7 @@ from datetime import timedelta
 from xmrig.helpers import log, _insert_data_to_db, XMRigAPIError, XMRigConnectionError, XMRigAuthorizationError
 from sqlalchemy.engine import Engine
 
-# TODO: Handle errors more gracefully, possibly with a custom exception class
-# TODO: Handle JSONDecodeError when the response is malformed so the program doesn't crash/raise an exception and continues running
+# TODO: Add try/except blocks to all methods to catch exceptions and log them, etc.
 # TODO: Multiple examples to help you get started
 # TODO: Comprehensive documentation
 
@@ -224,10 +223,14 @@ class XMRigAPI:
         Returns:
             bool: True if successful, or False if an error occurred.
         """
-        summary_success = self.get_summary()
-        backends_success = self.get_backends()
-        config_success = self.get_config()
-        return summary_success and backends_success and config_success
+        try:
+            summary_success = self.get_summary()
+            backends_success = self.get_backends()
+            config_success = self.get_config()
+            return summary_success and backends_success and config_success
+        except Exception as e:
+            log.error(f"An error occurred fetching all responses: {e}")
+            return False
 
     def pause_miner(self) -> bool:
         """
