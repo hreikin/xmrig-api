@@ -18,6 +18,7 @@ from xmrig.helpers import log, _insert_data_to_db, XMRigAPIError, XMRigConnectio
 from sqlalchemy.engine import Engine
 
 # TODO: Properties should fallback to using the database if the cached data is not available, handle JSONDecodeError to continue running and return "N/A" for the property.
+# TODO: Update tests to cover all new functionality.
 # TODO: Multiple examples to help you get started
 # TODO: Comprehensive documentation
 
