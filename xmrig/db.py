@@ -1,12 +1,13 @@
 import json
 import pandas as pd
 from sqlalchemy import create_engine, text
+from sqlalchemy.engine import Engine
 from datetime import datetime
 from xmrig.logger import log
 
 _engines = {}
 
-def init_db(db_url):
+def init_db(db_url: str) -> Engine:
     """
     Initializes the database engine.
 
@@ -20,7 +21,7 @@ def init_db(db_url):
         _engines[db_url] = create_engine(db_url)
     return _engines[db_url]
 
-def insert_data_to_db(json_data, table_name, engine):
+def insert_data_to_db(json_data: dict, table_name: str, engine: Engine) -> None:
     """
     Inserts JSON data into the specified database table.
 
@@ -45,7 +46,7 @@ def insert_data_to_db(json_data, table_name, engine):
 
     log.debug("Data inserted successfully")
 
-def delete_miner_from_db(miner_name, engine):
+def delete_miner_from_db(miner_name: str, engine: Engine) -> None:
     """
     Deletes all tables related to a specific miner from the database.
 
