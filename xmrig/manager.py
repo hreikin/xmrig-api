@@ -4,9 +4,9 @@ XMRig Manager module.
 This module provides the XMRigManager class to manage multiple XMRig miners via their APIs.
 It includes functionalities for adding, removing, retrieving, and performing actions on miners.
 """
-
+import requests
 from xmrig.api import XMRigAPI
-from xmrig.helpers import _init_db, _delete_miner_from_db, log
+from xmrig.helpers import _init_db, _delete_miner_from_db, log, XMRigAPIError
 from sqlalchemy.engine import Engine
 
 class XMRigManager:
@@ -99,12 +99,19 @@ class XMRigManager:
         """
         Updates all miners' cached data.
         """
-        for miner_name, miner_api in self._miners.items():
-            success = miner_api.get_all_responses()
-            if success:
-                log.info(f"Miner '{miner_name}' successfully updated.")
-            else:
-                log.warning(f"Failed to update miner '{miner_name}'.")
+        try:
+            for miner_name, miner_api in self._miners.items():
+                success = miner_api.get_all_responses()
+                if success:
+                    log.info(f"Miner '{miner_name}' successfully updated.")
+                else:
+                    log.warning(f"Failed to update miner '{miner_name}'.")
+        except requests.exceptions.JSONDecodeError as e:
+            log.error(f"An error occurred decoding the response: {e}")
+            return False
+        except Exception as e:
+            log.error(f"An error occurred fetching all the API endpoints from all miners: {e}")
+            raise XMRigAPIError() from e
 
     def list_miners(self) -> list[str]:
         """

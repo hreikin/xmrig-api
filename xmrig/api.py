@@ -123,10 +123,13 @@ class XMRigAPI:
             return True
         except requests.exceptions.RequestException as e:
             log.error(f"An error occurred while connecting to {self._summary_url}: {e}")
-            raise XMRigConnectionError() from e
+            return False
+        except requests.exceptions.JSONDecodeError as e:
+            log.error(f"An error occurred decoding the response: {e}")
+            return False
         except Exception as e:
             log.error(f"An error occurred updating the summary: {e}")
-            raise XMRigAPIError() from e
+            return False
 
     def get_backends(self) -> bool:
         """
@@ -151,10 +154,13 @@ class XMRigAPI:
             return True
         except requests.exceptions.RequestException as e:
             log.error(f"An error occurred while connecting to {self._backends_url}: {e}")
-            raise XMRigConnectionError() from e
+            return False
+        except requests.exceptions.JSONDecodeError as e:
+            log.error(f"An error occurred decoding the response: {e}")
+            return False
         except Exception as e:
             log.error(f"An error occurred updating the backends: {e}")
-            raise XMRigAPIError() from e
+            return False
 
     def get_config(self) -> bool:
         """
@@ -177,10 +183,13 @@ class XMRigAPI:
             return True
         except requests.exceptions.RequestException as e:
             log.error(f"An error occurred while connecting to {self._config_url}: {e}")
-            raise XMRigConnectionError() from e
+            return False
+        except requests.exceptions.JSONDecodeError as e:
+            log.error(f"An error occurred decoding the response: {e}")
+            return False
         except Exception as e:
             log.error(f"An error occurred updating the config: {e}")
-            raise XMRigAPIError() from e
+            return False
 
     def post_config(self, config: dict) -> bool:
         """
@@ -215,16 +224,10 @@ class XMRigAPI:
         Returns:
             bool: True if successful, or False if an error occurred.
         """
-        try:
-            self.get_summary()
-            self.get_backends()
-            if self._access_token != None:
-                self.get_config()
-            log.debug(f"All endpoints successfully fetched.")
-            return True
-        except Exception as e:
-            log.error(f"An error occurred fetching all the API endpoints: {e}")
-            raise XMRigAPIError() from e
+        summary_success = self.get_summary()
+        backends_success = self.get_backends()
+        config_success = self.get_config()
+        return summary_success and backends_success and config_success
 
     def pause_miner(self) -> bool:
         """
