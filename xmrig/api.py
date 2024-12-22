@@ -8,8 +8,7 @@ and storing collected data in a database.
 
 import requests
 from datetime import timedelta
-from xmrig.logger import log
-from xmrig.db import insert_data_to_db
+from xmrig.helpers import log, insert_data_to_db
 from sqlalchemy.engine import Engine
 
 # TODO: Ability to store collected data in a database to avoid data loss/errors upon API/miner restarts ??
