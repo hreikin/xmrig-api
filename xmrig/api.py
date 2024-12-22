@@ -24,7 +24,7 @@ class XMRigAuthorizationError(Exception):
         message (str): Error message explaining the authorization issue.
     """
 
-    def __init__(self, message="Access token is required but not provided. Please provide a valid access token."):
+    def __init__(self, message: str = "Access token is required but not provided. Please provide a valid access token."):
         """
         Initialize the authorization error.
 
