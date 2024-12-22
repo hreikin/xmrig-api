@@ -8,7 +8,7 @@ and storing collected data in a database.
 
 import requests
 from datetime import timedelta
-from xmrig.helpers import log, insert_data_to_db
+from xmrig.helpers import log, _insert_data_to_db
 from sqlalchemy.engine import Engine
 
 # TODO: Ability to store collected data in a database to avoid data loss/errors upon API/miner restarts ??
@@ -138,7 +138,7 @@ class XMRigAPI:
             self._summary_response = summary_response.json()
             log.debug(f"Summary endpoint successfully fetched.")
             if self._db_engine is not None:
-                insert_data_to_db(self._summary_response, f"{self._miner_name}-summary", self._db_engine)
+                _insert_data_to_db(self._summary_response, f"{self._miner_name}-summary", self._db_engine)
             return True
         except requests.exceptions.RequestException as e:
             log.error(f"An error occurred while connecting to {self._summary_url}: {e}")
@@ -163,7 +163,7 @@ class XMRigAPI:
             self._backends_response = backends_response.json()
             log.debug(f"Backends endpoint successfully fetched.")
             if self._db_engine is not None:
-                insert_data_to_db(self._backends_response, f"{self._miner_name}-backends", self._db_engine)
+                _insert_data_to_db(self._backends_response, f"{self._miner_name}-backends", self._db_engine)
             return True
         except requests.exceptions.RequestException as e:
             log.error(f"An error occurred while connecting to {self._backends_url}: {e}")
@@ -193,7 +193,7 @@ class XMRigAPI:
             # TODO: would be `miner1-config` or similar, the same would need to happen for the 
             # TODO: summary and backends, this seems very basic and not very scalable.
             if self._db_engine is not None:
-                insert_data_to_db(self._config_response, f"{self._miner_name}-config", self._db_engine)
+                _insert_data_to_db(self._config_response, f"{self._miner_name}-config", self._db_engine)
             return True
         except requests.exceptions.RequestException as e:
             log.error(f"An error occurred while connecting to {self._config_url}: {e}")
