@@ -95,12 +95,12 @@ class XMRigManager:
             else:
                 log.error(f"Action '{action}' is not a valid method for miner API.")
 
-    def update_all_miners(self) -> None:
+    def get_all_miners_endpoints(self) -> None:
         """
         Updates all miners' cached data.
         """
         for miner_name, miner_api in self._miners.items():
-            success = miner_api.update_all_responses()
+            success = miner_api.get_all_responses()
             if success:
                 log.info(f"Miner '{miner_name}' successfully updated.")
             else:
