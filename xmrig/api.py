@@ -8,17 +8,11 @@ as fetching status, managing configurations, and controlling the mining process.
 import requests
 from datetime import timedelta
 from xmrig.logger import log
+from xmrig.db import insert_data_to_db
+from sqlalchemy.engine import Engine
 
-# // TODO: Double check all return types are correct for list/dicts, compare with json
-# // TODO: Test coverage with mock and/or real data for properties
-# // TODO: Docstrings for tests
-# // TODO: Ability to configure/use multiple miners
-# // TODO: Test coverage for XMRigManager methods
-# TODO: Update current test coverage for XMRigAPI methods to use the new XMRigManager class - mock it like in test_xmrig_manager.py
-# TODO: Check version numbers and other metadata is correct
-# TODO: Research pre-commit/push-hooks to update version numbers in all relevant files when running `git tag x.x.x`
-# TODO: Workflow to build and publish to pypi on new tag
 # TODO: Ability to store collected data in a database to avoid data loss/errors upon API/miner restarts ??
+# TODO: Handle errors more gracefully, possibly with a custom exception class
 # TODO: Multiple examples to help you get started
 # TODO: Comprehensive documentation
 
@@ -63,7 +57,7 @@ class XMRigAPI:
         _json_rpc_payload (dict): Default payload to send with RPC request.
     """
 
-    def __init__(self, ip: str, port: str, access_token: str = None, tls_enabled: bool = False):
+    def __init__(self, miner_name: str, ip: str, port: str, access_token: str = None, tls_enabled: bool = False, db_engine: Engine = None):
         """
         Initializes the XMRig instance with the provided IP, port, and access token.
 
@@ -71,17 +65,20 @@ class XMRigAPI:
         required and the appropriate one will be chosen based on the `tls_enabled` value.
 
         Args:
+            miner_name (str): A unique name for the miner.
             ip (str): IP address or domain of the XMRig API.
             port (int): Port of the XMRig API.
             access_token (str, optional): Access token for authorization. Defaults to None.
             tls_enabled (bool, optional): TLS status of the miner/API. 
         """
+        self._miner_name = miner_name
         self._ip = ip
         self._port = port
         self._access_token = access_token
         self._base_url = f"http://{ip}:{port}"
         if tls_enabled == True:
             self._base_url = f"https://{ip}:{port}"
+        self._db_engine = db_engine
         self._json_rpc_url = f"{self._base_url}/json_rpc"
         self._summary_url = f"{self._base_url}/2/summary"
         self._backends_url = f"{self._base_url}/2/backends"
@@ -137,6 +134,8 @@ class XMRigAPI:
             summary_response.raise_for_status()
             self._summary_response = summary_response.json()
             log.debug(f"Summary endpoint successfully fetched.")
+            if self._db_engine is not None:
+                insert_data_to_db(self._summary_response, f"{self._miner_name}-summary", self._db_engine)
             return True
         except requests.exceptions.RequestException as e:
             log.error(f"An error occurred while connecting to {self._summary_url}: {e}")
@@ -149,6 +148,8 @@ class XMRigAPI:
         Returns:
             dict: True if the cached data is successfully updated or False if an error occurred.
         """
+        # TODO: This response will be malformed if the miner hasn't been started for 15 minutes, 
+        # TODO: need to handle this better so the user is informed better than just logging it.
         try:
             backends_response = requests.get(
                 self._backends_url, headers=self._headers)
@@ -158,6 +159,8 @@ class XMRigAPI:
             backends_response.raise_for_status()
             self._backends_response = backends_response.json()
             log.debug(f"Backends endpoint successfully fetched.")
+            if self._db_engine is not None:
+                insert_data_to_db(self._backends_response, f"{self._miner_name}-backends", self._db_engine)
             return True
         except requests.exceptions.RequestException as e:
             log.error(f"An error occurred while connecting to {self._backends_url}: {e}")
@@ -179,6 +182,15 @@ class XMRigAPI:
             config_response.raise_for_status()
             self._config_response = config_response.json()
             log.debug(f"Config endpoint successfully fetched.")
+            # TODO: Error occurs because xmrig-mo has more options in the config than xmrig does, 
+            # TODO: either need to create separate tables for each mining software/miner or find a 
+            # TODO: way to handle this in one table.
+            # TODO: 
+            # TODO: One possible solution is to include the miner name in the table name, so it 
+            # TODO: would be `miner1-config` or similar, the same would need to happen for the 
+            # TODO: summary and backends, this seems very basic and not very scalable.
+            if self._db_engine is not None:
+                insert_data_to_db(self._config_response, f"{self._miner_name}-config", self._db_engine)
             return True
         except requests.exceptions.RequestException as e:
             log.error(f"An error occurred while connecting to {self._config_url}: {e}")
