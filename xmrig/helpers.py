@@ -1,16 +1,18 @@
 """
-XMRig Database module.
+XMRig Helpers module.
 
-This module handles database initialization and operations for storing and managing miner data.
-It includes functions for initializing the database, inserting data, and deleting miner-related tables.
+This module configures logging for the XMRig API interactions and operations, 
+and handles database initialization and operations for storing and managing miner data.
 """
 
+import logging
 import json
 import pandas as pd
 from sqlalchemy import create_engine, text
 from sqlalchemy.engine import Engine
 from datetime import datetime
-from xmrig.logger import log
+
+log = logging.getLogger("XMRigAPI")
 
 _engines = {}
 
