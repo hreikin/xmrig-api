@@ -80,9 +80,13 @@ def _init_db(db_url: str) -> Engine:
     Returns:
         Engine: SQLAlchemy engine instance.
     """
-    if db_url not in _engines:
-        _engines[db_url] = create_engine(db_url)
-    return _engines[db_url]
+    try:
+        if db_url not in _engines:
+            _engines[db_url] = create_engine(db_url)
+        return _engines[db_url]
+    except Exception as e:
+        log.error(f"An error occurred initializing the database: {e}")
+        raise XMRigAPIError() from e
 
 def _insert_data_to_db(json_data: dict, table_name: str, engine: Engine) -> None:
     """
@@ -93,22 +97,26 @@ def _insert_data_to_db(json_data: dict, table_name: str, engine: Engine) -> None
         table_name (str): Name of the table to insert data into.
         engine (Engine): SQLAlchemy engine instance.
     """
-    # Normalize nested JSON
-    df = pd.json_normalize(json_data)
+    try:
+        # Normalize nested JSON
+        df = pd.json_normalize(json_data)
 
-    # Convert lists to JSON strings
-    for column in df.columns:
-        if df[column].apply(lambda x: isinstance(x, list)).any():
-            df[column] = df[column].apply(json.dumps)
+        # Convert lists to JSON strings
+        for column in df.columns:
+            if df[column].apply(lambda x: isinstance(x, list)).any():
+                df[column] = df[column].apply(json.dumps)
 
-    # Add a timestamp column and a column for a copy of the full unflattened json data
-    df.insert(0, 'timestamp', datetime.now())
-    df.insert(1, 'full_json', json.dumps(json_data))
+        # Add a timestamp column and a column for a copy of the full unflattened json data
+        df.insert(0, 'timestamp', datetime.now())
+        df.insert(1, 'full_json', json.dumps(json_data))
 
-    # Insert data into the database
-    df.to_sql(table_name, engine, if_exists='append', index=False)
+        # Insert data into the database
+        df.to_sql(table_name, engine, if_exists='append', index=False)
 
-    log.debug("Data inserted successfully")
+        log.debug("Data inserted successfully")
+    except Exception as e:
+        log.error(f"An error occurred inserting data to the database: {e}")
+        raise XMRigAPIError() from e
 
 def _delete_miner_from_db(miner_name: str, engine: Engine) -> None:
     """
@@ -118,14 +126,18 @@ def _delete_miner_from_db(miner_name: str, engine: Engine) -> None:
         miner_name (str): The unique name of the miner.
         engine (Engine): SQLAlchemy engine instance.
     """
-    # Use quotes to avoid SQL syntax errors
-    backends_table = f"'{miner_name}-backends'"
-    config_table = f"'{miner_name}-config'"
-    summary_table = f"'{miner_name}-summary'"
-    with engine.connect() as connection:
-        # Wrap the raw SQL strings in SQLAlchemy's `text` function so it isn't a raw string
-        connection.execute(text(f"DROP TABLE IF EXISTS {backends_table}"))
-        connection.execute(text(f"DROP TABLE IF EXISTS {config_table}"))
-        connection.execute(text(f"DROP TABLE IF EXISTS {summary_table}"))
+    try:
+        # Use quotes to avoid SQL syntax errors
+        backends_table = f"'{miner_name}-backends'"
+        config_table = f"'{miner_name}-config'"
+        summary_table = f"'{miner_name}-summary'"
+        with engine.connect() as connection:
+            # Wrap the raw SQL strings in SQLAlchemy's `text` function so it isn't a raw string
+            connection.execute(text(f"DROP TABLE IF EXISTS {backends_table}"))
+            connection.execute(text(f"DROP TABLE IF EXISTS {config_table}"))
+            connection.execute(text(f"DROP TABLE IF EXISTS {summary_table}"))
 
-    log.debug(f"All tables for '{miner_name}' have been deleted from the database")
+        log.debug(f"All tables for '{miner_name}' have been deleted from the database")
+    except Exception as e:
+        log.error(f"An error occurred deleting miner '{miner_name}' from the database: {e}")
+        raise XMRigAPIError() from e
