@@ -11,7 +11,6 @@ from datetime import timedelta
 from xmrig.helpers import log, _insert_data_to_db
 from sqlalchemy.engine import Engine
 
-# TODO: Ability to store collected data in a database to avoid data loss/errors upon API/miner restarts ??
 # TODO: Handle errors more gracefully, possibly with a custom exception class
 # TODO: Multiple examples to help you get started
 # TODO: Comprehensive documentation
@@ -185,13 +184,6 @@ class XMRigAPI:
             config_response.raise_for_status()
             self._config_response = config_response.json()
             log.debug(f"Config endpoint successfully fetched.")
-            # TODO: Error occurs because xmrig-mo has more options in the config than xmrig does, 
-            # TODO: either need to create separate tables for each mining software/miner or find a 
-            # TODO: way to handle this in one table.
-            # TODO: 
-            # TODO: One possible solution is to include the miner name in the table name, so it 
-            # TODO: would be `miner1-config` or similar, the same would need to happen for the 
-            # TODO: summary and backends, this seems very basic and not very scalable.
             if self._db_engine is not None:
                 _insert_data_to_db(self._config_response, f"{self._miner_name}-config", self._db_engine)
             return True
