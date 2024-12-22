@@ -11,7 +11,7 @@ from datetime import timedelta
 from xmrig.helpers import log, _insert_data_to_db, XMRigAPIError, XMRigConnectionError, XMRigAuthorizationError
 from sqlalchemy.engine import Engine
 
-# TODO: Add try/except blocks to all methods to catch exceptions and log them, etc.
+# TODO: Properties should fallback to using the database if the cached data is not available, handle JSONDecodeError to continue running and return "N/A" for the property.
 # TODO: Multiple examples to help you get started
 # TODO: Comprehensive documentation
 
@@ -137,8 +137,6 @@ class XMRigAPI:
         Returns:
             bool: True if the cached data is successfully updated or False if an error occurred.
         """
-        # TODO: This response will be malformed if the miner hasn't been started for 15 minutes, 
-        # TODO: need to handle this better so the user is informed better than just logging it.
         try:
             backends_response = requests.get(
                 self._backends_url, headers=self._headers)
@@ -1430,8 +1428,6 @@ class XMRigAPI:
         except Exception as e:
             log.error(f"An error occurred fetching the cached hugepages data: {e}")
             return False
-
-    # ***** Data Provided by the backends endpoint
 
     @property
     def enabled_backends(self) -> list | bool:
