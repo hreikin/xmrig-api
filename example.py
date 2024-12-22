@@ -27,7 +27,7 @@ log.info(manager.list_miners())
 miner_a = manager.get_miner("Miner1")
 miner_b = manager.get_miner("Miner2")
 
-# Update an individual miners endpoints
+# Update an individual miner's endpoints
 miner_a.update_summary()
 miner_a.update_backends()
 miner_a.update_config()
