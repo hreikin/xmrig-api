@@ -42,16 +42,16 @@ log.info(manager.list_miners())
 miner_a = manager.get_miner("Miner1")
 miner_b = manager.get_miner("Miner2")
 
-# Update an individual miners endpoints
-miner_a.update_summary()
-miner_a.update_backends()
-miner_a.update_config()
-miner_b.update_summary()
-miner_b.update_backends()
-miner_b.update_config()
+# Update an individual miner's endpoints
+miner_a.get_summary()
+miner_a.get_backends()
+miner_a.get_config()
+miner_b.get_summary()
+miner_b.get_backends()
+miner_b.get_config()
 
 # Update all endpoints for all miners
-manager.update_all_miners()
+manager.get_all_miners_endpoints()
 
 # Pause all miners
 manager.perform_action_on_all("pause")
@@ -66,7 +66,7 @@ miner_b.pause_miner()
 miner_b.resume_miner()
 
 # Edit and update the miners `config.json` via the HTTP API.
-miner_a.update_config()                                               # This updates the cached data
+miner_a.get_config()                                                  # This updates the cached data
 config = miner_a.config                                               # Use the `config` property to access the data
 config["api"]["worker-id"] = "NEW_WORKER_ID"                          # Change something
 miner_a.post_config(config)                                           # Post new config to change it
