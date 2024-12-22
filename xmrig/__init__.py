@@ -208,8 +208,9 @@ Private Functions:
         - _delete_miner_from_db
 """
 
-from .api import XMRigAPI, XMRigAuthorizationError
+from .api import XMRigAPI
 from .manager import XMRigManager
+from .helpers import XMRigAPIError, XMRigAuthorizationError, XMRigConnectionError
 
 __name__ = "xmrig"
 __version__ = "0.0.3"
@@ -219,4 +220,4 @@ __license__ = "MIT"
 __description__ = "This module provides objects to interact with the XMRig miner API, manage multiple miners, and store collected data in a database."
 __url__ = "https://hreikin.co.uk/xmrig-api"
 
-__all__ = ["XMRigAPI", "XMRigAuthorizationError", "XMRigManager"]
+__all__ = ["XMRigAPI", "XMRigAPIError", "XMRigAuthorizationError", "XMRigConnectionError", "XMRigManager"]
