@@ -16,37 +16,49 @@ log = logging.getLogger("MyLog")
 manager = XMRigManager()
 manager.add_miner("Miner1", "127.0.0.1", "37841", "SECRET", tls_enabled=False)
 manager.add_miner("Miner2", "127.0.0.1", "37842", "SECRET", tls_enabled=False)
+# Remove miners
+manager.remove_miner("Miner1")
+manager.add_miner("Miner1", "127.0.0.1", "37841", "SECRET", tls_enabled=False)      # Add back for rest of example code
+
+# List all miners
+log.info(manager.list_miners())
+
+# Get individual miners
+miner_a = manager.get_miner("Miner1")
+miner_b = manager.get_miner("Miner2")
+
+# Update an individual miners endpoints
+miner_a.update_summary()
+miner_a.update_backends()
+miner_a.update_config()
+miner_b.update_summary()
+miner_b.update_backends()
+miner_b.update_config()
+
+# Update all endpoints for all miners
+manager.update_all_miners()
 
 # Pause all miners
 manager.perform_action_on_all("pause")
 manager.perform_action_on_all("resume")
 
 # Start/stop a specific miner
-miner = manager.get_miner("Miner1")
-miner.stop_miner()
-miner.start_miner()
+miner_a.stop_miner()
+miner_a.start_miner()
 
-# Update data for a specific miner
-miner = manager.get_miner("Miner2")
-miner.update_summary()
+# Pause/Resume a specific miner
+miner_b.pause_miner()
+miner_b.resume_miner()
 
 # Edit and update the miners `config.json` via the HTTP API.
-miner = manager.get_miner("Miner1")
-miner.update_config()                                                 # This updates the cached data
-config = miner.config                                                 # Use the `config` property to access the data
+miner_a.update_config()                                               # This updates the cached data
+config = miner_a.config                                               # Use the `config` property to access the data
 config["api"]["worker-id"] = "NEW_WORKER_ID"                          # Change something
-miner.post_config(config)                                             # Post new config to change it
-
-# Update data for all miners
-manager.update_all_miners()
-
-# List all miners
-log.info(manager.list_miners())
+miner_a.post_config(config)                                           # Post new config to change it
 
 # Summary and Backends API data is available as properties in either full or individual format.
-miner = manager.get_miner("Miner2")
-log.info(miner.summary)                                             # Prints the entire `summary` endpoint response
-log.info(miner.sum_hashrates)                                       # Prints out the current hashrates
-log.info(miner.sum_pool_accepted_jobs)                              # Prints out the accepted_jobs counter
-log.info(miner.sum_pool_rejected_jobs)                              # Prints out the rejected_jobs counter
-log.info(miner.sum_current_difficulty)                              # Prints out the current difficulty
+log.info(miner_b.summary)                                             # Prints the entire `summary` endpoint response
+log.info(miner_b.sum_hashrates)                                       # Prints out the current hashrates
+log.info(miner_b.sum_pool_accepted_jobs)                              # Prints out the accepted_jobs counter
+log.info(miner_b.sum_pool_rejected_jobs)                              # Prints out the rejected_jobs counter
+log.info(miner_b.sum_current_difficulty)                              # Prints out the current difficulty
