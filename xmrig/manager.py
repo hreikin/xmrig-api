@@ -14,6 +14,7 @@ class XMRigManager:
 
         Args:
             api_factory (callable): Factory for creating XMRigAPI instances.
+            db_url (str): Database URL for storing miner data.
         """
         self._miners = {}
         self._api_factory = api_factory
@@ -21,7 +22,7 @@ class XMRigManager:
         if self._db_url is not None:
             self._db_engine = init_db(self._db_url)
 
-    def add_miner(self, miner_name: str, ip: str, port: str, access_token: str = None, tls_enabled: bool = False):
+    def add_miner(self, miner_name: str, ip: str, port: str, access_token: str=None, tls_enabled: bool=False):
         """
         Adds a new miner to the manager.
 
