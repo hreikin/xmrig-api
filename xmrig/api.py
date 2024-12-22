@@ -40,6 +40,7 @@ class XMRigAPI:
     A class to interact with the XMRig miner API.
 
     Attributes:
+        _miner_name (str): Unique name for the miner.
         _ip (str): IP address of the XMRig API.
         _port (str): Port of the XMRig API.
         _access_token (str): Access token for authorization.
@@ -55,6 +56,7 @@ class XMRigAPI:
         _new_config (dict): Config to update with.
         _headers (dict): Headers for all API/RPC requests.
         _json_rpc_payload (dict): Default payload to send with RPC request.
+        _db_engine (Engine): SQLAlchemy engine instance for database operations.
     """
 
     def __init__(self, miner_name: str, ip: str, port: str, access_token: str = None, tls_enabled: bool = False, db_engine: Engine = None):
@@ -70,6 +72,7 @@ class XMRigAPI:
             port (int): Port of the XMRig API.
             access_token (str, optional): Access token for authorization. Defaults to None.
             tls_enabled (bool, optional): TLS status of the miner/API. 
+            db_engine (Engine, optional): SQLAlchemy engine instance for database operations. Defaults to None.
         """
         self._miner_name = miner_name
         self._ip = ip
@@ -123,7 +126,7 @@ class XMRigAPI:
         Updates the cached summary data from the XMRig API.
 
         Returns:
-            dict: True if the cached data is successfully updated or False if an error occurred.
+            bool: True if the cached data is successfully updated or False if an error occurred.
         """
         try:
             summary_response = requests.get(
@@ -146,7 +149,7 @@ class XMRigAPI:
         Updates the cached backends data from the XMRig API.
 
         Returns:
-            dict: True if the cached data is successfully updated or False if an error occurred.
+            bool: True if the cached data is successfully updated or False if an error occurred.
         """
         # TODO: This response will be malformed if the miner hasn't been started for 15 minutes, 
         # TODO: need to handle this better so the user is informed better than just logging it.
@@ -171,7 +174,7 @@ class XMRigAPI:
         Updates the cached config data from the XMRig API.
 
         Returns:
-            dict: True if the cached data is successfully updated, or False if an error occurred.
+            bool: True if the cached data is successfully updated, or False if an error occurred.
         """
         try:
             config_response = requests.get(
@@ -200,6 +203,9 @@ class XMRigAPI:
         """
         Updates the miners config data via the XMRig API.
 
+        Args:
+            config (dict): Configuration data to update.
+
         Returns:
             bool: True if the config was changed successfully, or False if an error occurred.
         """
@@ -221,7 +227,7 @@ class XMRigAPI:
         Retrieves all responses from the API.
 
         Returns:
-            bool: True if successfull, or False if an error occurred.
+            bool: True if successful, or False if an error occurred.
         """
         try:
             self.update_summary()
