@@ -7,11 +7,28 @@ from xmrig.logger import log
 _engines = {}
 
 def init_db(db_url):
+    """
+    Initializes the database engine.
+
+    Args:
+        db_url (str): Database URL.
+
+    Returns:
+        Engine: SQLAlchemy engine instance.
+    """
     if db_url not in _engines:
         _engines[db_url] = create_engine(db_url)
     return _engines[db_url]
 
 def insert_data_to_db(json_data, table_name, engine):
+    """
+    Inserts JSON data into the specified database table.
+
+    Args:
+        json_data (dict): JSON data to insert.
+        table_name (str): Name of the table to insert data into.
+        engine (Engine): SQLAlchemy engine instance.
+    """
     # Normalize nested JSON
     df = pd.json_normalize(json_data)
 
@@ -29,6 +46,13 @@ def insert_data_to_db(json_data, table_name, engine):
     log.debug("Data inserted successfully")
 
 def delete_miner_from_db(miner_name, engine):
+    """
+    Deletes all tables related to a specific miner from the database.
+
+    Args:
+        miner_name (str): The unique name of the miner.
+        engine (Engine): SQLAlchemy engine instance.
+    """
     # Use quotes to avoid SQL syntax errors
     backends_table = f"'{miner_name}-backends'"
     config_table = f"'{miner_name}-config'"
