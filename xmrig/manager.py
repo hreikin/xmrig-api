@@ -1,3 +1,10 @@
+"""
+XMRig Manager module.
+
+This module provides the XMRigManager class to manage multiple XMRig miners via their APIs.
+It includes functionalities for adding, removing, retrieving, and performing actions on miners.
+"""
+
 from xmrig.api import XMRigAPI
 from xmrig.db import init_db, delete_miner_from_db
 from xmrig.logger import log
