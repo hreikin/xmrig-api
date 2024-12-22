@@ -39,13 +39,16 @@ class XMRigManager:
             access_token (str, optional): Access token for authorization. Defaults to None.
             tls_enabled (bool, optional): TLS status of the miner/API. Defaults to False.
         """
+        try:
+            if miner_name in self._miners:
+                raise ValueError(f"Miner with name '{miner_name}' already exists.")
 
-        if miner_name in self._miners:
-            raise ValueError(f"Miner with name '{miner_name}' already exists.")
-
-        # Use the injected factory to create the API instance
-        self._miners[miner_name] = self._api_factory(miner_name, ip, port, access_token, tls_enabled, self._db_engine)
-        log.info(f"Miner '{miner_name}' added to manager.")
+            # Use the injected factory to create the API instance
+            self._miners[miner_name] = self._api_factory(miner_name, ip, port, access_token, tls_enabled, self._db_engine)
+            log.info(f"Miner '{miner_name}' added to manager.")
+        except Exception as e:
+            log.error(f"An error occurred adding miner '{miner_name}': {e}")
+            raise XMRigAPIError() from e
 
     def remove_miner(self, miner_name: str) -> None:
         """
@@ -54,13 +57,17 @@ class XMRigManager:
         Args:
             miner_name (str): The unique name of the miner to remove.
         """
-        if miner_name not in self._miners:
-            raise ValueError(f"Miner with name '{miner_name}' does not exist.")
-        
-        if self._db_url is not None:
-            _delete_miner_from_db(miner_name, self._db_engine)
-        del self._miners[miner_name]
-        log.info(f"Miner '{miner_name}' removed from manager.")
+        try:
+            if miner_name not in self._miners:
+                raise ValueError(f"Miner with name '{miner_name}' does not exist.")
+            
+            if self._db_url is not None:
+                _delete_miner_from_db(miner_name, self._db_engine)
+            del self._miners[miner_name]
+            log.info(f"Miner '{miner_name}' removed from manager.")
+        except Exception as e:
+            log.error(f"An error occurred removing miner '{miner_name}': {e}")
+            raise XMRigAPIError() from e
 
     def get_miner(self, miner_name: str) -> XMRigAPI:
         """
@@ -72,10 +79,14 @@ class XMRigManager:
         Returns:
             XMRigAPI: The API instance for the requested miner.
         """
-        if miner_name not in self._miners:
-            raise ValueError(f"Miner with name '{miner_name}' does not exist.")
-        
-        return self._miners[miner_name]
+        try:
+            if miner_name not in self._miners:
+                raise ValueError(f"Miner with name '{miner_name}' does not exist.")
+            
+            return self._miners[miner_name]
+        except Exception as e:
+            log.error(f"An error occurred retrieving miner '{miner_name}': {e}")
+            raise XMRigAPIError() from e
 
     def perform_action_on_all(self, action: str) -> None:
         """
@@ -84,16 +95,20 @@ class XMRigManager:
         Args:
             action (str): The action to perform ('pause', 'resume', 'stop', etc.).
         """
-        for miner_name, miner_api in self._miners.items():
-            method = getattr(miner_api, f"{action}_miner", None)
-            if method and callable(method):
-                success = method()
-                if success:
-                    log.info(f"Action '{action}' successfully performed on '{miner_name}'.")
+        try:
+            for miner_name, miner_api in self._miners.items():
+                method = getattr(miner_api, f"{action}_miner", None)
+                if method and callable(method):
+                    success = method()
+                    if success:
+                        log.info(f"Action '{action}' successfully performed on '{miner_name}'.")
+                    else:
+                        log.warning(f"Action '{action}' failed on '{miner_name}'.")
                 else:
-                    log.warning(f"Action '{action}' failed on '{miner_name}'.")
-            else:
-                log.error(f"Action '{action}' is not a valid method for miner API.")
+                    log.error(f"Action '{action}' is not a valid method for miner API.")
+        except Exception as e:
+            log.error(f"An error occurred performing action '{action}' on all miners: {e}")
+            raise XMRigAPIError() from e
 
     def get_all_miners_endpoints(self) -> None:
         """
@@ -110,7 +125,7 @@ class XMRigManager:
             log.error(f"An error occurred decoding the response: {e}")
             return False
         except Exception as e:
-            log.error(f"An error occurred fetching all the API endpoints from all miners: {e}")
+            log.error(f"An error occurred updating all miners' endpoints: {e}")
             raise XMRigAPIError() from e
 
     def list_miners(self) -> list[str]:
@@ -120,4 +135,8 @@ class XMRigManager:
         Returns:
             list: A list of miner names.
         """
-        return list(self._miners.keys())
+        try:
+            return list(self._miners.keys())
+        except Exception as e:
+            log.error(f"An error occurred listing miners: {e}")
+            raise XMRigAPIError() from e
