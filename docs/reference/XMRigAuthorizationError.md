@@ -1,4 +1,4 @@
 # XMRigAuthorizationError
 
-::: xmrig.api.XMRigAuthorizationError
+::: xmrig.helpers.XMRigAuthorizationError
     handler: python
