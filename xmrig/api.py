@@ -104,9 +104,9 @@ class XMRigAPI:
             self._headers['Authorization'] = f"Bearer {self._access_token}"
             log.debug(f"Authorization header successfully changed.")
             return True
-        except Exception as e:
+        except XMRigAuthorizationError as e:
             log.error(f"An error occurred setting the Authorization Header: {e}")
-            return False
+            raise XMRigAuthorizationError() from e
 
     def get_summary(self) -> bool:
         """
@@ -133,6 +133,9 @@ class XMRigAPI:
         except requests.exceptions.JSONDecodeError as e:
             log.error(f"An error occurred decoding the response: {e}")
             return False
+        except XMRigAuthorizationError as e:
+            log.error(f"An error occurred updating the summary: {e}")
+            raise XMRigAuthorizationError() from e
         except Exception as e:
             log.error(f"An error occurred updating the summary: {e}")
             return False
@@ -162,6 +165,9 @@ class XMRigAPI:
         except requests.exceptions.JSONDecodeError as e:
             log.error(f"An error occurred decoding the response: {e}")
             return False
+        except XMRigAuthorizationError as e:
+            log.error(f"An error occurred updating the summary: {e}")
+            raise XMRigAuthorizationError() from e
         except Exception as e:
             log.error(f"An error occurred updating the backends: {e}")
             return False
@@ -191,6 +197,9 @@ class XMRigAPI:
         except requests.exceptions.JSONDecodeError as e:
             log.error(f"An error occurred decoding the response: {e}")
             return False
+        except XMRigAuthorizationError as e:
+            log.error(f"An error occurred updating the summary: {e}")
+            raise XMRigAuthorizationError() from e
         except Exception as e:
             log.error(f"An error occurred updating the config: {e}")
             return False
@@ -217,6 +226,9 @@ class XMRigAPI:
         except requests.exceptions.RequestException as e:
             log.error(f"An error occurred while connecting to {self._config_url}: {e}")
             raise XMRigConnectionError() from e
+        except XMRigAuthorizationError as e:
+            log.error(f"An error occurred updating the summary: {e}")
+            raise XMRigAuthorizationError() from e
         except Exception as e:
             log.error(f"An error occurred posting the config: {e}")
             raise XMRigAPIError() from e
