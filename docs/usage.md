@@ -82,3 +82,5 @@ log.info(miner_b.data.sum_pool_accepted_jobs)                              # Pri
 log.info(miner_b.data.sum_pool_rejected_jobs)                              # Prints out the rejected_jobs counter
 log.info(miner_b.data.sum_current_difficulty)                              # Prints out the current difficulty
 ```
+
+For more examples, visit the [Examples](examples.md) page.

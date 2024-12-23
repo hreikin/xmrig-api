@@ -6,6 +6,8 @@
 
 To get started with `XMRig-API`, visit the [Usage](usage.md) page for a quick installation and usage guide. For an in-depth overview of the module’s capabilities, consult the reference pages available at the documentation site.  
 
+For more examples, visit the [Examples](examples.md) page.
+
 ## Features
 
 `XMRig-API` includes several powerful features:
