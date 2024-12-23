@@ -23,10 +23,10 @@ manager.add_miner("Miner1", "127.0.0.1", "37841", "SECRET", tls_enabled=False)
 manager.add_miner("Miner2", "127.0.0.1", "37842", "SECRET", tls_enabled=False)
 
 log.info("Listing all miners")
-manager.list_miners()
+log.info(manager.list_miners())
 
 log.info("Removing Miner1")
 manager.remove_miner("Miner1")
 
 log.info("Listing all miners after removal")
-manager.list_miners()
+log.info(manager.list_miners())
