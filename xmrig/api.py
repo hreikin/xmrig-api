@@ -17,10 +17,9 @@ from datetime import timedelta
 from xmrig.helpers import log, _insert_data_to_db, XMRigAPIError, XMRigConnectionError, XMRigAuthorizationError
 from sqlalchemy.engine import Engine
 
+# TODO: Update tests to cover all new functionality in helpers.py.
 # TODO: Properties should fallback to using the database if the cached data is not available, handle JSONDecodeError to continue running and return "N/A" for the property.
-# TODO: Update tests to cover all new functionality.
-# TODO: Multiple examples to help you get started
-# TODO: Comprehensive documentation
+# TODO: Comprehensive documentation - add an examples page to the documentation containing all the examples from the examples folder.
 
 class XMRigAPI:
     """
@@ -166,7 +165,7 @@ class XMRigAPI:
             log.error(f"An error occurred decoding the response: {e}")
             return False
         except XMRigAuthorizationError as e:
-            log.error(f"An error occurred updating the summary: {e}")
+            log.error(f"An error occurred updating the backends: {e}")
             raise XMRigAuthorizationError() from e
         except Exception as e:
             log.error(f"An error occurred updating the backends: {e}")
@@ -198,7 +197,7 @@ class XMRigAPI:
             log.error(f"An error occurred decoding the response: {e}")
             return False
         except XMRigAuthorizationError as e:
-            log.error(f"An error occurred updating the summary: {e}")
+            log.error(f"An error occurred updating the config: {e}")
             raise XMRigAuthorizationError() from e
         except Exception as e:
             log.error(f"An error occurred updating the config: {e}")
