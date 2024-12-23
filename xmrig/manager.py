@@ -14,7 +14,6 @@ It includes functionalities for:
 import requests
 from xmrig.api import XMRigAPI
 from xmrig.helpers import _init_db, _delete_miner_from_db, log, XMRigAPIError
-from sqlalchemy.engine import Engine
 from typing import Callable, Optional, List
 
 class XMRigManager:
