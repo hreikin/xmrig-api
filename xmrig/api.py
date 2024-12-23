@@ -22,7 +22,6 @@ from typing import Optional, Dict, Any
 # TODO: Check XMRigAPI and XMRigManager tests work since recent changes.
 # TODO: Add config.json properties to the XMRigProperties class.
 # TODO: Properties should fallback to using the database if the cached data is not available, handle JSONDecodeError and exception from missing table/data within database to continue running and return "N/A" for the property.
-# TODO: Add version notification to docs when viewing main branch, look for a plugin/addon.
 
 class XMRigAPI:
     """

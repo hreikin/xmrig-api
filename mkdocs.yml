@@ -42,11 +42,6 @@ plugins:
   - search
   - mkdocstrings
   - include-markdown
-  - mike
-
-extra:
-  version:
-    provider: mike
 
 markdown_extensions:
   - pymdownx.highlight:
