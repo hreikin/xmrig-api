@@ -16,9 +16,11 @@ import requests
 from datetime import timedelta
 from xmrig.helpers import log, _insert_data_to_db, XMRigAPIError, XMRigConnectionError, XMRigAuthorizationError
 from sqlalchemy.engine import Engine
+from typing import Optional, Union, List, Dict, Any
 
+# TODO: Check current tests match return types and new functionality.
 # TODO: Update tests to cover all new functionality in helpers.py.
-# TODO: Properties should fallback to using the database if the cached data is not available, handle JSONDecodeError to continue running and return "N/A" for the property.
+# TODO: Properties should fallback to using the database if the cached data is not available, handle JSONDecodeError and exception from missing table/data within database to continue running and return "N/A" for the property.
 # TODO: Comprehensive documentation - add an examples page to the documentation containing all the examples from the examples folder.
 
 class XMRigAPI:
@@ -45,7 +47,7 @@ class XMRigAPI:
         _db_engine (Engine): SQLAlchemy engine instance for database operations.
     """
 
-    def __init__(self, miner_name: str, ip: str, port: str, access_token: str = None, tls_enabled: bool = False, db_engine: Engine = None):
+    def __init__(self, miner_name: str, ip: str, port: int, access_token: Optional[str] = None, tls_enabled: bool = False, db_engine: Optional[Engine] = None):
         """
         Initializes the XMRig instance with the provided IP, port, and access token.
 
@@ -203,12 +205,12 @@ class XMRigAPI:
             log.error(f"An error occurred updating the config: {e}")
             return False
 
-    def post_config(self, config: dict) -> bool:
+    def post_config(self, config: Dict[str, Any]) -> bool:
         """
         Updates the miners config data via the XMRig API.
 
         Args:
-            config (dict): Configuration data to update.
+            config (Dict[str, Any]): Configuration data to update.
 
         Returns:
             bool: True if the config was changed successfully, or False if an error occurred.
@@ -338,7 +340,7 @@ class XMRigAPI:
             raise XMRigAPIError() from e
 
     @property
-    def summary(self) -> dict | bool:
+    def summary(self) -> Union[Dict[str, Any], bool]:
         """
         Retrieves the entire cached summary endpoint data.
 
@@ -353,7 +355,7 @@ class XMRigAPI:
             raise XMRigAPIError() from e
 
     @property
-    def backends(self) -> list | bool:
+    def backends(self) -> Union[List[Dict[str, Any]], bool]:
         """
         Retrieves the entire cached backends endpoint data.
 
@@ -368,7 +370,7 @@ class XMRigAPI:
             raise XMRigAPIError() from e
 
     @property
-    def config(self) -> dict | bool:
+    def config(self) -> Union[Dict[str, Any], bool]:
         """
         Retrieves the entire cached config endpoint data.
 
@@ -383,7 +385,7 @@ class XMRigAPI:
             raise XMRigAPIError() from e
 
     @property
-    def sum_id(self) -> str | bool:
+    def sum_id(self) -> Union[str, bool]:
         """
         Retrieves the cached ID information from the summary data.
 
@@ -398,7 +400,7 @@ class XMRigAPI:
             return False
 
     @property
-    def sum_worker_id(self) -> str | bool:
+    def sum_worker_id(self) -> Union[str, bool]:
         """
         Retrieves the cached worker ID information from the summary data.
 
@@ -413,7 +415,7 @@ class XMRigAPI:
             return False
 
     @property
-    def sum_uptime(self) -> int | bool:
+    def sum_uptime(self) -> Union[int, bool]:
         """
         Retrieves the cached current uptime from the summary data.
 
@@ -428,7 +430,7 @@ class XMRigAPI:
             return False
 
     @property
-    def sum_uptime_readable(self) -> str | bool:
+    def sum_uptime_readable(self) -> Union[str, bool]:
         """
         Retrieves the cached uptime in a human-readable format from the summary data.
 
@@ -443,7 +445,7 @@ class XMRigAPI:
             return False
 
     @property
-    def sum_restricted(self) -> bool | None:
+    def sum_restricted(self) -> Optional[bool]:
         """
         Retrieves the cached current restricted status from the summary data.
 
@@ -458,7 +460,7 @@ class XMRigAPI:
             return None
 
     @property
-    def sum_resources(self) -> dict | bool:
+    def sum_resources(self) -> Union[Dict[str, Any], bool]:
         """
         Retrieves the cached resources information from the summary data.
 
@@ -473,7 +475,7 @@ class XMRigAPI:
             return False
 
     @property
-    def sum_memory_usage(self) -> dict | bool:
+    def sum_memory_usage(self) -> Union[Dict[str, Any], bool]:
         """
         Retrieves the cached memory usage from the summary data.
 
@@ -488,7 +490,7 @@ class XMRigAPI:
             return False
 
     @property
-    def sum_free_memory(self) -> int | bool:
+    def sum_free_memory(self) -> Union[int, bool]:
         """
         Retrieves the cached free memory from the summary data.
 
@@ -503,7 +505,7 @@ class XMRigAPI:
             return False
 
     @property
-    def sum_total_memory(self) -> int | bool:
+    def sum_total_memory(self) -> Union[int, bool]:
         """
         Retrieves the cached total memory from the summary data.
 
@@ -518,7 +520,7 @@ class XMRigAPI:
             return False
 
     @property
-    def sum_resident_set_memory(self) -> int | bool:
+    def sum_resident_set_memory(self) -> Union[int, bool]:
         """
         Retrieves the cached resident set memory from the summary data.
 
@@ -533,7 +535,7 @@ class XMRigAPI:
             return False
 
     @property
-    def sum_load_average(self) -> list | bool:
+    def sum_load_average(self) -> Union[List[float], bool]:
         """
         Retrieves the cached load average from the summary data.
 
@@ -548,7 +550,7 @@ class XMRigAPI:
             return False
 
     @property
-    def sum_hardware_concurrency(self) -> int | bool:
+    def sum_hardware_concurrency(self) -> Union[int, bool]:
         """
         Retrieves the cached hardware concurrency from the summary data.
 
@@ -563,7 +565,7 @@ class XMRigAPI:
             return False
 
     @property
-    def sum_features(self) -> list | bool:
+    def sum_features(self) -> Union[List[str], bool]:
         """
         Retrieves the cached supported features information from the summary data.
 
@@ -578,7 +580,7 @@ class XMRigAPI:
             return False
 
     @property
-    def sum_results(self) -> dict | bool:
+    def sum_results(self) -> Union[Dict[str, Any], bool]:
         """
         Retrieves the cached results information from the summary data.
 
@@ -593,7 +595,7 @@ class XMRigAPI:
             return False
 
     @property
-    def sum_current_difficulty(self) -> int | bool:
+    def sum_current_difficulty(self) -> Union[int, bool]:
         """
         Retrieves the cached current difficulty from the summary data.
 
@@ -608,7 +610,7 @@ class XMRigAPI:
             return False
 
     @property
-    def sum_good_shares(self) -> int | bool:
+    def sum_good_shares(self) -> Union[int, bool]:
         """
         Retrieves the cached good shares from the summary data.
 
@@ -623,7 +625,7 @@ class XMRigAPI:
             return False
 
     @property
-    def sum_total_shares(self) -> int | bool:
+    def sum_total_shares(self) -> Union[int, bool]:
         """
         Retrieves the cached total shares from the summary data.
 
@@ -638,7 +640,7 @@ class XMRigAPI:
             return False
 
     @property
-    def sum_avg_time(self) -> int | bool:
+    def sum_avg_time(self) -> Union[int, bool]:
         """
         Retrieves the cached average time information from the summary data.
 
@@ -653,7 +655,7 @@ class XMRigAPI:
             return False
 
     @property
-    def sum_avg_time_ms(self) -> int | bool:
+    def sum_avg_time_ms(self) -> Union[int, bool]:
         """
         Retrieves the cached average time in `ms` information from the summary data.
 
@@ -668,7 +670,7 @@ class XMRigAPI:
             return False
 
     @property
-    def sum_total_hashes(self) -> int | bool:
+    def sum_total_hashes(self) -> Union[int, bool]:
         """
         Retrieves the cached total number of hashes from the summary data.
 
@@ -683,7 +685,7 @@ class XMRigAPI:
             return False
 
     @property
-    def sum_best_results(self) -> list | bool:
+    def sum_best_results(self) -> Union[List[int], bool]:
         """
         Retrieves the cached best results from the summary data.
 
@@ -698,7 +700,7 @@ class XMRigAPI:
             return False
 
     @property
-    def sum_algorithm(self) -> str | bool:
+    def sum_algorithm(self) -> Union[str, bool]:
         """
         Retrieves the cached current mining algorithm from the summary data.
 
@@ -713,7 +715,7 @@ class XMRigAPI:
             return False
 
     @property
-    def sum_connection(self) -> dict | bool:
+    def sum_connection(self) -> Union[Dict[str, Any], bool]:
         """
         Retrieves the cached connection information from the summary data.
 
@@ -728,7 +730,7 @@ class XMRigAPI:
             return False
 
     @property
-    def sum_pool_info(self) -> str | bool:
+    def sum_pool_info(self) -> Union[str, bool]:
         """
         Retrieves the cached pool information from the summary data.
 
@@ -743,7 +745,7 @@ class XMRigAPI:
             return False
 
     @property
-    def sum_pool_ip_address(self) -> str | bool:
+    def sum_pool_ip_address(self) -> Union[str, bool]:
         """
         Retrieves the cached IP address from the summary data.
 
@@ -758,7 +760,7 @@ class XMRigAPI:
             return False
 
     @property
-    def sum_pool_uptime(self) -> int | bool:
+    def sum_pool_uptime(self) -> Union[int, bool]:
         """
         Retrieves the cached pool uptime information from the summary data.
 
@@ -773,7 +775,7 @@ class XMRigAPI:
             return False
 
     @property
-    def sum_pool_uptime_ms(self) -> int | bool:
+    def sum_pool_uptime_ms(self) -> Union[int, bool]:
         """
         Retrieves the cached pool uptime in ms from the summary data.
 
@@ -788,7 +790,7 @@ class XMRigAPI:
             return False
 
     @property
-    def sum_pool_ping(self) -> int | bool:
+    def sum_pool_ping(self) -> Union[int, bool]:
         """
         Retrieves the cached pool ping information from the summary data.
 
@@ -803,7 +805,7 @@ class XMRigAPI:
             return False
 
     @property
-    def sum_pool_failures(self) -> int | bool:
+    def sum_pool_failures(self) -> Union[int, bool]:
         """
         Retrieves the cached pool failures information from the summary data.
 
@@ -818,7 +820,7 @@ class XMRigAPI:
             return False
 
     @property
-    def sum_pool_tls(self) -> bool | None:
+    def sum_pool_tls(self) -> Optional[bool]:
         """
         Retrieves the cached pool tls status from the summary data.
 
@@ -833,7 +835,7 @@ class XMRigAPI:
             return False
 
     @property
-    def sum_pool_tls_fingerprint(self) -> str | bool:
+    def sum_pool_tls_fingerprint(self) -> Union[str, bool]:
         """
         Retrieves the cached pool tls fingerprint information from the summary data.
 
@@ -848,7 +850,7 @@ class XMRigAPI:
             return False
 
     @property
-    def sum_pool_algo(self) -> str | bool:
+    def sum_pool_algo(self) -> Union[str, bool]:
         """
         Retrieves the cached pool algorithm information from the summary data.
 
@@ -863,7 +865,7 @@ class XMRigAPI:
             return False
 
     @property
-    def sum_pool_diff(self) -> int | bool:
+    def sum_pool_diff(self) -> Union[int, bool]:
         """
         Retrieves the cached pool difficulty information from the summary data.
 
@@ -878,7 +880,7 @@ class XMRigAPI:
             return False
 
     @property
-    def sum_pool_accepted_jobs(self) -> int | bool:
+    def sum_pool_accepted_jobs(self) -> Union[int, bool]:
         """
         Retrieves the cached number of accepted jobs from the summary data.
 
@@ -893,7 +895,7 @@ class XMRigAPI:
             return False
 
     @property
-    def sum_pool_rejected_jobs(self) -> int | bool:
+    def sum_pool_rejected_jobs(self) -> Union[int, bool]:
         """
         Retrieves the cached number of rejected jobs from the summary data.
 
@@ -908,7 +910,7 @@ class XMRigAPI:
             return False
 
     @property
-    def sum_pool_average_time(self) -> int | bool:
+    def sum_pool_average_time(self) -> Union[int, bool]:
         """
         Retrieves the cached pool average time information from the summary data.
 
@@ -923,7 +925,7 @@ class XMRigAPI:
             return False
 
     @property
-    def sum_pool_average_time_ms(self) -> int | bool:
+    def sum_pool_average_time_ms(self) -> Union[int, bool]:
         """
         Retrieves the cached pool average time in ms from the summary data.
 
@@ -938,7 +940,7 @@ class XMRigAPI:
             return False
 
     @property
-    def sum_pool_total_hashes(self) -> int | bool:
+    def sum_pool_total_hashes(self) -> Union[int, bool]:
         """
         Retrieves the cached pool total hashes information from the summary data.
 
@@ -953,7 +955,7 @@ class XMRigAPI:
             return False
 
     @property
-    def sum_version(self) -> str | bool:
+    def sum_version(self) -> Union[str, bool]:
         """
         Retrieves the cached version information from the summary data.
 
@@ -968,7 +970,7 @@ class XMRigAPI:
             return False
 
     @property
-    def sum_kind(self) -> str | bool:
+    def sum_kind(self) -> Union[str, bool]:
         """
         Retrieves the cached kind information from the summary data.
 
@@ -983,7 +985,7 @@ class XMRigAPI:
             return False
 
     @property
-    def sum_ua(self) -> str | bool:
+    def sum_ua(self) -> Union[str, bool]:
         """
         Retrieves the cached user agent information from the summary data.
 
@@ -998,7 +1000,7 @@ class XMRigAPI:
             return False
 
     @property
-    def sum_cpu_info(self) -> dict | bool:
+    def sum_cpu_info(self) -> Union[Dict[str, Any], bool]:
         """
         Retrieves the cached CPU information from the summary data.
 
@@ -1013,7 +1015,7 @@ class XMRigAPI:
             return False
 
     @property
-    def sum_cpu_brand(self) -> str | bool:
+    def sum_cpu_brand(self) -> Union[str, bool]:
         """
         Retrieves the cached CPU brand information from the summary data.
 
@@ -1028,7 +1030,7 @@ class XMRigAPI:
             return False
 
     @property
-    def sum_cpu_family(self) -> int | bool:
+    def sum_cpu_family(self) -> Union[int, bool]:
         """
         Retrieves the cached CPU family information from the summary data.
 
@@ -1043,7 +1045,7 @@ class XMRigAPI:
             return False
 
     @property
-    def sum_cpu_model(self) -> int | bool:
+    def sum_cpu_model(self) -> Union[int, bool]:
         """
         Retrieves the cached CPU model information from the summary data.
 
@@ -1058,7 +1060,7 @@ class XMRigAPI:
             return False
 
     @property
-    def sum_cpu_stepping(self) -> int | bool:
+    def sum_cpu_stepping(self) -> Union[int, bool]:
         """
         Retrieves the cached CPU stepping information from the summary data.
 
@@ -1073,7 +1075,7 @@ class XMRigAPI:
             return False
 
     @property
-    def sum_cpu_proc_info(self) -> int | bool:
+    def sum_cpu_proc_info(self) -> Union[int, bool]:
         """
         Retrieves the cached CPU frequency information from the summary data.
 
@@ -1088,7 +1090,7 @@ class XMRigAPI:
             return False
 
     @property
-    def sum_cpu_aes(self) -> bool | None:
+    def sum_cpu_aes(self) -> Optional[bool]:
         """
         Retrieves the cached CPU aes information from the summary data.
 
@@ -1103,7 +1105,7 @@ class XMRigAPI:
             return None
 
     @property
-    def sum_cpu_avx2(self) -> bool | None:
+    def sum_cpu_avx2(self) -> Optional[bool]:
         """
         Retrieves the cached CPU avx2 information from the summary data.
 
@@ -1118,7 +1120,7 @@ class XMRigAPI:
             return None
 
     @property
-    def sum_cpu_x64(self) -> bool | None:
+    def sum_cpu_x64(self) -> Optional[bool]:
         """
         Retrieves the cached CPU x64 information from the summary data.
 
@@ -1133,7 +1135,7 @@ class XMRigAPI:
             return None
 
     @property
-    def sum_cpu_64_bit(self) -> bool | None:
+    def sum_cpu_64_bit(self) -> Optional[bool]:
         """
         Retrieves the cached CPU 64-bit information from the summary data.
 
@@ -1148,7 +1150,7 @@ class XMRigAPI:
             return None
 
     @property
-    def sum_cpu_l2(self) -> int | bool:
+    def sum_cpu_l2(self) -> Union[int, bool]:
         """
         Retrieves the cached CPU l2 cache information from the summary data.
 
@@ -1163,7 +1165,7 @@ class XMRigAPI:
             return False
 
     @property
-    def sum_cpu_l3(self) -> int | bool:
+    def sum_cpu_l3(self) -> Union[int, bool]:
         """
         Retrieves the cached CPU l3 cache information from the summary data.
 
@@ -1178,7 +1180,7 @@ class XMRigAPI:
             return False
 
     @property
-    def sum_cpu_cores(self) -> int | bool:
+    def sum_cpu_cores(self) -> Union[int, bool]:
         """
         Retrieves the cached CPU cores information from the summary data.
 
@@ -1193,7 +1195,7 @@ class XMRigAPI:
             return False
 
     @property
-    def sum_cpu_threads(self) -> int | bool:
+    def sum_cpu_threads(self) -> Union[int, bool]:
         """
         Retrieves the cached CPU threads information from the summary data.
 
@@ -1208,7 +1210,7 @@ class XMRigAPI:
             return False
 
     @property
-    def sum_cpu_packages(self) -> int | bool:
+    def sum_cpu_packages(self) -> Union[int, bool]:
         """
         Retrieves the cached CPU packages information from the summary data.
 
@@ -1223,7 +1225,7 @@ class XMRigAPI:
             return False
 
     @property
-    def sum_cpu_nodes(self) -> int | bool:
+    def sum_cpu_nodes(self) -> Union[int, bool]:
         """
         Retrieves the cached CPU nodes information from the summary data.
 
@@ -1238,7 +1240,7 @@ class XMRigAPI:
             return False
 
     @property
-    def sum_cpu_backend(self) -> str | bool:
+    def sum_cpu_backend(self) -> Union[str, bool]:
         """
         Retrieves the cached CPU backend information from the summary data.
 
@@ -1253,7 +1255,7 @@ class XMRigAPI:
             return False
 
     @property
-    def sum_cpu_msr(self) -> str | bool:
+    def sum_cpu_msr(self) -> Union[str, bool]:
         """
         Retrieves the cached CPU msr information from the summary data.
 
@@ -1268,7 +1270,7 @@ class XMRigAPI:
             return False
 
     @property
-    def sum_cpu_assembly(self) -> str | bool:
+    def sum_cpu_assembly(self) -> Union[str, bool]:
         """
         Retrieves the cached CPU assembly information from the summary data.
 
@@ -1283,7 +1285,7 @@ class XMRigAPI:
             return False
 
     @property
-    def sum_cpu_arch(self) -> str | bool:
+    def sum_cpu_arch(self) -> Union[str, bool]:
         """
         Retrieves the cached CPU architecture information from the summary data.
 
@@ -1298,7 +1300,7 @@ class XMRigAPI:
             return False
 
     @property
-    def sum_cpu_flags(self) -> list | bool:
+    def sum_cpu_flags(self) -> Union[List[str], bool]:
         """
         Retrieves the cached CPU flags information from the summary data.
 
@@ -1313,7 +1315,7 @@ class XMRigAPI:
             return False
 
     @property
-    def sum_donate_level(self) -> int | bool:
+    def sum_donate_level(self) -> Union[int, bool]:
         """
         Retrieves the cached donation level information from the summary data.
 
@@ -1328,7 +1330,7 @@ class XMRigAPI:
             return False
 
     @property
-    def sum_paused(self) -> bool | None:
+    def sum_paused(self) -> Optional[bool]:
         """
         Retrieves the cached paused status of the miner from the summary data.
 
@@ -1343,7 +1345,7 @@ class XMRigAPI:
             return None
 
     @property
-    def sum_algorithms(self) -> list | bool:
+    def sum_algorithms(self) -> Union[List[str], bool]:
         """
         Retrieves the cached algorithms information from the summary data.
 
@@ -1358,7 +1360,7 @@ class XMRigAPI:
             return False
 
     @property
-    def sum_hashrates(self) -> dict | bool:
+    def sum_hashrates(self) -> Union[Dict[str, Any], bool]:
         """
         Retrieves the cached current hashrates from the summary data.
 
@@ -1373,7 +1375,7 @@ class XMRigAPI:
             return False
 
     @property
-    def sum_hashrate_10s(self) -> float | bool:
+    def sum_hashrate_10s(self) -> Union[float, bool]:
         """
         Retrieves the cached current hashrate (10s) from the summary data.
 
@@ -1388,7 +1390,7 @@ class XMRigAPI:
             return False
 
     @property
-    def sum_hashrate_1m(self) -> float | bool:
+    def sum_hashrate_1m(self) -> Union[float, bool]:
         """
         Retrieves the cached current hashrate (1m) from the summary data.
 
@@ -1403,7 +1405,7 @@ class XMRigAPI:
             return False
 
     @property
-    def sum_hashrate_15m(self) -> float | bool:
+    def sum_hashrate_15m(self) -> Union[float, bool]:
         """
         Retrieves the cached current hashrate (15m) from the summary data.
 
@@ -1418,7 +1420,7 @@ class XMRigAPI:
             return False
 
     @property
-    def sum_hashrate_highest(self) -> float | bool:
+    def sum_hashrate_highest(self) -> Union[float, bool]:
         """
         Retrieves the cached current hashrate (highest) from the summary data.
 
@@ -1433,7 +1435,7 @@ class XMRigAPI:
             return False
 
     @property
-    def sum_hugepages(self) -> list | bool:
+    def sum_hugepages(self) -> Union[List[Dict[str, Any]], bool]:
         """
         Retrieves the cached current hugepages from the summary data.
 
@@ -1448,7 +1450,7 @@ class XMRigAPI:
             return False
 
     @property
-    def enabled_backends(self) -> list | bool:
+    def enabled_backends(self) -> Union[List[str], bool]:
         """
         Retrieves the cached currently enabled backends from the backends data.
 
@@ -1467,7 +1469,7 @@ class XMRigAPI:
             return False
     
     @property
-    def be_cpu_type(self) -> str | bool:
+    def be_cpu_type(self) -> Union[str, bool]:
         """
         Retrieves the cached CPU type status value from the backends data.
 
@@ -1482,7 +1484,7 @@ class XMRigAPI:
             return False
 
     @property
-    def be_cpu_enabled(self) -> bool | None:
+    def be_cpu_enabled(self) -> Optional[bool]:
         """
         Retrieves the cached CPU enabled status value from the backends data.
 
@@ -1497,7 +1499,7 @@ class XMRigAPI:
             return None
 
     @property
-    def be_cpu_algo(self) -> str | bool:
+    def be_cpu_algo(self) -> Union[str, bool]:
         """
         Retrieves the cached CPU algorithm information from the backends data.
 
@@ -1512,7 +1514,7 @@ class XMRigAPI:
             return False
 
     @property
-    def be_cpu_profile(self) -> str | bool:
+    def be_cpu_profile(self) -> Union[str, bool]:
         """
         Retrieves the cached CPU profile information from the backends data.
 
@@ -1527,7 +1529,7 @@ class XMRigAPI:
             return False
 
     @property
-    def be_cpu_hw_aes(self) -> bool | None:
+    def be_cpu_hw_aes(self) -> Optional[bool]:
         """
         Retrieves the cached CPU hw-aes support value from the backends data.
 
@@ -1542,7 +1544,7 @@ class XMRigAPI:
             return None
 
     @property
-    def be_cpu_priority(self) -> int | bool:
+    def be_cpu_priority(self) -> Union[int, bool]:
         """
         Retrieves the cached CPU priority from the backends data. 
 
@@ -1560,7 +1562,7 @@ class XMRigAPI:
             return False
 
     @property
-    def be_cpu_msr(self) -> bool | None:
+    def be_cpu_msr(self) -> Optional[bool]:
         """
         Retrieves the cached CPU msr information from the backends data.
 
@@ -1575,7 +1577,7 @@ class XMRigAPI:
             return None
 
     @property
-    def be_cpu_asm(self) -> str | bool:
+    def be_cpu_asm(self) -> Union[str, bool]:
         """
         Retrieves the cached CPU asm information from the backends data.
 
@@ -1590,7 +1592,7 @@ class XMRigAPI:
             return False
 
     @property
-    def be_cpu_argon2_impl(self) -> str | bool:
+    def be_cpu_argon2_impl(self) -> Union[str, bool]:
         """
         Retrieves the cached CPU argon2 implementation information from the backends data.
 
@@ -1605,7 +1607,7 @@ class XMRigAPI:
             return False
 
     @property
-    def be_cpu_hugepages(self) -> list | bool:
+    def be_cpu_hugepages(self) -> Union[List[Dict[str, Any]], bool]:
         """
         Retrieves the cached CPU hugepages information from the backends data.
 
@@ -1620,7 +1622,7 @@ class XMRigAPI:
             return False
 
     @property
-    def be_cpu_memory(self) -> int | bool:
+    def be_cpu_memory(self) -> Union[int, bool]:
         """
         Retrieves the cached CPU memory information from the backends data.
 
@@ -1635,7 +1637,7 @@ class XMRigAPI:
             return False
     
     @property
-    def be_cpu_hashrates(self) -> list | bool:
+    def be_cpu_hashrates(self) -> Union[List[float], bool]:
         """
         Retrieves the cached CPU hashrates information from the backends data.
 
@@ -1650,7 +1652,7 @@ class XMRigAPI:
             return False
     
     @property
-    def be_cpu_hashrate_10s(self) -> float | bool:
+    def be_cpu_hashrate_10s(self) -> Union[float, bool]:
         """
         Retrieves the cached CPU hashrate (10s) information from the backends data.
 
@@ -1665,7 +1667,7 @@ class XMRigAPI:
             return False
     
     @property
-    def be_cpu_hashrate_1m(self) -> float | bool:
+    def be_cpu_hashrate_1m(self) -> Union[float, bool]:
         """
         Retrieves the cached CPU hashrate (1m) information from the backends data.
 
@@ -1680,7 +1682,7 @@ class XMRigAPI:
             return False
     
     @property
-    def be_cpu_hashrate_15m(self) -> float | bool:
+    def be_cpu_hashrate_15m(self) -> Union[float, bool]:
         """
         Retrieves the cached CPU hashrate (15m) information from the backends data.
 
@@ -1695,7 +1697,7 @@ class XMRigAPI:
             return False
     
     @property
-    def be_cpu_threads(self) -> list | bool:
+    def be_cpu_threads(self) -> Union[List[Dict[str, Any]], bool]:
         """
         Retrieves the cached CPU threads information from the backends data.
 
@@ -1710,7 +1712,7 @@ class XMRigAPI:
             return False
 
     @property
-    def be_cpu_threads_intensity(self) -> list | bool:
+    def be_cpu_threads_intensity(self) -> Union[List[int], bool]:
         """
         Retrieves the cached CPU threads intensity information from the backends data.
 
@@ -1728,7 +1730,7 @@ class XMRigAPI:
             return False
     
     @property
-    def be_cpu_threads_affinity(self) -> list | bool:
+    def be_cpu_threads_affinity(self) -> Union[List[int], bool]:
         """
         Retrieves the cached CPU threads affinity information from the backends data.
 
@@ -1746,7 +1748,7 @@ class XMRigAPI:
             return False
     
     @property
-    def be_cpu_threads_av(self) -> list | bool:
+    def be_cpu_threads_av(self) -> Union[List[int], bool]:
         """
         Retrieves the cached CPU threads av information from the backends data.
 
@@ -1764,7 +1766,7 @@ class XMRigAPI:
             return False
     
     @property
-    def be_cpu_threads_hashrates_10s(self) -> list | bool:
+    def be_cpu_threads_hashrates_10s(self) -> Union[List[float], bool]:
         """
         Retrieves the cached CPU threads hashrates (10s) information from the backends data.
 
@@ -1782,7 +1784,7 @@ class XMRigAPI:
             return False
     
     @property
-    def be_cpu_threads_hashrates_1m(self) -> list | bool:
+    def be_cpu_threads_hashrates_1m(self) -> Union[List[float], bool]:
         """
         Retrieves the cached CPU threads hashrates (1m) information from the backends data.
 
@@ -1800,7 +1802,7 @@ class XMRigAPI:
             return False
     
     @property
-    def be_cpu_threads_hashrates_15m(self) -> list | bool:
+    def be_cpu_threads_hashrates_15m(self) -> Union[List[float], bool]:
         """
         Retrieves the cached CPU threads hashrates (15m) information from the backends data.
 
@@ -1818,7 +1820,7 @@ class XMRigAPI:
             return False
 
     @property
-    def be_opencl_type(self) -> str | bool:
+    def be_opencl_type(self) -> Union[str, bool]:
         """
         Retrieves the cached OpenCL type information from the backends data.
 
@@ -1833,7 +1835,7 @@ class XMRigAPI:
             return None
 
     @property
-    def be_opencl_enabled(self) -> bool | None:
+    def be_opencl_enabled(self) -> Optional[bool]:
         """
         Retrieves the cached OpenCL enabled information from the backends data.
 
@@ -1848,7 +1850,7 @@ class XMRigAPI:
             return None
 
     @property
-    def be_opencl_algo(self) -> str | bool:
+    def be_opencl_algo(self) -> Union[str, bool]:
         """
         Retrieves the cached OpenCL algorithm information from the backends data.
 
@@ -1863,7 +1865,7 @@ class XMRigAPI:
             return False
 
     @property
-    def be_opencl_profile(self) -> str | bool:
+    def be_opencl_profile(self) -> Union[str, bool]:
         """
         Retrieves the cached OpenCL profile information from the backends data.
 
@@ -1878,7 +1880,7 @@ class XMRigAPI:
             return False
 
     @property
-    def be_opencl_platform(self) -> dict | bool:
+    def be_opencl_platform(self) -> Union[Dict[str, Any], bool]:
         """
         Retrieves the cached OpenCL platform information from the backends data.
 
@@ -1893,7 +1895,7 @@ class XMRigAPI:
             return False
     
     @property
-    def be_opencl_platform_index(self) -> int | bool:
+    def be_opencl_platform_index(self) -> Union[int, bool]:
         """
         Retrieves the cached OpenCL platform index information from the backends data.
 
@@ -1908,7 +1910,7 @@ class XMRigAPI:
             return False
     
     @property
-    def be_opencl_platform_profile(self) -> str | bool:
+    def be_opencl_platform_profile(self) -> Union[str, bool]:
         """
         Retrieves the cached OpenCL platform profile information from the backends data.
 
@@ -1923,7 +1925,7 @@ class XMRigAPI:
             return False
     
     @property
-    def be_opencl_platform_version(self) -> str | bool:
+    def be_opencl_platform_version(self) -> Union[str, bool]:
         """
         Retrieves the cached OpenCL platform version information from the backends data.
 
@@ -1938,7 +1940,7 @@ class XMRigAPI:
             return False
     
     @property
-    def be_opencl_platform_name(self) -> str | bool:
+    def be_opencl_platform_name(self) -> Union[str, bool]:
         """
         Retrieves the cached OpenCL platform name information from the backends data.
 
@@ -1953,7 +1955,7 @@ class XMRigAPI:
             return False
     
     @property
-    def be_opencl_platform_vendor(self) -> str | bool:
+    def be_opencl_platform_vendor(self) -> Union[str, bool]:
         """
         Retrieves the cached OpenCL platform vendor information from the backends data.
 
@@ -1968,7 +1970,7 @@ class XMRigAPI:
             return False
     
     @property
-    def be_opencl_platform_extensions(self) -> str | bool:
+    def be_opencl_platform_extensions(self) -> Union[str, bool]:
         """
         Retrieves the cached OpenCL platform extensions information from the backends data.
 
@@ -1983,7 +1985,7 @@ class XMRigAPI:
             return False
     
     @property
-    def be_opencl_hashrates(self) -> list | bool:
+    def be_opencl_hashrates(self) -> Union[List[float], bool]:
         """
         Retrieves the cached OpenCL hashrates information from the backends data.
 
@@ -1998,7 +2000,7 @@ class XMRigAPI:
             return False
     
     @property
-    def be_opencl_hashrate_10s(self) -> float | bool:
+    def be_opencl_hashrate_10s(self) -> Union[float, bool]:
         """
         Retrieves the cached OpenCL hashrate (10s) information from the backends data.
 
@@ -2013,7 +2015,7 @@ class XMRigAPI:
             return False
     
     @property
-    def be_opencl_hashrate_1m(self) -> float | bool:
+    def be_opencl_hashrate_1m(self) -> Union[float, bool]:
         """
         Retrieves the cached OpenCL hashrate (1m) information from the backends data.
 
@@ -2028,7 +2030,7 @@ class XMRigAPI:
             return False
     
     @property
-    def be_opencl_hashrate_15m(self) -> float | bool:
+    def be_opencl_hashrate_15m(self) -> Union[float, bool]:
         """
         Retrieves the cached OpenCL hashrate (15m) information from the backends data.
 
@@ -2043,7 +2045,7 @@ class XMRigAPI:
             return False
 
     @property
-    def be_opencl_threads(self) -> dict | bool:
+    def be_opencl_threads(self) -> Union[Dict[str, Any], bool]:
         """
         Retrieves the cached OpenCL threads information from the backends data.
 
@@ -2058,7 +2060,7 @@ class XMRigAPI:
             return False
 
     @property
-    def be_opencl_threads_index(self) -> int | bool:
+    def be_opencl_threads_index(self) -> Union[int, bool]:
         """
         Retrieves the cached OpenCL threads index information from the backends data.
 
@@ -2073,7 +2075,7 @@ class XMRigAPI:
             return False
     
     @property
-    def be_opencl_threads_intensity(self) -> int | bool:
+    def be_opencl_threads_intensity(self) -> Union[int, bool]:
         """
         Retrieves the cached OpenCL threads intensity information from the backends data.
 
@@ -2088,7 +2090,7 @@ class XMRigAPI:
             return False
     
     @property
-    def be_opencl_threads_worksize(self) -> int | bool:
+    def be_opencl_threads_worksize(self) -> Union[int, bool]:
         """
         Retrieves the cached OpenCL threads worksize information from the backends data.
 
@@ -2103,7 +2105,7 @@ class XMRigAPI:
             return False
     
     @property
-    def be_opencl_threads_amount(self) -> list | bool:
+    def be_opencl_threads_amount(self) -> Union[List[int], bool]:
         """
         Retrieves the cached OpenCL threads amount information from the backends data.
 
@@ -2118,7 +2120,7 @@ class XMRigAPI:
             return False
     
     @property
-    def be_opencl_threads_unroll(self) -> int | bool:
+    def be_opencl_threads_unroll(self) -> Union[int, bool]:
         """
         Retrieves the cached OpenCL threads unroll information from the backends data.
 
@@ -2133,7 +2135,7 @@ class XMRigAPI:
             return False
     
     @property
-    def be_opencl_threads_affinity(self) -> int | bool:
+    def be_opencl_threads_affinity(self) -> Union[int, bool]:
         """
         Retrieves the cached OpenCL threads affinity information from the backends data.
 
@@ -2148,7 +2150,7 @@ class XMRigAPI:
             return False
     
     @property
-    def be_opencl_threads_hashrates(self) -> list | bool:
+    def be_opencl_threads_hashrates(self) -> Union[List[float], bool]:
         """
         Retrieves the cached OpenCL threads hashrates information from the backends data.
 
@@ -2163,7 +2165,7 @@ class XMRigAPI:
             return False
     
     @property
-    def be_opencl_threads_hashrates_10s(self) -> float | bool:
+    def be_opencl_threads_hashrate_10s(self) -> Union[float, bool]:
         """
         Retrieves the cached OpenCL threads hashrates (10s) information from the backends data.
 
@@ -2178,7 +2180,7 @@ class XMRigAPI:
             return False
     
     @property
-    def be_opencl_threads_hashrates_1m(self) -> float | bool:
+    def be_opencl_threads_hashrate_1m(self) -> Union[float, bool]:
         """
         Retrieves the cached OpenCL threads hashrates (1m) information from the backends data.
 
@@ -2193,7 +2195,7 @@ class XMRigAPI:
             return False
     
     @property
-    def be_opencl_threads_hashrates_15m(self) -> float | bool:
+    def be_opencl_threads_hashrate_15m(self) -> Union[float, bool]:
         """
         Retrieves the cached OpenCL threads hashrates (15m) information from the backends data.
 
@@ -2208,7 +2210,7 @@ class XMRigAPI:
             return False
     
     @property
-    def be_opencl_threads_board(self) -> str | bool:
+    def be_opencl_threads_board(self) -> Union[str, bool]:
         """
         Retrieves the cached OpenCL threads board information from the backends data.
 
@@ -2223,7 +2225,7 @@ class XMRigAPI:
             return False
     
     @property
-    def be_opencl_threads_name(self) -> str | bool:
+    def be_opencl_threads_name(self) -> Union[str, bool]:
         """
         Retrieves the cached OpenCL threads name information from the backends data.
 
@@ -2238,7 +2240,7 @@ class XMRigAPI:
             return False
     
     @property
-    def be_opencl_threads_bus_id(self) -> str | bool:
+    def be_opencl_threads_bus_id(self) -> Union[str, bool]:
         """
         Retrieves the cached OpenCL threads bus ID information from the backends data.
 
@@ -2253,7 +2255,7 @@ class XMRigAPI:
             return False
     
     @property
-    def be_opencl_threads_cu(self) -> int | bool:
+    def be_opencl_threads_cu(self) -> Union[int, bool]:
         """
         Retrieves the cached OpenCL threads cu information from the backends data.
 
@@ -2268,7 +2270,7 @@ class XMRigAPI:
             return False
     
     @property
-    def be_opencl_threads_global_mem(self) -> int | bool:
+    def be_opencl_threads_global_mem(self) -> Union[int, bool]:
         """
         Retrieves the cached OpenCL threads global memory information from the backends data.
 
@@ -2283,7 +2285,7 @@ class XMRigAPI:
             return False
     
     @property
-    def be_opencl_threads_health(self) -> dict | bool:
+    def be_opencl_threads_health(self) -> Union[Dict[str, Any], bool]:
         """
         Retrieves the cached OpenCL threads health information from the backends data.
 
@@ -2298,7 +2300,7 @@ class XMRigAPI:
             return False
     
     @property
-    def be_opencl_threads_health_temp(self) -> int | bool:
+    def be_opencl_threads_health_temp(self) -> Union[int, bool]:
         """
         Retrieves the cached OpenCL threads health temperature information from the backends data.
 
@@ -2313,7 +2315,7 @@ class XMRigAPI:
             return False
     
     @property
-    def be_opencl_threads_health_power(self) -> int | bool:
+    def be_opencl_threads_health_power(self) -> Union[int, bool]:
         """
         Retrieves the cached OpenCL threads health power information from the backends data.
 
@@ -2328,7 +2330,7 @@ class XMRigAPI:
             return False
     
     @property
-    def be_opencl_threads_health_clock(self) -> int | bool:
+    def be_opencl_threads_health_clock(self) -> Union[int, bool]:
         """
         Retrieves the cached OpenCL threads health clock information from the backends data.
 
@@ -2343,7 +2345,7 @@ class XMRigAPI:
             return False
     
     @property
-    def be_opencl_threads_health_mem_clock(self) -> int | bool:
+    def be_opencl_threads_health_mem_clock(self) -> Union[int, bool]:
         """
         Retrieves the cached OpenCL threads health memory clock information from the backends data.
 
@@ -2358,7 +2360,7 @@ class XMRigAPI:
             return False
     
     @property
-    def be_opencl_threads_health_rpm(self) -> int | bool:
+    def be_opencl_threads_health_rpm(self) -> Union[int, bool]:
         """
         Retrieves the cached OpenCL threads health rpm information from the backends data.
 
@@ -2373,7 +2375,7 @@ class XMRigAPI:
             return False
 
     @property
-    def be_cuda_type(self) -> str | bool:
+    def be_cuda_type(self) -> Union[str, bool]:
         """
         Retrieves the cached Cuda current type info from the backends data.
 
@@ -2388,7 +2390,7 @@ class XMRigAPI:
             return False
 
     @property
-    def be_cuda_enabled(self) -> bool | None:
+    def be_cuda_enabled(self) -> Optional[bool]:
         """
         Retrieves the cached Cuda current enabled info from the backends data.
 
@@ -2403,7 +2405,7 @@ class XMRigAPI:
             return None
 
     @property
-    def be_cuda_algo(self) -> str | bool:
+    def be_cuda_algo(self) -> Union[str, bool]:
         """
         Retrieves the cached Cuda algorithm information from the backends data.
 
@@ -2418,7 +2420,7 @@ class XMRigAPI:
             return False
 
     @property
-    def be_cuda_profile(self) -> str | bool:
+    def be_cuda_profile(self) -> Union[str, bool]:
         """
         Retrieves the cached Cuda profile information from the backends data.
 
@@ -2433,7 +2435,7 @@ class XMRigAPI:
             return False
 
     @property
-    def be_cuda_versions(self) -> dict | bool:
+    def be_cuda_versions(self) -> Union[Dict[str, Any], bool]:
         """
         Retrieves the cached Cuda versions information from the backends data.
 
@@ -2448,7 +2450,7 @@ class XMRigAPI:
             return False
 
     @property
-    def be_cuda_runtime(self) -> str | bool:
+    def be_cuda_runtime(self) -> Union[str, bool]:
         """
         Retrieves the cached Cuda runtime information from the backends data.
 
@@ -2463,7 +2465,7 @@ class XMRigAPI:
             return False
 
     @property
-    def be_cuda_driver(self) -> str | bool:
+    def be_cuda_driver(self) -> Union[str, bool]:
         """
         Retrieves the cached Cuda driver information from the backends data.
 
@@ -2478,7 +2480,7 @@ class XMRigAPI:
             return False
 
     @property
-    def be_cuda_plugin(self) -> str | bool:
+    def be_cuda_plugin(self) -> Union[str, bool]:
         """
         Retrieves the cached Cuda plugin information from the backends data.
 
@@ -2493,7 +2495,7 @@ class XMRigAPI:
             return False
 
     @property
-    def be_cuda_hashrates(self) -> list | bool:
+    def be_cuda_hashrates(self) -> Union[List[float], bool]:
         """
         Retrieves the cached Cuda current hashrates info from the backends data.
 
@@ -2508,7 +2510,7 @@ class XMRigAPI:
             return False
 
     @property
-    def be_cuda_hashrate_10s(self) -> float | bool:
+    def be_cuda_hashrate_10s(self) -> Union[float, bool]:
         """
         Retrieves the cached Cuda current hashrate (10s) info from the backends data.
 
@@ -2523,7 +2525,7 @@ class XMRigAPI:
             return False
 
     @property
-    def be_cuda_hashrate_1m(self) -> float | bool:
+    def be_cuda_hashrate_1m(self) -> Union[float, bool]:
         """
         Retrieves the cached Cuda current hashrate (1m) info from the backends data.
 
@@ -2538,7 +2540,7 @@ class XMRigAPI:
             return False
 
     @property
-    def be_cuda_hashrate_15m(self) -> float | bool:
+    def be_cuda_hashrate_15m(self) -> Union[float, bool]:
         """
         Retrieves the cached Cuda current hashrate (15m) info from the backends data.
 
@@ -2553,7 +2555,7 @@ class XMRigAPI:
             return False
 
     @property
-    def be_cuda_threads(self) -> dict | bool:
+    def be_cuda_threads(self) -> Union[Dict[str, Any], bool]:
         """
         Retrieves the cached Cuda current threads info from the backends data.
 
@@ -2568,7 +2570,7 @@ class XMRigAPI:
             return False
 
     @property
-    def be_cuda_threads_index(self) -> int | bool:
+    def be_cuda_threads_index(self) -> Union[int, bool]:
         """
         Retrieves the cached Cuda current threads index info from the backends data.
 
@@ -2583,7 +2585,7 @@ class XMRigAPI:
             return False
 
     @property
-    def be_cuda_threads_amount(self) -> int | bool:
+    def be_cuda_threads_amount(self) -> Union[int, bool]:
         """
         Retrieves the cached Cuda current threads amount info from the backends data.
 
@@ -2598,7 +2600,7 @@ class XMRigAPI:
             return False
 
     @property
-    def be_cuda_threads_blocks(self) -> int | bool:
+    def be_cuda_threads_blocks(self) -> Union[int, bool]:
         """
         Retrieves the cached Cuda current threads blocks info from the backends data.
 
@@ -2613,7 +2615,7 @@ class XMRigAPI:
             return False
 
     @property
-    def be_cuda_threads_bfactor(self) -> int | bool:
+    def be_cuda_threads_bfactor(self) -> Union[int, bool]:
         """
         Retrieves the cached Cuda current threads bfactor info from the backends data.
 
@@ -2628,7 +2630,7 @@ class XMRigAPI:
             return False
 
     @property
-    def be_cuda_threads_bsleep(self) -> int | bool:
+    def be_cuda_threads_bsleep(self) -> Union[int, bool]:
         """
         Retrieves the cached Cuda current threads bsleep info from the backends data.
 
@@ -2643,7 +2645,7 @@ class XMRigAPI:
             return False
 
     @property
-    def be_cuda_threads_affinity(self) -> int | bool:
+    def be_cuda_threads_affinity(self) -> Union[int, bool]:
         """
         Retrieves the cached Cuda current threads affinity info from the backends data.
 
@@ -2658,7 +2660,7 @@ class XMRigAPI:
             return False
 
     @property
-    def be_cuda_threads_dataset_host(self) -> bool | None:
+    def be_cuda_threads_dataset_host(self) -> Optional[bool]:
         """
         Retrieves the cached Cuda current threads dataset host info from the backends data.
 
@@ -2673,7 +2675,7 @@ class XMRigAPI:
             return None
 
     @property
-    def be_cuda_threads_hashrates(self) -> list | bool:
+    def be_cuda_threads_hashrates(self) -> Union[List[float], bool]:
         """
         Retrieves the cached Cuda current hashrates (10s/1m/15m) from the summary data.
 
@@ -2688,7 +2690,7 @@ class XMRigAPI:
             return False
 
     @property
-    def be_cuda_threads_hashrate_10s(self) -> float | bool:
+    def be_cuda_threads_hashrate_10s(self) -> Union[float, bool]:
         """
         Retrieves the cached Cuda current hashrate (10s) from the summary data.
 
@@ -2703,7 +2705,7 @@ class XMRigAPI:
             return False
 
     @property
-    def be_cuda_threads_hashrate_1m(self) -> float | bool:
+    def be_cuda_threads_hashrate_1m(self) -> Union[float, bool]:
         """
         Retrieves the cached Cuda current hashrate (1m) from the summary data.
 
@@ -2718,7 +2720,7 @@ class XMRigAPI:
             return False
 
     @property
-    def be_cuda_threads_hashrate_15m(self) -> float | bool:
+    def be_cuda_threads_hashrate_15m(self) -> Union[float, bool]:
         """
         Retrieves the cached Cuda current hashrate (15m) from the summary data.
 
@@ -2733,7 +2735,7 @@ class XMRigAPI:
             return False
 
     @property
-    def be_cuda_threads_name(self) -> str | bool:
+    def be_cuda_threads_name(self) -> Union[str, bool]:
         """
         Retrieves the cached Cuda current threads name info from the backends data.
 
@@ -2748,7 +2750,7 @@ class XMRigAPI:
             return False
 
     @property
-    def be_cuda_threads_bus_id(self) -> str | bool:
+    def be_cuda_threads_bus_id(self) -> Union[str, bool]:
         """
         Retrieves the cached Cuda current threads bus ID info from the backends data.
 
@@ -2763,7 +2765,7 @@ class XMRigAPI:
             return False
 
     @property
-    def be_cuda_threads_smx(self) -> int | bool:
+    def be_cuda_threads_smx(self) -> Union[int, bool]:
         """
         Retrieves the cached Cuda current threads smx info from the backends data.
 
@@ -2778,7 +2780,7 @@ class XMRigAPI:
             return False
 
     @property
-    def be_cuda_threads_arch(self) -> int | bool:
+    def be_cuda_threads_arch(self) -> Union[int, bool]:
         """
         Retrieves the cached Cuda current threads arch info from the backends data.
 
@@ -2793,7 +2795,7 @@ class XMRigAPI:
             return False
 
     @property
-    def be_cuda_threads_global_mem(self) -> int | bool:
+    def be_cuda_threads_global_mem(self) -> Union[int, bool]:
         """
         Retrieves the cached Cuda current threads global memory info from the backends data.
 
@@ -2808,7 +2810,7 @@ class XMRigAPI:
             return False
 
     @property
-    def be_cuda_threads_clock(self) -> int | bool:
+    def be_cuda_threads_clock(self) -> Union[int, bool]:
         """
         Retrieves the cached Cuda current threads clock info from the backends data.
 
@@ -2823,7 +2825,7 @@ class XMRigAPI:
             return False
 
     @property
-    def be_cuda_threads_memory_clock(self) -> int | bool:
+    def be_cuda_threads_memory_clock(self) -> Union[int, bool]:
         """
         Retrieves the cached Cuda current threads memory clock info from the backends data.
 

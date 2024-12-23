@@ -15,18 +15,19 @@ import requests
 from xmrig.api import XMRigAPI
 from xmrig.helpers import _init_db, _delete_miner_from_db, log, XMRigAPIError
 from sqlalchemy.engine import Engine
+from typing import Callable, Optional, List
 
 class XMRigManager:
     """
     A class to manage multiple XMRig miners via their APIs.
     """
 
-    def __init__(self, api_factory: callable = XMRigAPI, db_url: str = 'sqlite:///xmrig-api.db'):
+    def __init__(self, api_factory: Callable = XMRigAPI, db_url: str = 'sqlite:///xmrig-api.db'):
         """
         Initializes the manager with an empty collection of miners.
 
         Args:
-            api_factory (callable): Factory for creating XMRigAPI instances.
+            api_factory (Callable): Factory for creating XMRigAPI instances.
             db_url (str): Database URL for storing miner data.
         """
         self._miners = {}
@@ -35,7 +36,7 @@ class XMRigManager:
         if self._db_url is not None:
             self._db_engine = _init_db(self._db_url)
 
-    def add_miner(self, miner_name: str, ip: str, port: str, access_token: str = None, tls_enabled: bool = False) -> None:
+    def add_miner(self, miner_name: str, ip: str, port: int, access_token: Optional[str] = None, tls_enabled: bool = False) -> None:
         """
         Adds a new miner to the manager.
 
@@ -43,7 +44,7 @@ class XMRigManager:
             miner_name (str): A unique name for the miner.
             ip (str): IP address or domain of the XMRig API.
             port (int): Port of the XMRig API.
-            access_token (str, optional): Access token for authorization. Defaults to None.
+            access_token (Optional[str], optional): Access token for authorization. Defaults to None.
             tls_enabled (bool, optional): TLS status of the miner/API. Defaults to False.
         """
         try:
@@ -118,7 +119,7 @@ class XMRigManager:
             log.error(f"An error occurred performing action '{action}' on all miners: {e}")
             raise XMRigAPIError() from e
 
-    def get_all_miners_endpoints(self) -> None:
+    def get_all_miners_endpoints(self) -> bool:
         """
         Updates all miners' cached data.
         """
@@ -129,6 +130,7 @@ class XMRigManager:
                     log.info(f"Miner '{miner_name}' successfully updated.")
                 else:
                     log.warning(f"Failed to update miner '{miner_name}'.")
+            return True
         except requests.exceptions.JSONDecodeError as e:
             log.error(f"An error occurred decoding the response: {e}")
             return False
@@ -136,7 +138,7 @@ class XMRigManager:
             log.error(f"An error occurred updating all miners' endpoints: {e}")
             raise XMRigAPIError() from e
 
-    def list_miners(self) -> list[str]:
+    def list_miners(self) -> List[str]:
         """
         Lists all managed miners.
 

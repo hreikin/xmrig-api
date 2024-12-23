@@ -17,6 +17,7 @@ import pandas as pd
 from sqlalchemy import create_engine, text
 from sqlalchemy.engine import Engine
 from datetime import datetime
+from typing import Dict, Any
 
 log = logging.getLogger("XMRigAPI")
 
@@ -94,12 +95,12 @@ def _init_db(db_url: str) -> Engine:
         log.error(f"An error occurred initializing the database: {e}")
         raise XMRigAPIError() from e
 
-def _insert_data_to_db(json_data: dict, table_name: str, engine: Engine) -> None:
+def _insert_data_to_db(json_data: Dict[str, Any], table_name: str, engine: Engine) -> None:
     """
     Inserts JSON data into the specified database table.
 
     Args:
-        json_data (dict): JSON data to insert.
+        json_data (Dict[str, Any]): JSON data to insert.
         table_name (str): Name of the table to insert data into.
         engine (Engine): SQLAlchemy engine instance.
     """
