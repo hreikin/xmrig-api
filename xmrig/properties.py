@@ -9,7 +9,7 @@ from xmrig.helpers import log, XMRigAPIError
 from sqlalchemy.engine import Engine
 
 # TODO: Integrate database functionality to fallback and retrieve data from the database if the API or response is not available.
-# TODO: If the API, response or data from the database is not available, return a string like "N/A" or "Not Available" instead of False.
+# TODO: If the data from the cached response or data from the database is not available, return a string like "N/A" or "Not Available" instead of False.
 
 class XMRigProperties:
     """
