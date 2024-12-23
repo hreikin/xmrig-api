@@ -11,6 +11,9 @@ logging.basicConfig(
     ]
 )
 log = logging.getLogger("MyLog")
+log.info("######################################################################################################")
+log.info("Please ensure you have a running XMRig instance to connect to and have updated the connection details.")
+log.info("######################################################################################################")
 
 # Add miners
 manager = XMRigManager()

@@ -15,8 +15,9 @@ log.info("######################################################################
 log.info("Please ensure you have a running XMRig instance to connect to and have updated the connection details.")
 log.info("######################################################################################################")
 
-# Update all endpoints for all miners
+# Get individual miners
 manager = XMRigManager()
 manager.add_miner("Miner1", "127.0.0.1", "37841", "SECRET", tls_enabled=False)
 manager.add_miner("Miner2", "127.0.0.1", "37842", "SECRET", tls_enabled=False)
-manager.get_all_miners_endpoints()
+miner_a = manager.get_miner("Miner1")
+miner_b = manager.get_miner("Miner2")
