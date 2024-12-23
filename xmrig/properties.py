@@ -1,8 +1,21 @@
+"""
+This module provides the XMRigProperties class, which is used to retrieve and cache various
+properties and statistics from the XMRig miner's API responses.
+"""
+
 from typing import Any, Dict, List, Optional, Union
 from datetime import timedelta
 from xmrig.helpers import log, XMRigAPIError
 
 class XMRigProperties:
+    """
+    A class to represent and cache properties and statistics from the XMRig miner's API responses.
+
+    Attributes:
+        summary_response (Dict[str, Any]): Cached summary endpoint data.
+        backends_response (Dict[str, Any]): Cached backends endpoint data.
+        config_response (Dict[str, Any]): Cached config endpoint data.
+    """
     def __init__(self, summary_response: Dict[str, Any], backends_response: Dict[str, Any], config_response: Dict[str, Any]):
         self._summary_response = summary_response
         self._backends_response = backends_response
