@@ -14,7 +14,6 @@ For more examples, visit the [Examples](examples.md) page.
 
 - **Support for Multiple Miners**: Configure and manage multiple miners from a single instance.
 - **Data Persistence**: Store and manage miner data in a database to ensure resilience and prevent data loss during API or miner restarts.
-- **Comprehensive Test Coverage**: A robust test suite for enhanced reliability and easier development.
 - **Getting Started Examples**: Practical examples to help new users quickly understand and use the tool.
 - **Reference Documentation**: Detailed documentation to guide you through all features and functions.  
 - **Logging**: Configurable logging for better debugging and monitoring.
@@ -28,8 +27,9 @@ For more examples, visit the [Examples](examples.md) page.
 - **Enhanced Data Persistence**: Improved database support with more detailed data storage and retrieval options.
 - **Advanced Configuration Management**: More flexible and powerful configuration management capabilities.
 - **Extended API Coverage**: Support for additional XMRig API endpoints, data and functionalities from other forks, e.g. `xmrig-mo` and `xmrig-proxy`.
-- **Improved Error Handling**: More robust error handling and recovery mechanisms.
 - **Performance Optimization**: Enhancements to improve the performance and efficiency of the module.
+- **Improved Error Handling**: More robust error handling and recovery mechanisms.
+- **Comprehensive Test Coverage**: A robust test suite for enhanced reliability and easier development.
 
 These features make `XMRig-API` an ideal solution for both miners and developers seeking a user-friendly and robust tool.
 
