@@ -6,6 +6,10 @@ properties and statistics from the XMRig miner's API responses.
 from typing import Any, Dict, List, Optional, Union
 from datetime import timedelta
 from xmrig.helpers import log, XMRigAPIError
+from sqlalchemy.engine import Engine
+
+# TODO: Integrate database functionality to fallback and retrieve data from the database if the API or response is not available.
+# TODO: If the API, response or data from the database is not available, return a string like "N/A" or "Not Available" instead of False.
 
 class XMRigProperties:
     """
@@ -16,7 +20,7 @@ class XMRigProperties:
         backends_response (Dict[str, Any]): Cached backends endpoint data.
         config_response (Dict[str, Any]): Cached config endpoint data.
     """
-    def __init__(self, summary_response: Dict[str, Any], backends_response: Dict[str, Any], config_response: Dict[str, Any]):
+    def __init__(self, summary_response: Dict[str, Any], backends_response: Dict[str, Any], config_response: Dict[str, Any], db_engine: Engine):
         self._summary_response = summary_response
         self._backends_response = backends_response
         self._config_response = config_response
