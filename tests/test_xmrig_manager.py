@@ -1,6 +1,6 @@
 import unittest
 from unittest.mock import MagicMock
-from xmrig import XMRigManager
+from xmrig import XMRigManager, XMRigAPIError
 
 class TestXMRigManager(unittest.TestCase):
     def setUp(self):
@@ -29,7 +29,7 @@ class TestXMRigManager(unittest.TestCase):
     def test_add_duplicate_miner(self):
         """Test that adding a miner with a duplicate name raises an error."""
         self.manager.add_miner("Miner1", "192.168.0.101", "8080")
-        with self.assertRaises(ValueError):
+        with self.assertRaises(XMRigAPIError):
             self.manager.add_miner("Miner1", "192.168.0.102", "8081")
 
     def test_remove_miner(self):
@@ -41,7 +41,7 @@ class TestXMRigManager(unittest.TestCase):
 
     def test_remove_nonexistent_miner(self):
         """Test that removing a nonexistent miner raises an error."""
-        with self.assertRaises(ValueError):
+        with self.assertRaises(XMRigAPIError):
             self.manager.remove_miner("NonExistentMiner")
 
     def test_get_miner(self):
@@ -54,7 +54,7 @@ class TestXMRigManager(unittest.TestCase):
 
     def test_get_nonexistent_miner(self):
         """Test that retrieving a nonexistent miner raises an error."""
-        with self.assertRaises(ValueError):
+        with self.assertRaises(XMRigAPIError):
             self.manager.get_miner("NonExistentMiner")
 
     def test_perform_action_on_all(self):
@@ -72,20 +72,32 @@ class TestXMRigManager(unittest.TestCase):
         self.mock_miner_1.pause_miner.assert_called_once()
         self.mock_miner_2.pause_miner.assert_called_once()
 
-    def test_update_all_miners(self):
+    def test_perform_invalid_action_on_all(self):
+        """Test performing an invalid action on all miners."""
+        self.manager.add_miner("Miner1", "192.168.0.101", "8080")
+        self.manager.add_miner("Miner2", "192.168.0.102", "8081")
+
+        # Ensure the mock miners do not have the invalid action method
+        self.mock_miner_1.configure_mock(**{"invalid_action_miner": None})
+        self.mock_miner_2.configure_mock(**{"invalid_action_miner": None})
+
+        with self.assertRaises(XMRigAPIError):
+            self.manager.perform_action_on_all("invalid_action")
+
+    def test_get_all_miners_endpoints(self):
         """Test updating cached data for all miners."""
         self.manager.add_miner("Miner1", "192.168.0.101", "8080")
         self.manager.add_miner("Miner2", "192.168.0.102", "8081")
 
         # Mock methods for the miners
-        self.mock_miner_1.update_all_responses.return_value = True
-        self.mock_miner_2.update_all_responses.return_value = True
+        self.mock_miner_1.get_all_responses.return_value = True
+        self.mock_miner_2.get_all_responses.return_value = True
 
-        self.manager.update_all_miners()
+        self.manager.get_all_miners_endpoints()
 
         # Verify calls
-        self.mock_miner_1.update_all_responses.assert_called_once()
-        self.mock_miner_2.update_all_responses.assert_called_once()
+        self.mock_miner_1.get_all_responses.assert_called_once()
+        self.mock_miner_2.get_all_responses.assert_called_once()
 
     def test_list_miners(self):
         """Test listing all managed miners."""

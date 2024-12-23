@@ -113,6 +113,7 @@ class XMRigManager:
                         log.warning(f"Action '{action}' failed on '{miner_name}'.")
                 else:
                     log.error(f"Action '{action}' is not a valid method for miner API.")
+                    raise XMRigAPIError(f"Action '{action}' is not a valid method for miner API.")
         except Exception as e:
             log.error(f"An error occurred performing action '{action}' on all miners: {e}")
             raise XMRigAPIError() from e
