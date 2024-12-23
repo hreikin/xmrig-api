@@ -103,7 +103,7 @@ class XMRigAPI:
         Args:
             data (Dict[str, Any]): Data to set as properties.
         """
-        self.data = XMRigProperties(self._summary_response, self._backends_response, self._config_response)
+        self.data = XMRigProperties(self._summary_response, self._backends_response, self._config_response, self._db_engine)
 
     def set_auth_header(self) -> bool:
         """
