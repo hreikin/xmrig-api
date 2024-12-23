@@ -7,9 +7,7 @@ from typing import Any, Dict, List, Union
 from datetime import timedelta
 from xmrig.helpers import log
 from sqlalchemy.engine import Engine
-
-# TODO: Integrate database functionality to fallback and retrieve data from the database if the API or response is not available.
-# TODO: If the data from the cached response or data from the database is not available, return a string like "N/A" or "Not Available" instead of False.
+from sqlalchemy.sql import text
 
 class XMRigProperties:
     """
@@ -20,18 +18,19 @@ class XMRigProperties:
         backends_response (Dict[str, Any]): Cached backends endpoint data.
         config_response (Dict[str, Any]): Cached config endpoint data.
     """
-    def __init__(self, summary_response: Dict[str, Any], backends_response: Dict[str, Any], config_response: Dict[str, Any], db_engine: Engine):
+    def __init__(self, summary_response: Dict[str, Any], backends_response: Dict[str, Any], config_response: Dict[str, Any], db_engine: Engine, miner_name: str):
         self._summary_response = summary_response
         self._backends_response = backends_response
         self._config_response = config_response
         self._db_engine = db_engine
+        self._summary_table_name = f"'{miner_name}-summary'"
+        self._backends_table_name = f"'{miner_name}-backends'"
+        self._config_table_name = f"'{miner_name}-config'"
     
-    # TODO: Add fallback to database if data is not available in the cached response
-    # TODO: Handle JSONDecodeError and exception from missing table/data within database
-
-    def _get_data_from_response(self, response: Dict[str, Any], keys: List[str]) -> Union[Any, str]:
+    # TODO: Refactor the properties below to pass through the table_name and list of flattened keys (or a string ?) to retrieve the data from the database
+    def _get_data_from_response(self, table_name: str, response: Dict[str, Any], keys: List[str]) -> Union[Any, str]:
         """
-        Retrieves the data from the response using the provided keys.
+        Retrieves the data from the response using the provided keys. Falls back to the database if the data is not available.
 
         Args:
             response (Dict[str, Any]): The response data.
@@ -46,9 +45,23 @@ class XMRigProperties:
                 for key in keys:
                     data = data[key]
             return data
+        # TODO: Handle JSONDecodeError and exception from missing table/data within database
         except Exception as e:
             log.error(f"An error occurred fetching the data from the response using the provided keys: {e}")
-            return "N/A"
+            # Fallback to database
+            try:
+                query = f"SELECT * FROM {table_name} ORDER BY timestamp DESC LIMIT 1"
+                with self._db_engine.connect() as connection:
+                    result = connection.execute(text(query)).fetchone()
+                    # TODO: Needs to be refactored to handle flattened nested keys in the database as it (probably) doesnt currently work
+                    if result:
+                        data = result._mapping
+                        for key in keys:
+                            data = data[key]
+                        return data
+            except Exception as db_e:
+                log.error(f"An error occurred fetching the data from the database: {db_e}")
+                return "N/A"
 
     @property
     def summary(self) -> Union[Dict[str, Any], str]:
@@ -130,7 +143,8 @@ class XMRigProperties:
         Returns:
             str: Uptime in the format "days, hours:minutes:seconds", or "N/A" if not available.
         """
-        log.debug(str(timedelta(seconds=self._summary_response["uptime"])))
+        if self._summary_response is not None:
+            log.debug(str(timedelta(seconds=self._summary_response["uptime"])))
         return str(timedelta(seconds=self._get_data_from_response(self._summary_response, ["uptime"])))
 
     @property
