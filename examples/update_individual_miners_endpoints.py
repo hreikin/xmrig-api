@@ -1,8 +1,6 @@
 import logging
 from xmrig import XMRigManager
 
-# ...existing code...
-
 # Get individual miners
 manager = XMRigManager()
 manager.add_miner("Miner1", "127.0.0.1", "37841", "SECRET", tls_enabled=False)
