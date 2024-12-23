@@ -29,4 +29,4 @@ miner_a = manager.get_miner("Miner1")
 miner_a.get_config()                                                       # This updates the cached data
 config = miner_a.data.config                                               # Use the `config` property to access the data
 config["api"]["worker-id"] = "NEW_WORKER_ID"                               # Change something
-miner_a.post_config(config)   
+miner_a.post_config(config)
