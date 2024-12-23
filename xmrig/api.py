@@ -92,11 +92,11 @@ class XMRigAPI:
             "jsonrpc": "2.0",
             "id": 1,
         }
-        self.data = XMRigProperties(self._summary_response, self._backends_response, self._config_response)
+        self.data = XMRigProperties(self._summary_response, self._backends_response, self._config_response, self._db_engine)
         self.get_all_responses()
         log.info(f"XMRigAPI initialized for {self._base_url}")
     
-    def _update_properties(self) -> None:
+    def _update_properties_cache(self) -> None:
         """
         Sets the properties for the XMRigAPI instance.
 
@@ -135,7 +135,7 @@ class XMRigAPI:
             # Raise an HTTPError for bad responses (4xx and 5xx)
             summary_response.raise_for_status()
             self._summary_response = summary_response.json()
-            self._update_properties()
+            self._update_properties_cache()
             log.debug(f"Summary endpoint successfully fetched.")
             if self._db_engine is not None:
                 _insert_data_to_db(self._summary_response, f"{self._miner_name}-summary", self._db_engine)
@@ -168,7 +168,7 @@ class XMRigAPI:
             # Raise an HTTPError for bad responses (4xx and 5xx)
             backends_response.raise_for_status()
             self._backends_response = backends_response.json()
-            self._update_properties()
+            self._update_properties_cache()
             log.debug(f"Backends endpoint successfully fetched.")
             if self._db_engine is not None:
                 _insert_data_to_db(self._backends_response, f"{self._miner_name}-backends", self._db_engine)
@@ -201,7 +201,7 @@ class XMRigAPI:
             # Raise an HTTPError for bad responses (4xx and 5xx)
             config_response.raise_for_status()
             self._config_response = config_response.json()
-            self._update_properties()
+            self._update_properties_cache()
             log.debug(f"Config endpoint successfully fetched.")
             if self._db_engine is not None:
                 _insert_data_to_db(self._config_response, f"{self._miner_name}-config", self._db_engine)
@@ -236,7 +236,7 @@ class XMRigAPI:
                 raise XMRigAuthorizationError()
             # Raise an HTTPError for bad responses (4xx and 5xx)
             self._post_config_response.raise_for_status()
-            self._update_properties()
+            self._update_properties_cache()
             log.debug(f"Config endpoint successfully updated.")
             return True
         except requests.exceptions.RequestException as e:
