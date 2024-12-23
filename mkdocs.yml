@@ -24,6 +24,7 @@ theme:
     - navigation.instant
     - navigation.instant.prefetch
     - navigation.instant.progress
+    - content.code.copy
 nav:
   - "Home": "README.md"
   - "Usage": "usage.md"
@@ -41,3 +42,12 @@ plugins:
   - search
   - mkdocstrings
   - include-markdown
+
+markdown_extensions:
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.superfences
