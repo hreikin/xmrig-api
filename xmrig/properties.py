@@ -3,7 +3,7 @@ This module provides the XMRigProperties class, which is used to retrieve and ca
 properties and statistics from the XMRig miner's API responses.
 """
 
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Dict, List, Union
 from datetime import timedelta
 from xmrig.helpers import log
 from sqlalchemy.engine import Engine
