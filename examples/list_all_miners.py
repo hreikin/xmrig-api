@@ -16,9 +16,10 @@ log.info("Please ensure you have a running XMRig instance to connect to and have
 log.info("######################################################################################################")
 
 manager = XMRigManager()
+
+log.info("Adding miners to the manager")
 manager.add_miner("Miner1", "127.0.0.1", "37841", "SECRET", tls_enabled=False)
 manager.add_miner("Miner2", "127.0.0.1", "37842", "SECRET", tls_enabled=False)
 
-# List all miners
-log = logging.getLogger("MyLog")
+log.info("Listing all miners")
 log.info(manager.list_miners())

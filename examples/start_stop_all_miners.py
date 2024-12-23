@@ -17,7 +17,13 @@ log.info("######################################################################
 
 # Pause/resume all miners
 manager = XMRigManager()
+
+log.info("Adding miners to the manager")
 manager.add_miner("Miner1", "127.0.0.1", "37841", "SECRET", tls_enabled=False)
 manager.add_miner("Miner2", "127.0.0.1", "37842", "SECRET", tls_enabled=False)
+
+log.info("Stopping all miners")
 manager.perform_action_on_all("stop")
+
+log.info("Starting all miners")
 manager.perform_action_on_all("start")

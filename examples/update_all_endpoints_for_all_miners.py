@@ -17,6 +17,10 @@ log.info("######################################################################
 
 # Update all endpoints for all miners
 manager = XMRigManager()
+
+log.info("Adding miners to the manager")
 manager.add_miner("Miner1", "127.0.0.1", "37841", "SECRET", tls_enabled=False)
 manager.add_miner("Miner2", "127.0.0.1", "37842", "SECRET", tls_enabled=False)
+
+log.info("Updating all endpoints for all miners")
 manager.get_all_miners_endpoints()

@@ -16,6 +16,7 @@ log.info("Please ensure you have a running XMRig instance to connect to and have
 log.info("######################################################################################################")
 
 # Add miners
+log.info("Adding miners to the manager")
 manager = XMRigManager()
 manager.add_miner("Miner1", "127.0.0.1", "37841", "SECRET", tls_enabled=False)
 manager.add_miner("Miner2", "127.0.0.1", "37842", "SECRET", tls_enabled=False)
