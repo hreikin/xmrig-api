@@ -12,9 +12,9 @@ logging.basicConfig(
 )
 log = logging.getLogger("ExampleLog")
 
-log.info("######################################################################################################")
-log.info("Please ensure you have a running XMRig instance to connect to and have updated the connection details.")
-log.info("######################################################################################################")
+log.info("###############################################################################################################################")
+log.info("## Please ensure you have a running XMRig instance to connect to and have updated the connection details within the example. ##")
+log.info("###############################################################################################################################")
 
 # Get individual miners
 log.info("Adding miners to the manager")
