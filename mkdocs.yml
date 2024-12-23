@@ -27,6 +27,7 @@ theme:
 nav:
   - "Home": "README.md"
   - "Usage": "usage.md"
+  - "Examples": "examples.md"
   - "Reference":
     - "XMRigAPI": "reference/XMRigAPI.md"
     - "XMRigAPIError": "reference/XMRigAPIError.md"
@@ -39,3 +40,4 @@ nav:
 plugins:
   - search
   - mkdocstrings
+  - include-markdown
