@@ -1,6 +1,6 @@
 from typing import Any, Dict, List, Optional, Union
 from datetime import timedelta
-from .helpers import log, XMRigAPIError
+from xmrig.helpers import log, XMRigAPIError
 
 class XMRigProperties:
     def __init__(self, summary_response: Dict[str, Any], backends_response: Dict[str, Any], config_response: Dict[str, Any]):
