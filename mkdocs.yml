@@ -33,6 +33,7 @@ nav:
     - "XMRigAuthorizationError": "reference/XMRigAuthorizationError.md"
     - "XMRigConnectionError": "reference/XMRigConnectionError.md"
     - "XMRigManager": "reference/XMRigManager.md"
+    - "XMRigProperties": "reference/XMRigProperties.md"
   - "Contributing": "CONTRIBUTING.md"
 
 plugins:
