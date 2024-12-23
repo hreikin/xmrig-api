@@ -24,6 +24,7 @@ class XMRigProperties:
         self._summary_response = summary_response
         self._backends_response = backends_response
         self._config_response = config_response
+        self._db_engine = db_engine
 
     @property
     def summary(self) -> Union[Dict[str, Any], bool]:
