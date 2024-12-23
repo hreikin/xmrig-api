@@ -51,14 +51,14 @@ miner_b.pause_miner()
 miner_b.resume_miner()
 
 # Edit and update the miners `config.json` via the HTTP API.
-miner_a.get_config()                                                  # This updates the cached data
-config = miner_a.config                                               # Use the `config` property to access the data
-config["api"]["worker-id"] = "NEW_WORKER_ID"                          # Change something
-miner_a.post_config(config)                                           # Post new config to change it
+miner_a.get_config()                                                       # This updates the cached data
+config = miner_a.data.config                                               # Use the `config` property to access the data
+config["api"]["worker-id"] = "NEW_WORKER_ID"                               # Change something
+miner_a.post_config(config)                                                # Post new config to change it
 
 # Summary and Backends API data is available as properties in either full or individual format.
-log.info(miner_b.summary)                                             # Prints the entire `summary` endpoint response
-log.info(miner_b.sum_hashrates)                                       # Prints out the current hashrates
-log.info(miner_b.sum_pool_accepted_jobs)                              # Prints out the accepted_jobs counter
-log.info(miner_b.sum_pool_rejected_jobs)                              # Prints out the rejected_jobs counter
-log.info(miner_b.sum_current_difficulty)                              # Prints out the current difficulty
+log.info(miner_b.data.summary)                                             # Prints the entire `summary` endpoint response
+log.info(miner_b.data.sum_hashrates)                                       # Prints out the current hashrates
+log.info(miner_b.data.sum_pool_accepted_jobs)                              # Prints out the accepted_jobs counter
+log.info(miner_b.data.sum_pool_rejected_jobs)                              # Prints out the rejected_jobs counter
+log.info(miner_b.data.sum_current_difficulty)                              # Prints out the current difficulty
