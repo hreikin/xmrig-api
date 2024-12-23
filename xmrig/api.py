@@ -18,10 +18,10 @@ from xmrig.properties import XMRigProperties
 from sqlalchemy.engine import Engine
 from typing import Optional, Dict, Any
 
-# TODO: Update tests to cover all new functionality in helpers.py.
-# TODO: Check XMRigAPI and XMRigManager tests work since recent changes.
+# TODO: Is helpers.py file already tested by the XMRigAPI and XMRigManager tests?
 # TODO: Add config.json properties to the XMRigProperties class.
-# TODO: Properties should fallback to using the database if the cached data is not available, handle JSONDecodeError and exception from missing table/data within database to continue running and return "N/A" for the property.
+# TODO: Properties should fallback to using the database if the cached data is not available.
+# TODO: Handle JSONDecodeError and exception from missing table/data within database to continue running and return "N/A" for the property.
 
 class XMRigAPI:
     """
@@ -91,7 +91,7 @@ class XMRigAPI:
             "jsonrpc": "2.0",
             "id": 1,
         }
-        self.data = XMRigProperties(self._summary_response, self._backends_response, self._config_response, self._db_engine)
+        self.data = XMRigProperties(self._summary_response, self._backends_response, self._config_response, self._db_engine, self._miner_name)
         self.get_all_responses()
         log.info(f"XMRigAPI initialized for {self._base_url}")
     
@@ -102,7 +102,7 @@ class XMRigAPI:
         Args:
             data (Dict[str, Any]): Data to set as properties.
         """
-        self.data = XMRigProperties(self._summary_response, self._backends_response, self._config_response, self._db_engine)
+        self.data = XMRigProperties(self._summary_response, self._backends_response, self._config_response, self._db_engine, self._miner_name)
 
     def set_auth_header(self) -> bool:
         """
