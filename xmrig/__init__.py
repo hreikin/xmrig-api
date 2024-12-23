@@ -14,11 +14,13 @@ Classes:
     XMRigAuthorizationError: Custom exception for authorization errors.
     XMRigConnectionError: Custom exception for connection errors.
     XMRigManager: Manages multiple XMRig miners via their APIs.
+    XMRigProperties: Retrieves and caches properties and statistics from the XMRig miner's API responses.
 
 Modules:
     api: Contains the XMRigAPI class and related functionalities.
     manager: Contains the XMRigManager class for managing multiple miners.
     helpers: Configures logging and handles database operations for the module.
+    properties: Contains the XMRigProperties class for retrieving and caching properties.
 
 Public Functions:
     XMRigAPI:
