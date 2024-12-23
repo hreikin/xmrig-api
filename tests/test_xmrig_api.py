@@ -754,19 +754,19 @@ class TestXMRigAPI(unittest.TestCase):
         result = self.api.be_opencl_threads_hashrates
         self.assertIsInstance(result, list)
 
-    def test_be_opencl_threads_hashrates_10s_property(self):
-        """Test that the 'be_opencl_threads_hashrates_10s' property returns a float or None."""
-        result = self.api.be_opencl_threads_hashrates_10s
+    def test_be_opencl_threads_hashrate_10s_property(self):
+        """Test that the 'be_opencl_threads_hashrate_10s' property returns a float or None."""
+        result = self.api.be_opencl_threads_hashrate_10s
         self.assertIsInstance(result, (float, type(None)))
 
-    def test_be_opencl_threads_hashrates_1m_property(self):
-        """Test that the 'be_opencl_threads_hashrates_1m' property returns a float or None."""
-        result = self.api.be_opencl_threads_hashrates_1m
+    def test_be_opencl_threads_hashrate_1m_property(self):
+        """Test that the 'be_opencl_threads_hashrate_1m' property returns a float or None."""
+        result = self.api.be_opencl_threads_hashrate_1m
         self.assertIsInstance(result, (float, type(None)))
 
-    def test_be_opencl_threads_hashrates_15m_property(self):
-        """Test that the 'be_opencl_threads_hashrates_15m' property returns a float or None."""
-        result = self.api.be_opencl_threads_hashrates_15m
+    def test_be_opencl_threads_hashrate_15m_property(self):
+        """Test that the 'be_opencl_threads_hashrate_15m' property returns a float or None."""
+        result = self.api.be_opencl_threads_hashrate_15m
         self.assertIsInstance(result, (float, type(None)))
 
     def test_be_opencl_threads_board_property(self):
