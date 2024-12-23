@@ -18,7 +18,7 @@ from xmrig.helpers import log, _insert_data_to_db, XMRigAPIError, XMRigConnectio
 from sqlalchemy.engine import Engine
 from typing import Optional, Union, List, Dict, Any
 
-# TODO: Check current tests match return types and new functionality.
+# TODO: Research if possible to split properties into own classes/files for better organization.
 # TODO: Update tests to cover all new functionality in helpers.py.
 # TODO: Properties should fallback to using the database if the cached data is not available, handle JSONDecodeError and exception from missing table/data within database to continue running and return "N/A" for the property.
 # TODO: Comprehensive documentation - add an examples page to the documentation containing all the examples from the examples folder.
