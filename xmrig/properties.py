@@ -45,38 +45,27 @@ class XMRigProperties:
             if len(keys) > 0:
                 for key in keys:
                     data = data[key]
+            else:
+                data = data
             return data
         except (KeyError, TypeError, JSONDecodeError) as e:
-            log.error(f"An error occurred fetching the data from the response using the provided keys: {e}")
-            # Fallback to database
+            log.error(f"An error occurred fetching the data from the response using the provided keys, trying database: {e}")
             try:
-                query = f"SELECT * FROM {fallback_table_name} ORDER BY timestamp DESC LIMIT 1"
-                with self._db_engine.connect() as connection:
-                    result = connection.execute(text(query)).fetchone()
-                    if result:
-                        column_name = str()
-                        if "threads" in keys and keys != ["cpu", "threads"]:
-                            column_name = "threads"
-                        elif "pools" in keys:
-                            column_name = "pools"
-                        else:
-                            # Get the column name from the keys, ignore ints, separate strings with periods
-                            for key in keys:
-                                if isinstance(key, str):
-                                    column_name += f"{key}."
-                            # Remove the trailing period
-                            column_name = column_name[:-1]
-                        # Get the data from the database
-                        data = result._mapping[column_name]
-                        if column_name == "threads":
-                            data = json.loads(data)
-                        return data
+                self._get_data_from_db(fallback_table_name, keys, self._db_engine)
             except Exception as db_e:
                 log.error(f"An error occurred fetching the data from the database: {db_e}")
                 return "N/A"
+        
+    def _get_data_from_db(self, table_name: str, keys: list, engine: Engine) -> None:
+        """
+        Retrieves the data from the database using the provided table name.
 
-    # TODO: Check all property logic is correct for anything related to threads, hashrates, etc. Compare response 
-    # TODO: with data available in database to confirm expected behaviour/output.
+        Args:
+            table_name (str): The name of the table to use to retrieve the data.
+            engine (Engine): The SQLAlchemy engine instance.
+        """
+        return "N/A"
+
     # TODO: Remove "if self._summary_response is not None:", "if self._backends_response is not None:" checks and 
     # TODO: log statements.
     # TODO: Add config data points to properties.
@@ -85,6 +74,7 @@ class XMRigProperties:
     # Full data from endpoints #
     ############################
 
+    # TODO: May require special handling for db
     @property
     def summary(self) -> Union[Dict[str, Any], str]:
         """
@@ -93,10 +83,9 @@ class XMRigProperties:
         Returns:
             dict: Current summary response, or "N/A" if not available.
         """
-        if self._summary_response is not None:
-            log.debug(self._summary_response)
         return dict(self._get_data_from_response(self._summary_response, [], self._summary_table_name))
 
+    # TODO: May require special handling for db
     @property
     def backends(self) -> Union[List[Dict[str, Any]], str]:
         """
@@ -109,6 +98,7 @@ class XMRigProperties:
             log.debug(self._backends_response)
         return self._get_data_from_response(self._backends_response, [], self._backends_table_name)
 
+    # TODO: May require special handling for db
     @property
     def config(self) -> Union[Dict[str, Any], str]:
         """
@@ -117,8 +107,6 @@ class XMRigProperties:
         Returns:
             dict: Current config response, or "N/A" if not available.
         """
-        if self._config_response is not None:
-            log.debug(self._config_response)
         return dict(self._get_data_from_response(self._config_response, [], self._config_table_name))
     
     ##############################
@@ -133,8 +121,6 @@ class XMRigProperties:
         Returns:
             str: ID information, or "N/A" if not available.
         """
-        if self._summary_response is not None:
-            log.debug(self._summary_response["id"])
         return self._get_data_from_response(self._summary_response, ["id"], self._summary_table_name)
 
     @property
@@ -145,8 +131,6 @@ class XMRigProperties:
         Returns:
             str: Worker ID information, or "N/A" if not available.
         """
-        if self._summary_response is not None:
-            log.debug(self._summary_response["worker_id"])
         return self._get_data_from_response(self._summary_response, ["worker_id"], self._summary_table_name)
 
     @property
@@ -157,10 +141,9 @@ class XMRigProperties:
         Returns:
             int: Current uptime in seconds, or "N/A" if not available.
         """
-        if self._summary_response is not None:
-            log.debug(self._summary_response["uptime"])
         return self._get_data_from_response(self._summary_response, ["uptime"], self._summary_table_name)
 
+    # TODO: May require special handling for db
     @property
     def sum_uptime_readable(self) -> str:
         """
@@ -169,9 +152,8 @@ class XMRigProperties:
         Returns:
             str: Uptime in the format "days, hours:minutes:seconds", or "N/A" if not available.
         """
-        if self._summary_response is not None:
-            log.debug(str(timedelta(seconds=self._summary_response["uptime"])))
-        return str(timedelta(seconds=self._get_data_from_response(self._summary_response, ["uptime"], self._summary_table_name)))
+        result = self._get_data_from_response(self._summary_response, ["uptime"], self._summary_table_name)
+        return str(timedelta(seconds=result)) if result != "N/A" else result
 
     @property
     def sum_restricted(self) -> Union[bool, str]:
@@ -181,8 +163,6 @@ class XMRigProperties:
         Returns:
             bool: Current restricted status, or "N/A" if not available.
         """
-        if self._summary_response is not None:
-            log.debug(self._summary_response["restricted"])
         return self._get_data_from_response(self._summary_response, ["restricted"], self._summary_table_name)
 
     @property
@@ -193,8 +173,6 @@ class XMRigProperties:
         Returns:
             dict: Resources information, or "N/A" if not available.
         """
-        if self._summary_response is not None:
-            log.debug(self._summary_response["resources"])
         return self._get_data_from_response(self._summary_response, ["resources"], self._summary_table_name)
 
     @property
@@ -205,8 +183,6 @@ class XMRigProperties:
         Returns:
             dict: Memory usage information, or "N/A" if not available.
         """
-        if self._summary_response is not None:
-            log.debug(self._summary_response["resources"]["memory"])
         return self._get_data_from_response(self._summary_response, ["resources", "memory"], self._summary_table_name)
 
     @property
@@ -217,8 +193,6 @@ class XMRigProperties:
         Returns:
             int: Free memory information, or "N/A" if not available.
         """
-        if self._summary_response is not None:
-            log.debug(self._summary_response["resources"]["memory"]["free"])
         return self._get_data_from_response(self._summary_response, ["resources", "memory", "free"], self._summary_table_name)
 
     @property
@@ -229,8 +203,6 @@ class XMRigProperties:
         Returns:
             int: Total memory information, or "N/A" if not available.
         """
-        if self._summary_response is not None:
-            log.debug(self._summary_response["resources"]["memory"]["total"])
         return self._get_data_from_response(self._summary_response, ["resources", "memory", "total"], self._summary_table_name)
 
     @property
@@ -241,8 +213,6 @@ class XMRigProperties:
         Returns:
             int: Resident set memory information, or "N/A" if not available.
         """
-        if self._summary_response is not None:
-            log.debug(self._summary_response["resources"]["memory"]["resident_set_memory"])
         return self._get_data_from_response(self._summary_response, ["resources", "memory", "resident_set_memory"], self._summary_table_name)
 
     @property
@@ -253,8 +223,6 @@ class XMRigProperties:
         Returns:
             list: Load average information, or "N/A" if not available.
         """
-        if self._summary_response is not None:
-            log.debug(self._summary_response["resources"]["load_average"])
         return self._get_data_from_response(self._summary_response, ["resources", "load_average"], self._summary_table_name)
 
     @property
@@ -265,8 +233,6 @@ class XMRigProperties:
         Returns:
             int: Hardware concurrency information, or "N/A" if not available.
         """
-        if self._summary_response is not None:
-            log.debug(self._summary_response["resources"]["hardware_concurrency"])
         return self._get_data_from_response(self._summary_response, ["resources", "hardware_concurrency"], self._summary_table_name)
 
     @property
@@ -277,8 +243,6 @@ class XMRigProperties:
         Returns:
             list: Supported features information, or "N/A" if not available.
         """
-        if self._summary_response is not None:
-            log.debug(self._summary_response["features"])
         return self._get_data_from_response(self._summary_response, ["features"], self._summary_table_name)
 
     @property
@@ -289,8 +253,6 @@ class XMRigProperties:
         Returns:
             dict: Results information, or "N/A" if not available.
         """
-        if self._summary_response is not None:
-            log.debug(self._summary_response["results"])
         return self._get_data_from_response(self._summary_response, ["results"], self._summary_table_name)
 
     @property
@@ -301,8 +263,6 @@ class XMRigProperties:
         Returns:
             int: Current difficulty, or "N/A" if not available.
         """
-        if self._summary_response is not None:
-            log.debug(self._summary_response["results"]["diff_current"])
         return self._get_data_from_response(self._summary_response, ["results", "diff_current"], self._summary_table_name)
 
     @property
@@ -313,8 +273,6 @@ class XMRigProperties:
         Returns:
             int: Good shares, or "N/A" if not available.
         """
-        if self._summary_response is not None:
-            log.debug(self._summary_response["results"]["shares_good"])
         return self._get_data_from_response(self._summary_response, ["results", "shares_good"], self._summary_table_name)
 
     @property
@@ -325,8 +283,6 @@ class XMRigProperties:
         Returns:
             int: Total shares, or "N/A" if not available.
         """
-        if self._summary_response is not None:
-            log.debug(self._summary_response["results"]["shares_total"])
         return self._get_data_from_response(self._summary_response, ["results", "shares_total"], self._summary_table_name)
 
     @property
@@ -337,8 +293,6 @@ class XMRigProperties:
         Returns:
             int: Average time information, or "N/A" if not available.
         """
-        if self._summary_response is not None:
-            log.debug(self._summary_response["results"]["avg_time"])
         return self._get_data_from_response(self._summary_response, ["results", "avg_time"], self._summary_table_name)
 
     @property
@@ -349,8 +303,6 @@ class XMRigProperties:
         Returns:
             int: Average time in `ms` information, or "N/A" if not available.
         """
-        if self._summary_response is not None:
-            log.debug(self._summary_response["results"]["avg_time_ms"])
         return self._get_data_from_response(self._summary_response, ["results", "avg_time_ms"], self._summary_table_name)
 
     @property
@@ -361,8 +313,6 @@ class XMRigProperties:
         Returns:
             int: Total number of hashes, or "N/A" if not available.
         """
-        if self._summary_response is not None:
-            log.debug(self._summary_response["results"]["hashes_total"])
         return self._get_data_from_response(self._summary_response, ["results", "hashes_total"], self._summary_table_name)
 
     @property
@@ -373,8 +323,6 @@ class XMRigProperties:
         Returns:
             list: Best results, or "N/A" if not available.
         """
-        if self._summary_response is not None:
-            log.debug(self._summary_response["results"]["best"])
         return self._get_data_from_response(self._summary_response, ["results", "best"], self._summary_table_name)
 
     @property
@@ -385,8 +333,6 @@ class XMRigProperties:
         Returns:
             str: Current mining algorithm, or "N/A" if not available.
         """
-        if self._summary_response is not None:
-            log.debug(self._summary_response["algo"])
         return self._get_data_from_response(self._summary_response, ["algo"], self._summary_table_name)
 
     @property
@@ -397,8 +343,6 @@ class XMRigProperties:
         Returns:
             dict: Connection information, or "N/A" if not available.
         """
-        if self._summary_response is not None:
-            log.debug(self._summary_response["connection"])
         return self._get_data_from_response(self._summary_response, ["connection"], self._summary_table_name)
 
     @property
@@ -409,8 +353,6 @@ class XMRigProperties:
         Returns:
             str: Pool information, or "N/A" if not available.
         """
-        if self._summary_response is not None:
-            log.debug(self._summary_response["connection"]["pool"])
         return self._get_data_from_response(self._summary_response, ["connection", "pool"], self._summary_table_name)
 
     @property
@@ -421,8 +363,6 @@ class XMRigProperties:
         Returns:
             str: IP address, or "N/A" if not available.
         """
-        if self._summary_response is not None:
-            log.debug(self._summary_response["connection"]["ip"])
         return self._get_data_from_response(self._summary_response, ["connection", "ip"], self._summary_table_name)
 
     @property
@@ -433,8 +373,6 @@ class XMRigProperties:
         Returns:
             int: Pool uptime information, or "N/A" if not available.
         """
-        if self._summary_response is not None:
-            log.debug(self._summary_response["connection"]["uptime"])
         return self._get_data_from_response(self._summary_response, ["connection", "uptime"], self._summary_table_name)
 
     @property
@@ -445,8 +383,6 @@ class XMRigProperties:
         Returns:
             int: Pool uptime in ms, or "N/A" if not available.
         """
-        if self._summary_response is not None:
-            log.debug(self._summary_response["connection"]["uptime_ms"])
         return self._get_data_from_response(self._summary_response, ["connection", "uptime_ms"], self._summary_table_name)
 
     @property
@@ -457,8 +393,6 @@ class XMRigProperties:
         Returns:
             int: Pool ping information, or "N/A" if not available.
         """
-        if self._summary_response is not None:
-            log.debug(self._summary_response["connection"]["ping"])
         return self._get_data_from_response(self._summary_response, ["connection", "ping"], self._summary_table_name)
 
     @property
@@ -469,8 +403,6 @@ class XMRigProperties:
         Returns:
             int: Pool failures information, or "N/A" if not available.
         """
-        if self._summary_response is not None:
-            log.debug(self._summary_response["connection"]["failures"])
         return self._get_data_from_response(self._summary_response, ["connection", "failures"], self._summary_table_name)
 
     @property
@@ -481,8 +413,6 @@ class XMRigProperties:
         Returns:
             bool: Pool tls status, or "N/A" if not available.
         """
-        if self._summary_response is not None:
-            log.debug(self._summary_response["connection"]["tls"])
         return self._get_data_from_response(self._summary_response, ["connection", "tls"], self._summary_table_name)
 
     @property
@@ -493,8 +423,6 @@ class XMRigProperties:
         Returns:
             str: Pool tls fingerprint information, or "N/A" if not available.
         """
-        if self._summary_response is not None:
-            log.debug(self._summary_response["connection"]["tls-fingerprint"])
         return self._get_data_from_response(self._summary_response, ["connection", "tls-fingerprint"], self._summary_table_name)
 
     @property
@@ -505,8 +433,6 @@ class XMRigProperties:
         Returns:
             str: Pool algorithm information, or "N/A" if not available.
         """
-        if self._summary_response is not None:
-            log.debug(self._summary_response["connection"]["algo"])
         return self._get_data_from_response(self._summary_response, ["connection", "algo"], self._summary_table_name)
 
     @property
@@ -517,8 +443,6 @@ class XMRigProperties:
         Returns:
             int: Pool difficulty information, or "N/A" if not available.
         """
-        if self._summary_response is not None:
-            log.debug(self._summary_response["connection"]["diff"])
         return self._get_data_from_response(self._summary_response, ["connection", "diff"], self._summary_table_name)
 
     @property
@@ -529,8 +453,6 @@ class XMRigProperties:
         Returns:
             int: Number of accepted jobs, or "N/A" if not available.
         """
-        if self._summary_response is not None:
-            log.debug(self._summary_response["connection"]["accepted"])
         return self._get_data_from_response(self._summary_response, ["connection", "accepted"], self._summary_table_name)
 
     @property
@@ -541,8 +463,6 @@ class XMRigProperties:
         Returns:
             int: Number of rejected jobs, or "N/A" if not available.
         """
-        if self._summary_response is not None:
-            log.debug(self._summary_response["connection"]["rejected"])
         return self._get_data_from_response(self._summary_response,  ["connection", "rejected"], self._summary_table_name)
 
     @property
@@ -553,8 +473,6 @@ class XMRigProperties:
         Returns:
             int: Pool average time information, or "N/A" if not available.
         """
-        if self._summary_response is not None:
-            log.debug(self._summary_response["connection"]["avg_time"])
         return self._get_data_from_response(self._summary_response, ["connection", "avg_time"], self._summary_table_name)
 
     @property
@@ -565,8 +483,6 @@ class XMRigProperties:
         Returns:
             int: Pool average time in ms, or "N/A" if not available.
         """
-        if self._summary_response is not None:
-            log.debug(self._summary_response["connection"]["avg_time_ms"])
         return self._get_data_from_response(self._summary_response, ["connection", "avg_time_ms"], self._summary_table_name)
 
     @property
@@ -577,8 +493,6 @@ class XMRigProperties:
         Returns:
             int: Pool total hashes information, or "N/A" if not available.
         """
-        if self._summary_response is not None:
-            log.debug(self._summary_response["connection"]["hashes_total"])
         return self._get_data_from_response(self._summary_response, ["connection", "hashes_total"], self._summary_table_name)
 
     @property
@@ -589,8 +503,6 @@ class XMRigProperties:
         Returns:
             str: Version information, or "N/A" if not available.
         """
-        if self._summary_response is not None:
-            log.debug(self._summary_response["version"])
         return self._get_data_from_response(self._summary_response, ["version"], self._summary_table_name)
 
     @property
@@ -601,8 +513,6 @@ class XMRigProperties:
         Returns:
             str: Kind information, or "N/A" if not available.
         """
-        if self._summary_response is not None:
-            log.debug(self._summary_response["kind"])
         return self._get_data_from_response(self._summary_response, ["kind"], self._summary_table_name)
 
     @property
@@ -613,8 +523,6 @@ class XMRigProperties:
         Returns:
             str: User agent information, or "N/A" if not available.
         """
-        if self._summary_response is not None:
-            log.debug(self._summary_response["ua"])
         return self._get_data_from_response(self._summary_response, ["ua"], self._summary_table_name)
 
     @property
@@ -625,8 +533,6 @@ class XMRigProperties:
         Returns:
             dict: CPU information, or "N/A" if not available.
         """
-        if self._summary_response is not None:
-            log.debug(self._summary_response["cpu"])
         return self._get_data_from_response(self._summary_response, ["cpu"], self._summary_table_name)
 
     @property
@@ -637,8 +543,6 @@ class XMRigProperties:
         Returns:
             str: CPU brand information, or "N/A" if not available.
         """
-        if self._summary_response is not None:
-            log.debug(self._summary_response["cpu"]["brand"])
         return self._get_data_from_response(self._summary_response, ["cpu", "brand"], self._summary_table_name)
 
     @property
@@ -649,8 +553,6 @@ class XMRigProperties:
         Returns:
             int: CPU family information, or "N/A" if not available.
         """
-        if self._summary_response is not None:
-            log.debug(self._summary_response["cpu"]["family"])
         return self._get_data_from_response(self._summary_response, ["cpu", "family"], self._summary_table_name)
 
     @property
@@ -661,8 +563,6 @@ class XMRigProperties:
         Returns:
             int: CPU model information, or "N/A" if not available.
         """
-        if self._summary_response is not None:
-            log.debug(self._summary_response["cpu"]["model"])
         return self._get_data_from_response(self._summary_response, ["cpu", "model"], self._summary_table_name)
 
     @property
@@ -673,8 +573,6 @@ class XMRigProperties:
         Returns:
             int: CPU stepping information, or "N/A" if not available.
         """
-        if self._summary_response is not None:
-            log.debug(self._summary_response["cpu"]["stepping"])
         return self._get_data_from_response(self._summary_response,  ["cpu", "stepping"], self._summary_table_name)
 
     @property
@@ -685,8 +583,6 @@ class XMRigProperties:
         Returns:
             int: CPU frequency information, or "N/A" if not available.
         """
-        if self._summary_response is not None:
-            log.debug(self._summary_response["cpu"]["proc_info"])
         return self._get_data_from_response(self._summary_response, ["cpu", "proc_info"], self._summary_table_name)
 
     @property
@@ -697,8 +593,6 @@ class XMRigProperties:
         Returns:
             bool: CPU AES support status, or "N/A" if not available.
         """
-        if self._summary_response is not None:
-            log.debug(self._summary_response["cpu"]["aes"])
         return self._get_data_from_response(self._summary_response, ["cpu", "aes"], self._summary_table_name)
 
     @property
@@ -709,8 +603,6 @@ class XMRigProperties:
         Returns:
             bool: CPU AVX2 support status, or "N/A" if not available.
         """
-        if self._summary_response is not None:
-            log.debug(self._summary_response["cpu"]["avx2"])
         return self._get_data_from_response(self._summary_response, ["cpu", "avx2"], self._summary_table_name)
 
     @property
@@ -721,8 +613,6 @@ class XMRigProperties:
         Returns:
             bool: CPU x64 support status, or "N/A" if not available.
         """
-        if self._summary_response is not None:
-            log.debug(self._summary_response["cpu"]["x64"])
         return self._get_data_from_response(self._summary_response, ["cpu", "x64"], self._summary_table_name)
 
     @property
@@ -733,8 +623,6 @@ class XMRigProperties:
         Returns:
             bool: CPU 64-bit support status, or "N/A" if not available.
         """
-        if self._summary_response is not None:
-            log.debug(self._summary_response["cpu"]["64_bit"])
         return self._get_data_from_response(self._summary_response, ["cpu", "64_bit"], self._summary_table_name)
 
     @property
@@ -745,8 +633,6 @@ class XMRigProperties:
         Returns:
             int: CPU L2 cache size, or "N/A" if not available.
         """
-        if self._summary_response is not None:
-            log.debug(self._summary_response["cpu"]["l2"])
         return self._get_data_from_response(self._summary_response, ["cpu", "l2"], self._summary_table_name)
 
     @property
@@ -757,8 +643,6 @@ class XMRigProperties:
         Returns:
             int: CPU L3 cache size, or "N/A" if not available.
         """
-        if self._summary_response is not None:
-            log.debug(self._summary_response["cpu"]["l3"])
         return self._get_data_from_response(self._summary_response, ["cpu", "l3"], self._summary_table_name)
 
     @property
@@ -769,8 +653,6 @@ class XMRigProperties:
         Returns:
             int: CPU cores count, or "N/A" if not available.
         """
-        if self._summary_response is not None:
-            log.debug(self._summary_response["cpu"]["cores"])
         return self._get_data_from_response(self._summary_response, ["cpu", "cores"], self._summary_table_name)
 
     @property
@@ -781,8 +663,6 @@ class XMRigProperties:
         Returns:
             int: CPU threads count, or "N/A" if not available.
         """
-        if self._summary_response is not None:
-            log.debug(self._summary_response["cpu"]["threads"])
         return self._get_data_from_response(self._summary_response, ["cpu", "threads"], self._summary_table_name)
 
     @property
@@ -793,8 +673,6 @@ class XMRigProperties:
         Returns:
             int: CPU packages count, or "N/A" if not available.
         """
-        if self._summary_response is not None:
-            log.debug(self._summary_response["cpu"]["packages"])
         return self._get_data_from_response(self._summary_response, ["cpu", "packages"], self._summary_table_name)
 
     @property
@@ -805,8 +683,6 @@ class XMRigProperties:
         Returns:
             int: CPU nodes count, or "N/A" if not available.
         """
-        if self._summary_response is not None:
-            log.debug(self._summary_response["cpu"]["nodes"])
         return self._get_data_from_response(self._summary_response, ["cpu", "nodes"], self._summary_table_name)
 
     @property
@@ -817,8 +693,6 @@ class XMRigProperties:
         Returns:
             str: CPU backend information, or "N/A" if not available.
         """
-        if self._summary_response is not None:
-            log.debug(self._summary_response["cpu"]["backend"])
         return self._get_data_from_response(self._summary_response,  ["cpu", "backend"], self._summary_table_name)
 
     @property
@@ -829,8 +703,6 @@ class XMRigProperties:
         Returns:
             str: CPU MSR information, or "N/A" if not available.
         """
-        if self._summary_response is not None:
-            log.debug(self._summary_response["cpu"]["msr"])
         return self._get_data_from_response(self._summary_response, ["cpu", "msr"], self._summary_table_name)
 
     @property
@@ -841,8 +713,6 @@ class XMRigProperties:
         Returns:
             str: CPU assembly information, or "N/A" if not available.
         """
-        if self._summary_response is not None:
-            log.debug(self._summary_response["cpu"]["assembly"])
         return self._get_data_from_response(self._summary_response,  ["cpu", "assembly"], self._summary_table_name)
 
     @property
@@ -853,8 +723,6 @@ class XMRigProperties:
         Returns:
             str: CPU architecture information, or "N/A" if not available.
         """
-        if self._summary_response is not None:
-            log.debug(self._summary_response["cpu"]["arch"])
         return self._get_data_from_response(self._summary_response, ["cpu", "arch"], self._summary_table_name)
 
     @property
@@ -865,8 +733,6 @@ class XMRigProperties:
         Returns:
             list: CPU flags information, or "N/A" if not available.
         """
-        if self._summary_response is not None:
-            log.debug(self._summary_response["cpu"]["flags"])
         return self._get_data_from_response(self._summary_response, ["cpu", "flags"], self._summary_table_name)
 
     @property
@@ -877,8 +743,6 @@ class XMRigProperties:
         Returns:
             int: Donate level information, or "N/A" if not available.
         """
-        if self._summary_response is not None:
-            log.debug(self._summary_response["donate_level"])
         return self._get_data_from_response(self._summary_response, ["donate_level"], self._summary_table_name)
 
     @property
@@ -889,8 +753,6 @@ class XMRigProperties:
         Returns:
             bool: Paused status, or "N/A" if not available.
         """
-        if self._summary_response is not None:
-            log.debug(self._summary_response["paused"])
         return self._get_data_from_response(self._summary_response, ["paused"], self._summary_table_name)
 
     @property
@@ -901,8 +763,6 @@ class XMRigProperties:
         Returns:
             list: Algorithms information, or "N/A" if not available.
         """
-        if self._summary_response is not None:
-            log.debug(self._summary_response["algorithms"])
         return self._get_data_from_response(self._summary_response, ["algorithms"], self._summary_table_name)
 
     @property
@@ -913,8 +773,6 @@ class XMRigProperties:
         Returns:
             dict: Hashrate information, or "N/A" if not available.
         """
-        if self._summary_response is not None:
-            log.debug(self._summary_response["hashrate"])
         return self._get_data_from_response(self._summary_response, ["hashrate"], self._summary_table_name)
 
     @property
@@ -925,8 +783,6 @@ class XMRigProperties:
         Returns:
             float: Hashrate for the last 10 seconds, or "N/A" if not available.
         """
-        if self._summary_response is not None:
-            log.debug(self._summary_response["hashrate"]["total"][0])
         return self._get_data_from_response(self._summary_response, ["hashrate", "total", 0], self._summary_table_name)
 
     @property
@@ -937,8 +793,6 @@ class XMRigProperties:
         Returns:
             float: Hashrate for the last 1 minute, or "N/A" if not available.
         """
-        if self._summary_response is not None:
-            log.debug(self._summary_response["hashrate"]["total"][1])
         return self._get_data_from_response(self._summary_response, ["hashrate", "total", 1], self._summary_table_name)
 
     @property
@@ -949,8 +803,6 @@ class XMRigProperties:
         Returns:
             float: Hashrate for the last 15 minutes, or "N/A" if not available.
         """
-        if self._summary_response is not None:
-            log.debug(self._summary_response["hashrate"]["total"][2])
         return self._get_data_from_response(self._summary_response, ["hashrate", "total", 2], self._summary_table_name)
 
     @property
@@ -961,8 +813,6 @@ class XMRigProperties:
         Returns:
             float: Highest hashrate, or "N/A" if not available.
         """
-        if self._summary_response is not None:
-            log.debug(self._summary_response["hashrate"]["highest"])
         return self._get_data_from_response(self._summary_response, ["hashrate", "highest"], self._summary_table_name)
 
     @property
@@ -973,14 +823,13 @@ class XMRigProperties:
         Returns:
             list: Hugepages information, or "N/A" if not available.
         """
-        if self._summary_response is not None:
-            log.debug(self._summary_response["hugepages"])
         return self._get_data_from_response(self._summary_response, ["hugepages"], self._summary_table_name)
 
     ###############################
     # Data from backends endpoint #
     ###############################
 
+    # TODO: May require special handling for db
     @property
     def enabled_backends(self) -> Union[List[str], str]:
         """
@@ -993,8 +842,6 @@ class XMRigProperties:
         for i in self._get_data_from_response(self._backends_response, [], self._backends_table_name):
             if "type" in i and i["enabled"] == True:
                 backend_types.append(i["type"])
-        if self._backends_response is not None:
-            log.debug(backend_types)
         return backend_types
 
     @property
@@ -1005,8 +852,6 @@ class XMRigProperties:
         Returns:
             str: CPU backend type, or "N/A" if not available.
         """
-        if self._backends_response is not None:
-            log.debug(self._backends_response[0]["type"])
         return self._get_data_from_response(self._backends_response, [0, "type"], self._backends_table_name)
 
     @property
@@ -1017,8 +862,6 @@ class XMRigProperties:
         Returns:
             bool: CPU backend enabled status, or "N/A" if not available.
         """
-        if self._backends_response is not None:
-            log.debug(self._backends_response[0]["enabled"])
         return self._get_data_from_response(self._backends_response, [0, "enabled"], self._backends_table_name)
 
     @property
@@ -1029,8 +872,6 @@ class XMRigProperties:
         Returns:
             str: CPU backend algorithm, or "N/A" if not available.
         """
-        if self._backends_response is not None:
-            log.debug(self._backends_response[0]["algo"])
         return self._get_data_from_response(self._backends_response, [0, "algo"], self._backends_table_name)
 
     @property
@@ -1041,8 +882,6 @@ class XMRigProperties:
         Returns:
             str: CPU backend profile, or "N/A" if not available.
         """
-        if self._backends_response is not None:
-            log.debug(self._backends_response[0]["profile"])
         return self._get_data_from_response(self._backends_response, [0, "profile"], self._backends_table_name)
 
     @property
@@ -1053,8 +892,6 @@ class XMRigProperties:
         Returns:
             bool: CPU backend hardware AES support status, or "N/A" if not available.
         """
-        if self._backends_response is not None:
-            log.debug(self._backends_response[0]["hw-aes"])
         return self._get_data_from_response(self._backends_response, [0, "hw-aes"], self._backends_table_name)
 
     @property
@@ -1065,8 +902,6 @@ class XMRigProperties:
         Returns:
             int: CPU backend priority, or "N/A" if not available.
         """
-        if self._backends_response is not None:
-            log.debug(self._backends_response[0]["priority"])
         return self._get_data_from_response(self._backends_response, [0, "priority"], self._backends_table_name)
 
     @property
@@ -1077,8 +912,6 @@ class XMRigProperties:
         Returns:
             bool: CPU backend MSR support status, or "N/A" if not available.
         """
-        if self._backends_response is not None:
-            log.debug(self._backends_response[0]["msr"])
         return self._get_data_from_response(self._backends_response, [0, "msr"], self._backends_table_name)
 
     @property
@@ -1089,8 +922,6 @@ class XMRigProperties:
         Returns:
             str: CPU backend assembly information, or "N/A" if not available.
         """
-        if self._backends_response is not None:
-            log.debug(self._backends_response[0]["asm"])
         return self._get_data_from_response(self._backends_response, [0, "asm"], self._backends_table_name)
 
     @property
@@ -1101,8 +932,6 @@ class XMRigProperties:
         Returns:
             str: CPU backend Argon2 implementation, or "N/A" if not available.
         """
-        if self._backends_response is not None:
-            log.debug(self._backends_response[0]["argon2-impl"])
         return self._get_data_from_response(self._backends_response, [0, "argon2-impl"], self._backends_table_name)
 
     @property
@@ -1113,8 +942,6 @@ class XMRigProperties:
         Returns:
             list: CPU backend hugepages information, or "N/A" if not available.
         """
-        if self._backends_response is not None:
-            log.debug(self._backends_response[0]["hugepages"])
         return self._get_data_from_response(self._backends_response, [0, "hugepages"], self._backends_table_name)
 
     @property
@@ -1125,8 +952,6 @@ class XMRigProperties:
         Returns:
             int: CPU backend memory information, or "N/A" if not available.
         """
-        if self._backends_response is not None:
-            log.debug(self._backends_response[0]["memory"])
         return self._get_data_from_response(self._backends_response, [0, "memory"], self._backends_table_name)
 
     @property
@@ -1137,8 +962,6 @@ class XMRigProperties:
         Returns:
             list: CPU backend hashrates, or "N/A" if not available.
         """
-        if self._backends_response is not None:
-            log.debug(self._backends_response[0]["hashrate"])
         return self._get_data_from_response(self._backends_response, [0, "hashrate"], self._backends_table_name)
 
     @property
@@ -1149,8 +972,6 @@ class XMRigProperties:
         Returns:
             float: CPU backend hashrate for the last 10 seconds, or "N/A" if not available.
         """
-        if self._backends_response is not None:
-            log.debug(self._backends_response[0]["hashrate"][0])
         return self._get_data_from_response(self._backends_response, [0, "hashrate", 0], self._backends_table_name)
 
     @property
@@ -1161,8 +982,6 @@ class XMRigProperties:
         Returns:
             float: CPU backend hashrate for the last 1 minute, or "N/A" if not available.
         """
-        if self._backends_response is not None:
-            log.debug(self._backends_response[0]["hashrate"][1])
         return self._get_data_from_response(self._backends_response, [0, "hashrate", 1], self._backends_table_name)
 
     @property
@@ -1173,8 +992,6 @@ class XMRigProperties:
         Returns:
             float: CPU backend hashrate for the last 15 minutes, or "N/A" if not available.
         """
-        if self._backends_response is not None:
-            log.debug(self._backends_response[0]["hashrate"][2])
         return self._get_data_from_response(self._backends_response, [0, "hashrate", 2], self._backends_table_name)
     
     # TODO: Check all property logic is correct for anything related to threads
@@ -1186,8 +1003,6 @@ class XMRigProperties:
         Returns:
             list: CPU backend threads information, or "N/A" if not available.
         """
-        if self._backends_response is not None:
-            log.debug(self._backends_response[0]["threads"])
         return self._get_data_from_response(self._backends_response, [0, "threads"], self._backends_table_name)
 
     @property
@@ -1199,10 +1014,8 @@ class XMRigProperties:
             list: CPU backend threads intensity information, or "N/A" if not available.
         """
         intensities = []
-        if self._backends_response is not None:
-            for i in self._get_data_from_response(self._backends_response, [0, "threads"], self._backends_table_name):
+        for i in self._get_data_from_response(self._backends_response, [0, "threads"], self._backends_table_name):
                 intensities.append(i["intensity"])
-        log.debug(intensities)
         return intensities
 
     @property
@@ -1214,10 +1027,8 @@ class XMRigProperties:
             list: CPU backend threads affinity information, or "N/A" if not available.
         """
         affinities = []
-        if self._backends_response is not None:
-            for i in self._get_data_from_response(self._backends_response, [0, "threads"], self._backends_table_name):
+        for i in self._get_data_from_response(self._backends_response, [0, "threads"], self._backends_table_name):
                 affinities.append(i["affinity"])
-        log.debug(affinities)
         return affinities
 
     @property
@@ -1229,10 +1040,8 @@ class XMRigProperties:
             list: CPU backend threads AV information, or "N/A" if not available.
         """
         avs = []
-        if self._backends_response is not None:
-            for i in self._get_data_from_response(self._backends_response, [0, "threads"], self._backends_table_name):
+        for i in self._get_data_from_response(self._backends_response, [0, "threads"], self._backends_table_name):
                 avs.append(i["av"])
-        log.debug(avs)
         return avs
 
     @property
@@ -1244,10 +1053,8 @@ class XMRigProperties:
             list: CPU backend threads hashrates for the last 10 seconds, or "N/A" if not available.
         """
         hashrates_10s = []
-        if self._backends_response is not None:
-            for i in self._get_data_from_response(self._backends_response, [0, "threads"], self._backends_table_name):
+        for i in self._get_data_from_response(self._backends_response, [0, "threads"], self._backends_table_name):
                 hashrates_10s.append(i["hashrate"][0])
-        log.debug(hashrates_10s)
         return hashrates_10s
 
     @property
@@ -1259,10 +1066,8 @@ class XMRigProperties:
             list: CPU backend threads hashrates for the last 1 minute, or "N/A" if not available.
         """
         hashrates_1m = []
-        if self._backends_response is not None:
-            for i in self._get_data_from_response(self._backends_response, [0, "threads"], self._backends_table_name):
+        for i in self._get_data_from_response(self._backends_response, [0, "threads"], self._backends_table_name):
                 hashrates_1m.append(i["hashrate"][1])
-        log.debug(hashrates_1m)
         return hashrates_1m
 
     @property
@@ -1274,10 +1079,8 @@ class XMRigProperties:
             list: CPU backend threads hashrates for the last 15 minutes, or "N/A" if not available.
         """
         hashrates_15m = []
-        if self._backends_response is not None:
-            for i in self._get_data_from_response(self._backends_response, [0, "threads"], self._backends_table_name):
+        for i in self._get_data_from_response(self._backends_response, [0, "threads"], self._backends_table_name):
                 hashrates_15m.append(i["hashrate"][2])
-        log.debug(hashrates_15m)
         return hashrates_15m
 
     @property
@@ -1288,8 +1091,6 @@ class XMRigProperties:
         Returns:
             str: OpenCL backend type, or "N/A" if not available.
         """
-        if self._backends_response is not None:
-            log.debug(self._backends_response[1]["type"])
         return self._get_data_from_response(self._backends_response, [1, "type"], self._backends_table_name)
 
     @property
@@ -1300,8 +1101,6 @@ class XMRigProperties:
         Returns:
             bool: OpenCL backend enabled status, or "N/A" if not available.
         """
-        if self._backends_response is not None:
-            log.debug(self._backends_response[1]["enabled"])
         return self._get_data_from_response(self._backends_response, [1, "enabled"], self._backends_table_name)
 
     @property
@@ -1312,8 +1111,6 @@ class XMRigProperties:
         Returns:
             str: OpenCL backend algorithm, or "N/A" if not available.
         """
-        if self._backends_response is not None:
-            log.debug(self._backends_response[1]["algo"])
         return self._get_data_from_response(self._backends_response, [1, "algo"], self._backends_table_name)
 
     @property
@@ -1324,8 +1121,6 @@ class XMRigProperties:
         Returns:
             str: OpenCL backend profile, or "N/A" if not available.
         """
-        if self._backends_response is not None:
-            log.debug(self._backends_response[1]["profile"])
         return self._get_data_from_response(self._backends_response, [1, "profile"], self._backends_table_name)
 
     @property
@@ -1336,8 +1131,6 @@ class XMRigProperties:
         Returns:
             dict: OpenCL backend platform information, or "N/A" if not available.
         """
-        if self._backends_response is not None:
-            log.debug(self._backends_response[1]["platform"])
         return self._get_data_from_response(self._backends_response, [1, "platform"], self._backends_table_name)
 
     @property
@@ -1348,8 +1141,6 @@ class XMRigProperties:
         Returns:
             int: OpenCL backend platform index, or "N/A" if not available.
         """
-        if self._backends_response is not None:
-            log.debug(self._backends_response[1]["platform"]["index"])
         return self._get_data_from_response(self._backends_response, [1, "platform", "index"], self._backends_table_name)
 
     @property
@@ -1360,8 +1151,6 @@ class XMRigProperties:
         Returns:
             str: OpenCL backend platform profile, or "N/A" if not available.
         """
-        if self._backends_response is not None:
-            log.debug(self._backends_response[1]["platform"]["profile"])
         return self._get_data_from_response(self._backends_response, [1, "platform", "profile"], self._backends_table_name)
 
     @property
@@ -1372,8 +1161,6 @@ class XMRigProperties:
         Returns:
             str: OpenCL backend platform version, or "N/A" if not available.
         """
-        if self._backends_response is not None:
-            log.debug(self._backends_response[1]["platform"]["version"])
         return self._get_data_from_response(self._backends_response, [1, "platform", "version"], self._backends_table_name)
 
     @property
@@ -1384,8 +1171,6 @@ class XMRigProperties:
         Returns:
             str: OpenCL backend platform name, or "N/A" if not available.
         """
-        if self._backends_response is not None:
-            log.debug(self._backends_response[1]["platform"]["name"])
         return self._get_data_from_response(self._backends_response, [1, "platform", "name"], self._backends_table_name)
 
     @property
@@ -1396,8 +1181,6 @@ class XMRigProperties:
         Returns:
             str: OpenCL backend platform vendor, or "N/A" if not available.
         """
-        if self._backends_response is not None:
-            log.debug(self._backends_response[1]["platform"]["vendor"])
         return self._get_data_from_response(self._backends_response, [1, "platform", "vendor"], self._backends_table_name)
 
     @property
@@ -1408,8 +1191,6 @@ class XMRigProperties:
         Returns:
             str: OpenCL backend platform extensions, or "N/A" if not available.
         """
-        if self._backends_response is not None:
-            log.debug(self._backends_response[1]["platform"]["extensions"])
         return self._get_data_from_response(self._backends_response, [1, "platform", "extensions"], self._backends_table_name)
 
     @property
@@ -1420,8 +1201,6 @@ class XMRigProperties:
         Returns:
             list: OpenCL backend hashrates, or "N/A" if not available.
         """
-        if self._backends_response is not None:
-            log.debug(self._backends_response[1]["hashrate"])
         return self._get_data_from_response(self._backends_response, [1, "hashrate"], self._backends_table_name)
 
     @property
@@ -1432,8 +1211,6 @@ class XMRigProperties:
         Returns:
             float: OpenCL backend hashrate for the last 10 seconds, or "N/A" if not available.
         """
-        if self._backends_response is not None:
-            log.debug(self._backends_response[1]["hashrate"][0])
         return self._get_data_from_response(self._backends_response, [1, "hashrate", 0], self._backends_table_name)
 
     @property
@@ -1444,8 +1221,6 @@ class XMRigProperties:
         Returns:
             float: OpenCL backend hashrate for the last 1 minute, or "N/A" if not available.
         """
-        if self._backends_response is not None:
-            log.debug(self._backends_response[1]["hashrate"][1])
         return self._get_data_from_response(self._backends_response, [1, "hashrate", 1], self._backends_table_name)
 
     @property
@@ -1456,10 +1231,9 @@ class XMRigProperties:
         Returns:
             float: OpenCL backend hashrate for the last 15 minutes, or "N/A" if not available.
         """
-        if self._backends_response is not None:
-            log.debug(self._backends_response[1]["hashrate"][2])
         return self._get_data_from_response(self._backends_response, [1, "hashrate", 2], self._backends_table_name)
 
+    # TODO: May require special handling for db
     @property
     def be_opencl_threads(self) -> Union[Dict[str, Any], str]:
         """
@@ -1468,10 +1242,9 @@ class XMRigProperties:
         Returns:
             dict: OpenCL backend threads information, or "N/A" if not available.
         """
-        if self._backends_response is not None:
-            log.debug(self._backends_response[1]["threads"][0])
         return self._get_data_from_response(self._backends_response, [1, "threads", 0], self._backends_table_name)
 
+    # TODO: May require special handling for db
     @property
     def be_opencl_threads_index(self) -> Union[int, str]:
         """
@@ -1480,10 +1253,9 @@ class XMRigProperties:
         Returns:
             int: OpenCL backend threads index, or "N/A" if not available.
         """
-        if self._backends_response is not None:
-            log.debug(self._backends_response[1]["threads"][0]["index"])
         return self._get_data_from_response(self._backends_response, [1, "threads", 0, "index"], self._backends_table_name)
 
+    # TODO: May require special handling for db
     @property
     def be_opencl_threads_intensity(self) -> Union[int, str]:
         """
@@ -1492,10 +1264,9 @@ class XMRigProperties:
         Returns:
             int: OpenCL backend threads intensity, or "N/A" if not available.
         """
-        if self._backends_response is not None:
-            log.debug(self._backends_response[1]["threads"][0]["intensity"])
         return self._get_data_from_response(self._backends_response, [1, "threads", 0, "intensity"], self._backends_table_name)
 
+    # TODO: May require special handling for db
     @property
     def be_opencl_threads_worksize(self) -> Union[int, str]:
         """
@@ -1504,10 +1275,9 @@ class XMRigProperties:
         Returns:
             int: OpenCL backend threads worksize, or "N/A" if not available.
         """
-        if self._backends_response is not None:
-            log.debug(self._backends_response[1]["threads"][0]["worksize"])
         return self._get_data_from_response(self._backends_response, [1, "threads", 0, "worksize"], self._backends_table_name)
 
+    # TODO: May require special handling for db
     @property
     def be_opencl_threads_amount(self) -> Union[List[int], str]:
         """
@@ -1516,10 +1286,9 @@ class XMRigProperties:
         Returns:
             list: OpenCL backend threads amount, or "N/A" if not available.
         """
-        if self._backends_response is not None:
-            log.debug(self._backends_response[1]["threads"][0]["threads"])
         return self._get_data_from_response(self._backends_response, [1, "threads", 0, "threads"], self._backends_table_name)
 
+    # TODO: May require special handling for db
     @property
     def be_opencl_threads_unroll(self) -> Union[int, str]:
         """
@@ -1528,10 +1297,9 @@ class XMRigProperties:
         Returns:
             int: OpenCL backend threads unroll, or "N/A" if not available.
         """
-        if self._backends_response is not None:
-            log.debug(self._backends_response[1]["threads"][0]["unroll"])
         return self._get_data_from_response(self._backends_response, [1, "threads", 0, "unroll"], self._backends_table_name)
 
+    # TODO: May require special handling for db
     @property
     def be_opencl_threads_affinity(self) -> Union[int, str]:
         """
@@ -1540,10 +1308,9 @@ class XMRigProperties:
         Returns:
             int: OpenCL backend threads affinity, or "N/A" if not available.
         """
-        if self._backends_response is not None:
-            log.debug(self._backends_response[1]["threads"][0]["affinity"])
         return self._get_data_from_response(self._backends_response, [1, "threads", 0, "affinity"], self._backends_table_name)
 
+    # TODO: May require special handling for db
     @property
     def be_opencl_threads_hashrates(self) -> Union[List[float], str]:
         """
@@ -1552,10 +1319,9 @@ class XMRigProperties:
         Returns:
             list: OpenCL backend threads hashrates, or "N/A" if not available.
         """
-        if self._backends_response is not None:
-            log.debug(self._backends_response[1]["threads"][0]["hashrate"])
         return self._get_data_from_response(self._backends_response, [1, "threads", 0, "hashrate"], self._backends_table_name)
 
+    # TODO: May require special handling for db
     @property
     def be_opencl_threads_hashrate_10s(self) -> Union[float, str]:
         """
@@ -1564,10 +1330,9 @@ class XMRigProperties:
         Returns:
             float: OpenCL backend threads hashrate for the last 10 seconds, or "N/A" if not available.
         """
-        if self._backends_response is not None:
-            log.debug(self._backends_response[1]["threads"][0]["hashrate"][0])
         return self._get_data_from_response(self._backends_response, [1, "threads", 0, "hashrate", 0], self._backends_table_name)
 
+    # TODO: May require special handling for db
     @property
     def be_opencl_threads_hashrate_1m(self) -> Union[float, str]:
         """
@@ -1576,10 +1341,9 @@ class XMRigProperties:
         Returns:
             float: OpenCL backend threads hashrate for the last 1 minute, or "N/A" if not available.
         """
-        if self._backends_response is not None:
-            log.debug(self._backends_response[1]["threads"][0]["hashrate"][1])
         return self._get_data_from_response(self._backends_response, [1, "threads", 0, "hashrate", 1], self._backends_table_name)
 
+    # TODO: May require special handling for db
     @property
     def be_opencl_threads_hashrate_15m(self) -> Union[float, str]:
         """
@@ -1588,10 +1352,9 @@ class XMRigProperties:
         Returns:
             float: OpenCL backend threads hashrate for the last 15 minutes, or "N/A" if not available.
         """
-        if self._backends_response is not None:
-            log.debug(self._backends_response[1]["threads"][0]["hashrate"][2])
         return self._get_data_from_response(self._backends_response, [1, "threads", 0, "hashrate", 2], self._backends_table_name)
 
+    # TODO: May require special handling for db
     @property
     def be_opencl_threads_board(self) -> str:
         """
@@ -1600,10 +1363,9 @@ class XMRigProperties:
         Returns:
             str: OpenCL backend threads board information, or "N/A" if not available.
         """
-        if self._backends_response is not None:
-            log.debug(self._backends_response[1]["threads"][0]["board"])
         return self._get_data_from_response(self._backends_response, [1, "threads", 0, "board"], self._backends_table_name)
 
+    # TODO: May require special handling for db
     @property
     def be_opencl_threads_name(self) -> str:
         """
@@ -1612,10 +1374,9 @@ class XMRigProperties:
         Returns:
             str: OpenCL backend threads name, or "N/A" if not available.
         """
-        if self._backends_response is not None:
-            log.debug(self._backends_response[1]["threads"][0]["name"])
         return self._get_data_from_response(self._backends_response, [1, "threads", 0, "name"], self._backends_table_name)
 
+    # TODO: May require special handling for db
     @property
     def be_opencl_threads_bus_id(self) -> str:
         """
@@ -1624,10 +1385,9 @@ class XMRigProperties:
         Returns:
             str: OpenCL backend threads bus ID, or "N/A" if not available.
         """
-        if self._backends_response is not None:
-            log.debug(self._backends_response[1]["threads"][0]["bus_id"])
         return self._get_data_from_response(self._backends_response, [1, "threads", 0, "bus_id"], self._backends_table_name)
 
+    # TODO: May require special handling for db
     @property
     def be_opencl_threads_cu(self) -> Union[int, str]:
         """
@@ -1636,10 +1396,9 @@ class XMRigProperties:
         Returns:
             int: OpenCL backend threads compute units, or "N/A" if not available.
         """
-        if self._backends_response is not None:
-            log.debug(self._backends_response[1]["threads"][0]["cu"])
         return self._get_data_from_response(self._backends_response, [1, "threads", 0, "cu"], self._backends_table_name)
 
+    # TODO: May require special handling for db
     @property
     def be_opencl_threads_global_mem(self) -> Union[int, str]:
         """
@@ -1648,10 +1407,9 @@ class XMRigProperties:
         Returns:
             int: OpenCL backend threads global memory, or "N/A" if not available.
         """
-        if self._backends_response is not None:
-            log.debug(self._backends_response[1]["threads"][0]["global_mem"])
         return self._get_data_from_response(self._backends_response, [1, "threads", 0, "global_mem"], self._backends_table_name)
 
+    # TODO: May require special handling for db
     @property
     def be_opencl_threads_health(self) -> Union[Dict[str, Any], str]:
         """
@@ -1660,10 +1418,9 @@ class XMRigProperties:
         Returns:
             dict: OpenCL backend threads health information, or "N/A" if not available.
         """
-        if self._backends_response is not None:
-            log.debug(self._backends_response[1]["threads"][0]["health"])
         return self._get_data_from_response(self._backends_response, [1, "threads", 0, "health"], self._backends_table_name)
 
+    # TODO: May require special handling for db
     @property
     def be_opencl_threads_health_temp(self) -> Union[int, str]:
         """
@@ -1672,10 +1429,9 @@ class XMRigProperties:
         Returns:
             int: OpenCL backend threads health temperature, or "N/A" if not available.
         """
-        if self._backends_response is not None:
-            log.debug(self._backends_response[1]["threads"][0]["health"]["temperature"])
         return self._get_data_from_response(self._backends_response, [1, "threads", 0, "health", "temperature"], self._backends_table_name)
 
+    # TODO: May require special handling for db
     @property
     def be_opencl_threads_health_power(self) -> Union[int, str]:
         """
@@ -1684,10 +1440,9 @@ class XMRigProperties:
         Returns:
             int: OpenCL backend threads health power, or "N/A" if not available.
         """
-        if self._backends_response is not None:
-            log.debug(self._backends_response[1]["threads"][0]["health"]["power"])
         return self._get_data_from_response(self._backends_response, [1, "threads", 0, "health", "power"], self._backends_table_name)
 
+    # TODO: May require special handling for db
     @property
     def be_opencl_threads_health_clock(self) -> Union[int, str]:
         """
@@ -1696,10 +1451,9 @@ class XMRigProperties:
         Returns:
             int: OpenCL backend threads health clock, or "N/A" if not available.
         """
-        if self._backends_response is not None:
-            log.debug(self._backends_response[1]["threads"][0]["health"]["clock"])
         return self._get_data_from_response(self._backends_response, [1, "threads", 0, "health", "clock"], self._backends_table_name)
 
+    # TODO: May require special handling for db
     @property
     def be_opencl_threads_health_mem_clock(self) -> Union[int, str]:
         """
@@ -1708,10 +1462,9 @@ class XMRigProperties:
         Returns:
             int: OpenCL backend threads health memory clock, or "N/A" if not available.
         """
-        if self._backends_response is not None:
-            log.debug(self._backends_response[1]["threads"][0]["health"]["mem_clock"])
         return self._get_data_from_response(self._backends_response, [1, "threads", 0, "health", "mem_clock"], self._backends_table_name)
 
+    # TODO: May require special handling for db
     @property
     def be_opencl_threads_health_rpm(self) -> Union[int, str]:
         """
@@ -1720,8 +1473,6 @@ class XMRigProperties:
         Returns:
             int: OpenCL backend threads health RPM, or "N/A" if not available.
         """
-        if self._backends_response is not None:
-            log.debug(self._backends_response[1]["threads"][0]["health"]["rpm"])
         return self._get_data_from_response(self._backends_response, [1, "threads", 0, "health", "rpm"], self._backends_table_name)
 
     @property
@@ -1732,8 +1483,6 @@ class XMRigProperties:
         Returns:
             str: CUDA backend type, or "N/A" if not available.
         """
-        if self._backends_response is not None:
-            log.debug(self._backends_response[2]["type"])
         return self._get_data_from_response(self._backends_response, [2, "type"], self._backends_table_name)
 
     @property
@@ -1744,8 +1493,6 @@ class XMRigProperties:
         Returns:
             bool: CUDA backend enabled status, or "N/A" if not available.
         """
-        if self._backends_response is not None:
-            log.debug(self._backends_response[2]["enabled"])
         return self._get_data_from_response(self._backends_response, [2, "enabled"], self._backends_table_name)
 
     @property
@@ -1756,8 +1503,6 @@ class XMRigProperties:
         Returns:
             str: CUDA backend algorithm, or "N/A" if not available.
         """
-        if self._backends_response is not None:
-            log.debug(self._backends_response[2]["algo"])
         return self._get_data_from_response(self._backends_response, [2, "algo"], self._backends_table_name)
 
     @property
@@ -1768,8 +1513,6 @@ class XMRigProperties:
         Returns:
             str: CUDA backend profile, or "N/A" if not available.
         """
-        if self._backends_response is not None:
-            log.debug(self._backends_response[2]["profile"])
         return self._get_data_from_response(self._backends_response, [2, "profile"], self._backends_table_name)
 
     @property
@@ -1780,8 +1523,6 @@ class XMRigProperties:
         Returns:
             dict: CUDA backend versions information, or "N/A" if not available.
         """
-        if self._backends_response is not None:
-            log.debug(self._backends_response[2]["versions"])
         return self._get_data_from_response(self._backends_response, [2, "versions"], self._backends_table_name)
 
     @property
@@ -1792,8 +1533,6 @@ class XMRigProperties:
         Returns:
             str: CUDA backend runtime version, or "N/A" if not available.
         """
-        if self._backends_response is not None:
-            log.debug(self._backends_response[2]["versions"]["cuda-runtime"])
         return self._get_data_from_response(self._backends_response, [2, "versions", "cuda-runtime"], self._backends_table_name)
 
     @property
@@ -1804,8 +1543,6 @@ class XMRigProperties:
         Returns:
             str: CUDA backend driver version, or "N/A" if not available.
         """
-        if self._backends_response is not None:
-            log.debug(self._backends_response[2]["versions"]["cuda-driver"])
         return self._get_data_from_response(self._backends_response, [2, "versions", "cuda-driver"], self._backends_table_name)
 
     @property
@@ -1816,8 +1553,6 @@ class XMRigProperties:
         Returns:
             str: CUDA backend plugin version, or "N/A" if not available.
         """
-        if self._backends_response is not None:
-            log.debug(self._backends_response[2]["versions"]["plugin"])
         return self._get_data_from_response(self._backends_response, [2, "versions", "plugin"], self._backends_table_name)
 
     @property
@@ -1828,8 +1563,6 @@ class XMRigProperties:
         Returns:
             list: CUDA backend hashrates, or "N/A" if not available.
         """
-        if self._backends_response is not None:
-            log.debug(self._backends_response[2]["hashrate"])
         return self._get_data_from_response(self._backends_response, [2, "hashrate"], self._backends_table_name)
 
     @property
@@ -1840,8 +1573,6 @@ class XMRigProperties:
         Returns:
             float: CUDA backend hashrate for the last 10 seconds, or "N/A" if not available.
         """
-        if self._backends_response is not None:
-            log.debug(self._backends_response[2]["hashrate"][0])
         return self._get_data_from_response(self._backends_response, [2, "hashrate", 0], self._backends_table_name)
 
     @property
@@ -1852,8 +1583,6 @@ class XMRigProperties:
         Returns:
             float: CUDA backend hashrate for the last 1 minute, or "N/A" if not available.
         """
-        if self._backends_response is not None:
-            log.debug(self._backends_response[2]["hashrate"][1])
         return self._get_data_from_response(self._backends_response, [2, "hashrate", 1], self._backends_table_name)
 
     @property
@@ -1864,8 +1593,6 @@ class XMRigProperties:
         Returns:
             float: CUDA backend hashrate for the last 15 minutes, or "N/A" if not available.
         """
-        if self._backends_response is not None:
-            log.debug(self._backends_response[2]["hashrate"][2])
         return self._get_data_from_response(self._backends_response, [2, "hashrate", 2], self._backends_table_name)
 
     @property
@@ -1876,8 +1603,6 @@ class XMRigProperties:
         Returns:
             dict: CUDA backend threads information, or "N/A" if not available.
         """
-        if self._backends_response is not None:
-            log.debug(self._backends_response[2]["threads"][0])
         return self._get_data_from_response(self._backends_response, [2, "threads", 0], self._backends_table_name)
 
     @property
@@ -1888,8 +1613,6 @@ class XMRigProperties:
         Returns:
             int: CUDA backend threads index, or "N/A" if not available.
         """
-        if self._backends_response is not None:
-            log.debug(self._backends_response[2]["threads"][0]["index"])
         return self._get_data_from_response(self._backends_response, [2, "threads", 0, "index"], self._backends_table_name)
 
     @property
@@ -1900,8 +1623,6 @@ class XMRigProperties:
         Returns:
             int: CUDA backend threads amount, or "N/A" if not available.
         """
-        if self._backends_response is not None:
-            log.debug(self._backends_response[2]["threads"][0]["threads"])
         return self._get_data_from_response(self._backends_response, [2, "threads", 0, "threads"], self._backends_table_name)
 
     @property
@@ -1912,8 +1633,6 @@ class XMRigProperties:
         Returns:
             int: CUDA backend threads blocks, or "N/A" if not available.
         """
-        if self._backends_response is not None:
-            log.debug(self._backends_response[2]["threads"][0]["blocks"])
         return self._get_data_from_response(self._backends_response, [2, "threads", 0, "blocks"], self._backends_table_name)
 
     @property
@@ -1924,8 +1643,6 @@ class XMRigProperties:
         Returns:
             int: CUDA backend threads bfactor, or "N/A" if not available.
         """
-        if self._backends_response is not None:
-            log.debug(self._backends_response[2]["threads"][0]["bfactor"])
         return self._get_data_from_response(self._backends_response, [2, "threads", 0, "bfactor"], self._backends_table_name)
 
     @property
@@ -1936,8 +1653,6 @@ class XMRigProperties:
         Returns:
             int: CUDA backend threads bsleep, or "N/A" if not available.
         """
-        if self._backends_response is not None:
-            log.debug(self._backends_response[2]["threads"][0]["bsleep"])
         return self._get_data_from_response(self._backends_response, [2, "threads", 0, "bsleep"], self._backends_table_name)
 
     @property
@@ -1948,8 +1663,6 @@ class XMRigProperties:
         Returns:
             int: CUDA backend threads affinity, or "N/A" if not available.
         """
-        if self._backends_response is not None:
-            log.debug(self._backends_response[2]["threads"][0]["affinity"])
         return self._get_data_from_response(self._backends_response, [2, "threads", 0, "affinity"], self._backends_table_name)
 
     @property
@@ -1960,8 +1673,6 @@ class XMRigProperties:
         Returns:
             bool: CUDA backend threads dataset host status, or "N/A" if not available.
         """
-        if self._backends_response is not None:
-            log.debug(self._backends_response[2]["threads"][0]["dataset_host"])
         return self._get_data_from_response(self._backends_response, [2, "threads", 0, "dataset_host"], self._backends_table_name)
 
     @property
@@ -1972,8 +1683,6 @@ class XMRigProperties:
         Returns:
             list: CUDA backend threads hashrates, or "N/A" if not available.
         """
-        if self._backends_response is not None:
-            log.debug(self._backends_response[2]["threads"][0]["hashrate"])
         return self._get_data_from_response(self._backends_response, [2, "threads", 0, "hashrate"], self._backends_table_name)
 
     @property
@@ -1984,8 +1693,6 @@ class XMRigProperties:
         Returns:
             float: CUDA backend threads hashrate for the last 10 seconds, or "N/A" if not available.
         """
-        if self._backends_response is not None:
-            log.debug(self._backends_response[2]["threads"][0]["hashrate"][0])
         return self._get_data_from_response(self._backends_response, [2, "threads", 0, "hashrate", 0], self._backends_table_name)
 
     @property
@@ -1996,8 +1703,6 @@ class XMRigProperties:
         Returns:
             float: CUDA backend threads hashrate for the last 1 minute, or "N/A" if not available.
         """
-        if self._backends_response is not None:
-            log.debug(self._backends_response[2]["threads"][0]["hashrate"][1])
         return self._get_data_from_response(self._backends_response, [2, "threads", 0, "hashrate", 1], self._backends_table_name)
 
     @property
@@ -2008,8 +1713,6 @@ class XMRigProperties:
         Returns:
             float: CUDA backend threads hashrate for the last 15 minutes, or "N/A" if not available.
         """
-        if self._backends_response is not None:
-            log.debug(self._backends_response[2]["threads"][0]["hashrate"][2])
         return self._get_data_from_response(self._backends_response, [2, "threads", 0, "hashrate", 2], self._backends_table_name)
 
     @property
@@ -2020,8 +1723,6 @@ class XMRigProperties:
         Returns:
             str: CUDA backend threads name, or "N/A" if not available.
         """
-        if self._backends_response is not None:
-            log.debug(self._backends_response[2]["threads"][0]["name"])
         return self._get_data_from_response(self._backends_response, [2, "threads", 0, "name"], self._backends_table_name)
 
     @property
@@ -2032,8 +1733,6 @@ class XMRigProperties:
         Returns:
             str: CUDA backend threads bus ID, or "N/A" if not available.
         """
-        if self._backends_response is not None:
-            log.debug(self._backends_response[2]["threads"][0]["bus_id"])
         return self._get_data_from_response(self._backends_response, [2, "threads", 0, "bus_id"], self._backends_table_name)
 
     @property
@@ -2044,8 +1743,6 @@ class XMRigProperties:
         Returns:
             int: CUDA backend threads SMX count, or "N/A" if not available.
         """
-        if self._backends_response is not None:
-            log.debug(self._backends_response[2]["threads"][0]["smx"])
         return self._get_data_from_response(self._backends_response, [2, "threads", 0, "smx"], self._backends_table_name)
 
     @property
@@ -2056,8 +1753,6 @@ class XMRigProperties:
         Returns:
             int: CUDA backend threads architecture, or "N/A" if not available.
         """
-        if self._backends_response is not None:
-            log.debug(self._backends_response[2]["threads"][0]["arch"])
         return self._get_data_from_response(self._backends_response, [2, "threads", 0, "arch"], self._backends_table_name)
 
     @property
@@ -2068,8 +1763,6 @@ class XMRigProperties:
         Returns:
             int: CUDA backend threads global memory, or "N/A" if not available.
         """
-        if self._backends_response is not None:
-            log.debug(self._backends_response[2]["threads"][0]["global_mem"])
         return self._get_data_from_response(self._backends_response, [2, "threads", 0, "global_mem"], self._backends_table_name)
 
     @property
@@ -2080,8 +1773,6 @@ class XMRigProperties:
         Returns:
             int: CUDA backend threads clock, or "N/A" if not available.
         """
-        if self._backends_response is not None:
-            log.debug(self._backends_response[2]["threads"][0]["clock"])
         return self._get_data_from_response(self._backends_response, [2, "threads", 0, "clock"], self._backends_table_name)
 
     @property
@@ -2092,7 +1783,5 @@ class XMRigProperties:
         Returns:
             int: CUDA backend threads memory clock, or "N/A" if not available.
         """
-        if self._backends_response is not None:
-            log.debug(self._backends_response[2]["threads"][0]["memory_clock"])
         return self._get_data_from_response(self._backends_response, [2, "threads", 0, "memory_clock"], self._backends_table_name)
 
