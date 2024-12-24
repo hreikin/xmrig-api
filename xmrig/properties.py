@@ -8,6 +8,8 @@ from datetime import timedelta
 from xmrig.helpers import log
 from sqlalchemy.engine import Engine
 from sqlalchemy.sql import text
+from json import JSONDecodeError
+import json
 
 class XMRigProperties:
     """
@@ -27,14 +29,13 @@ class XMRigProperties:
         self._backends_table_name = f"'{miner_name}-backends'"
         self._config_table_name = f"'{miner_name}-config'"
     
-    # TODO: Refactor the properties below to pass through the table_name and list of flattened keys (or a string ?) to retrieve the data from the database
-    def _get_data_from_response(self, table_name: str, response: Dict[str, Any], keys: List[str]) -> Union[Any, str]:
+    def _get_data_from_response(self, response: Dict[str, Any], keys: List[Union[str, int]], fallback_table_name: str) -> Union[Any, str]:
         """
         Retrieves the data from the response using the provided keys. Falls back to the database if the data is not available.
 
         Args:
             response (Dict[str, Any]): The response data.
-            keys (List[str]): The keys to use to retrieve the data.
+            keys (List[Union[str, int]]): The keys to use to retrieve the data.
 
         Returns:
             Union[Any, str]: The retrieved data, or a default string value of "N/A" if not available.
@@ -45,23 +46,44 @@ class XMRigProperties:
                 for key in keys:
                     data = data[key]
             return data
-        # TODO: Handle JSONDecodeError and exception from missing table/data within database
-        except Exception as e:
+        except (KeyError, TypeError, JSONDecodeError) as e:
             log.error(f"An error occurred fetching the data from the response using the provided keys: {e}")
             # Fallback to database
             try:
-                query = f"SELECT * FROM {table_name} ORDER BY timestamp DESC LIMIT 1"
+                query = f"SELECT * FROM {fallback_table_name} ORDER BY timestamp DESC LIMIT 1"
                 with self._db_engine.connect() as connection:
                     result = connection.execute(text(query)).fetchone()
-                    # TODO: Needs to be refactored to handle flattened nested keys in the database as it (probably) doesnt currently work
                     if result:
-                        data = result._mapping
-                        for key in keys:
-                            data = data[key]
+                        column_name = str()
+                        if "threads" in keys and keys != ["cpu", "threads"]:
+                            column_name = "threads"
+                        elif "pools" in keys:
+                            column_name = "pools"
+                        else:
+                            # Get the column name from the keys, ignore ints, separate strings with periods
+                            for key in keys:
+                                if isinstance(key, str):
+                                    column_name += f"{key}."
+                            # Remove the trailing period
+                            column_name = column_name[:-1]
+                        # Get the data from the database
+                        data = result._mapping[column_name]
+                        if column_name == "threads":
+                            data = json.loads(data)
                         return data
             except Exception as db_e:
                 log.error(f"An error occurred fetching the data from the database: {db_e}")
                 return "N/A"
+
+    # TODO: Check all property logic is correct for anything related to threads, hashrates, etc. Compare response 
+    # TODO: with data available in database to confirm expected behaviour/output.
+    # TODO: Remove "if self._summary_response is not None:", "if self._backends_response is not None:" checks and 
+    # TODO: log statements.
+    # TODO: Add config data points to properties.
+
+    ############################
+    # Full data from endpoints #
+    ############################
 
     @property
     def summary(self) -> Union[Dict[str, Any], str]:
@@ -73,7 +95,7 @@ class XMRigProperties:
         """
         if self._summary_response is not None:
             log.debug(self._summary_response)
-        return self._get_data_from_response(self._summary_response, [])
+        return dict(self._get_data_from_response(self._summary_response, [], self._summary_table_name))
 
     @property
     def backends(self) -> Union[List[Dict[str, Any]], str]:
@@ -85,7 +107,7 @@ class XMRigProperties:
         """
         if self._backends_response is not None:
             log.debug(self._backends_response)
-        return self._get_data_from_response(self._backends_response, [])
+        return self._get_data_from_response(self._backends_response, [], self._backends_table_name)
 
     @property
     def config(self) -> Union[Dict[str, Any], str]:
@@ -97,7 +119,11 @@ class XMRigProperties:
         """
         if self._config_response is not None:
             log.debug(self._config_response)
-        return self._get_data_from_response(self._config_response, [])
+        return dict(self._get_data_from_response(self._config_response, [], self._config_table_name))
+    
+    ##############################
+    # Data from summary endpoint #
+    ##############################
 
     @property
     def sum_id(self) -> str:
@@ -109,7 +135,7 @@ class XMRigProperties:
         """
         if self._summary_response is not None:
             log.debug(self._summary_response["id"])
-        return self._get_data_from_response(self._summary_response, ["id"])
+        return self._get_data_from_response(self._summary_response, ["id"], self._summary_table_name)
 
     @property
     def sum_worker_id(self) -> str:
@@ -121,7 +147,7 @@ class XMRigProperties:
         """
         if self._summary_response is not None:
             log.debug(self._summary_response["worker_id"])
-        return self._get_data_from_response(self._summary_response, ["worker_id"])
+        return self._get_data_from_response(self._summary_response, ["worker_id"], self._summary_table_name)
 
     @property
     def sum_uptime(self) -> Union[int, str]:
@@ -133,7 +159,7 @@ class XMRigProperties:
         """
         if self._summary_response is not None:
             log.debug(self._summary_response["uptime"])
-        return self._get_data_from_response(self._summary_response, ["uptime"])
+        return self._get_data_from_response(self._summary_response, ["uptime"], self._summary_table_name)
 
     @property
     def sum_uptime_readable(self) -> str:
@@ -145,7 +171,7 @@ class XMRigProperties:
         """
         if self._summary_response is not None:
             log.debug(str(timedelta(seconds=self._summary_response["uptime"])))
-        return str(timedelta(seconds=self._get_data_from_response(self._summary_response, ["uptime"])))
+        return str(timedelta(seconds=self._get_data_from_response(self._summary_response, ["uptime"], self._summary_table_name)))
 
     @property
     def sum_restricted(self) -> Union[bool, str]:
@@ -157,7 +183,7 @@ class XMRigProperties:
         """
         if self._summary_response is not None:
             log.debug(self._summary_response["restricted"])
-        return self._get_data_from_response(self._summary_response, ["restricted"])
+        return self._get_data_from_response(self._summary_response, ["restricted"], self._summary_table_name)
 
     @property
     def sum_resources(self) -> Union[Dict[str, Any], str]:
@@ -169,7 +195,7 @@ class XMRigProperties:
         """
         if self._summary_response is not None:
             log.debug(self._summary_response["resources"])
-        return self._get_data_from_response(self._summary_response, ["resources"])
+        return self._get_data_from_response(self._summary_response, ["resources"], self._summary_table_name)
 
     @property
     def sum_memory_usage(self) -> Union[Dict[str, Any], str]:
@@ -181,7 +207,7 @@ class XMRigProperties:
         """
         if self._summary_response is not None:
             log.debug(self._summary_response["resources"]["memory"])
-        return self._get_data_from_response(self._summary_response, ["resources", "memory"])
+        return self._get_data_from_response(self._summary_response, ["resources", "memory"], self._summary_table_name)
 
     @property
     def sum_free_memory(self) -> Union[int, str]:
@@ -193,7 +219,7 @@ class XMRigProperties:
         """
         if self._summary_response is not None:
             log.debug(self._summary_response["resources"]["memory"]["free"])
-        return self._get_data_from_response(self._summary_response, ["resources", "memory", "free"])
+        return self._get_data_from_response(self._summary_response, ["resources", "memory", "free"], self._summary_table_name)
 
     @property
     def sum_total_memory(self) -> Union[int, str]:
@@ -205,7 +231,7 @@ class XMRigProperties:
         """
         if self._summary_response is not None:
             log.debug(self._summary_response["resources"]["memory"]["total"])
-        return self._get_data_from_response(self._summary_response, ["resources", "memory", "total"])
+        return self._get_data_from_response(self._summary_response, ["resources", "memory", "total"], self._summary_table_name)
 
     @property
     def sum_resident_set_memory(self) -> Union[int, str]:
@@ -217,7 +243,7 @@ class XMRigProperties:
         """
         if self._summary_response is not None:
             log.debug(self._summary_response["resources"]["memory"]["resident_set_memory"])
-        return self._get_data_from_response(self._summary_response, ["resources", "memory", "resident_set_memory"])
+        return self._get_data_from_response(self._summary_response, ["resources", "memory", "resident_set_memory"], self._summary_table_name)
 
     @property
     def sum_load_average(self) -> Union[List[float], str]:
@@ -229,7 +255,7 @@ class XMRigProperties:
         """
         if self._summary_response is not None:
             log.debug(self._summary_response["resources"]["load_average"])
-        return self._get_data_from_response(self._summary_response, ["resources", "load_average"])
+        return self._get_data_from_response(self._summary_response, ["resources", "load_average"], self._summary_table_name)
 
     @property
     def sum_hardware_concurrency(self) -> Union[int, str]:
@@ -241,7 +267,7 @@ class XMRigProperties:
         """
         if self._summary_response is not None:
             log.debug(self._summary_response["resources"]["hardware_concurrency"])
-        return self._get_data_from_response(self._summary_response, ["resources", "hardware_concurrency"])
+        return self._get_data_from_response(self._summary_response, ["resources", "hardware_concurrency"], self._summary_table_name)
 
     @property
     def sum_features(self) -> Union[List[str], str]:
@@ -253,7 +279,7 @@ class XMRigProperties:
         """
         if self._summary_response is not None:
             log.debug(self._summary_response["features"])
-        return self._get_data_from_response(self._summary_response, ["features"])
+        return self._get_data_from_response(self._summary_response, ["features"], self._summary_table_name)
 
     @property
     def sum_results(self) -> Union[Dict[str, Any], str]:
@@ -265,7 +291,7 @@ class XMRigProperties:
         """
         if self._summary_response is not None:
             log.debug(self._summary_response["results"])
-        return self._get_data_from_response(self._summary_response, ["results"])
+        return self._get_data_from_response(self._summary_response, ["results"], self._summary_table_name)
 
     @property
     def sum_current_difficulty(self) -> Union[int, str]:
@@ -277,7 +303,7 @@ class XMRigProperties:
         """
         if self._summary_response is not None:
             log.debug(self._summary_response["results"]["diff_current"])
-        return self._get_data_from_response(self._summary_response, ["results", "diff_current"])
+        return self._get_data_from_response(self._summary_response, ["results", "diff_current"], self._summary_table_name)
 
     @property
     def sum_good_shares(self) -> Union[int, str]:
@@ -289,7 +315,7 @@ class XMRigProperties:
         """
         if self._summary_response is not None:
             log.debug(self._summary_response["results"]["shares_good"])
-        return self._get_data_from_response(self._summary_response, ["results", "shares_good"])
+        return self._get_data_from_response(self._summary_response, ["results", "shares_good"], self._summary_table_name)
 
     @property
     def sum_total_shares(self) -> Union[int, str]:
@@ -301,7 +327,7 @@ class XMRigProperties:
         """
         if self._summary_response is not None:
             log.debug(self._summary_response["results"]["shares_total"])
-        return self._get_data_from_response(self._summary_response, ["results", "shares_total"])
+        return self._get_data_from_response(self._summary_response, ["results", "shares_total"], self._summary_table_name)
 
     @property
     def sum_avg_time(self) -> Union[int, str]:
@@ -313,7 +339,7 @@ class XMRigProperties:
         """
         if self._summary_response is not None:
             log.debug(self._summary_response["results"]["avg_time"])
-        return self._get_data_from_response(self._summary_response, ["results", "avg_time"])
+        return self._get_data_from_response(self._summary_response, ["results", "avg_time"], self._summary_table_name)
 
     @property
     def sum_avg_time_ms(self) -> Union[int, str]:
@@ -325,7 +351,7 @@ class XMRigProperties:
         """
         if self._summary_response is not None:
             log.debug(self._summary_response["results"]["avg_time_ms"])
-        return self._get_data_from_response(self._summary_response, ["results", "avg_time_ms"])
+        return self._get_data_from_response(self._summary_response, ["results", "avg_time_ms"], self._summary_table_name)
 
     @property
     def sum_total_hashes(self) -> Union[int, str]:
@@ -337,7 +363,7 @@ class XMRigProperties:
         """
         if self._summary_response is not None:
             log.debug(self._summary_response["results"]["hashes_total"])
-        return self._get_data_from_response(self._summary_response, ["results", "hashes_total"])
+        return self._get_data_from_response(self._summary_response, ["results", "hashes_total"], self._summary_table_name)
 
     @property
     def sum_best_results(self) -> Union[List[int], str]:
@@ -349,7 +375,7 @@ class XMRigProperties:
         """
         if self._summary_response is not None:
             log.debug(self._summary_response["results"]["best"])
-        return self._get_data_from_response(self._summary_response, ["results", "best"])
+        return self._get_data_from_response(self._summary_response, ["results", "best"], self._summary_table_name)
 
     @property
     def sum_algorithm(self) -> str:
@@ -361,7 +387,7 @@ class XMRigProperties:
         """
         if self._summary_response is not None:
             log.debug(self._summary_response["algo"])
-        return self._get_data_from_response(self._summary_response, ["algo"])
+        return self._get_data_from_response(self._summary_response, ["algo"], self._summary_table_name)
 
     @property
     def sum_connection(self) -> Union[Dict[str, Any], str]:
@@ -373,7 +399,7 @@ class XMRigProperties:
         """
         if self._summary_response is not None:
             log.debug(self._summary_response["connection"])
-        return self._get_data_from_response(self._summary_response, ["connection"])
+        return self._get_data_from_response(self._summary_response, ["connection"], self._summary_table_name)
 
     @property
     def sum_pool_info(self) -> str:
@@ -385,7 +411,7 @@ class XMRigProperties:
         """
         if self._summary_response is not None:
             log.debug(self._summary_response["connection"]["pool"])
-        return self._get_data_from_response(self._summary_response, ["connection", "pool"])
+        return self._get_data_from_response(self._summary_response, ["connection", "pool"], self._summary_table_name)
 
     @property
     def sum_pool_ip_address(self) -> str:
@@ -397,7 +423,7 @@ class XMRigProperties:
         """
         if self._summary_response is not None:
             log.debug(self._summary_response["connection"]["ip"])
-        return self._get_data_from_response(self._summary_response, ["connection", "ip"])
+        return self._get_data_from_response(self._summary_response, ["connection", "ip"], self._summary_table_name)
 
     @property
     def sum_pool_uptime(self) -> Union[int, str]:
@@ -409,7 +435,7 @@ class XMRigProperties:
         """
         if self._summary_response is not None:
             log.debug(self._summary_response["connection"]["uptime"])
-        return self._get_data_from_response(self._summary_response, ["connection", "uptime"])
+        return self._get_data_from_response(self._summary_response, ["connection", "uptime"], self._summary_table_name)
 
     @property
     def sum_pool_uptime_ms(self) -> Union[int, str]:
@@ -421,7 +447,7 @@ class XMRigProperties:
         """
         if self._summary_response is not None:
             log.debug(self._summary_response["connection"]["uptime_ms"])
-        return self._get_data_from_response(self._summary_response, ["connection", "uptime_ms"])
+        return self._get_data_from_response(self._summary_response, ["connection", "uptime_ms"], self._summary_table_name)
 
     @property
     def sum_pool_ping(self) -> Union[int, str]:
@@ -433,7 +459,7 @@ class XMRigProperties:
         """
         if self._summary_response is not None:
             log.debug(self._summary_response["connection"]["ping"])
-        return self._get_data_from_response(self._summary_response, ["connection", "ping"])
+        return self._get_data_from_response(self._summary_response, ["connection", "ping"], self._summary_table_name)
 
     @property
     def sum_pool_failures(self) -> Union[int, str]:
@@ -445,7 +471,7 @@ class XMRigProperties:
         """
         if self._summary_response is not None:
             log.debug(self._summary_response["connection"]["failures"])
-        return self._get_data_from_response(self._summary_response, ["connection", "failures"])
+        return self._get_data_from_response(self._summary_response, ["connection", "failures"], self._summary_table_name)
 
     @property
     def sum_pool_tls(self) -> Union[bool, str]:
@@ -457,7 +483,7 @@ class XMRigProperties:
         """
         if self._summary_response is not None:
             log.debug(self._summary_response["connection"]["tls"])
-        return self._get_data_from_response(self._summary_response, ["connection", "tls"])
+        return self._get_data_from_response(self._summary_response, ["connection", "tls"], self._summary_table_name)
 
     @property
     def sum_pool_tls_fingerprint(self) -> str:
@@ -469,7 +495,7 @@ class XMRigProperties:
         """
         if self._summary_response is not None:
             log.debug(self._summary_response["connection"]["tls-fingerprint"])
-        return self._get_data_from_response(self._summary_response, ["connection", "tls-fingerprint"])
+        return self._get_data_from_response(self._summary_response, ["connection", "tls-fingerprint"], self._summary_table_name)
 
     @property
     def sum_pool_algo(self) -> str:
@@ -481,7 +507,7 @@ class XMRigProperties:
         """
         if self._summary_response is not None:
             log.debug(self._summary_response["connection"]["algo"])
-        return self._get_data_from_response(self._summary_response, ["connection", "algo"])
+        return self._get_data_from_response(self._summary_response, ["connection", "algo"], self._summary_table_name)
 
     @property
     def sum_pool_diff(self) -> Union[int, str]:
@@ -493,7 +519,7 @@ class XMRigProperties:
         """
         if self._summary_response is not None:
             log.debug(self._summary_response["connection"]["diff"])
-        return self._get_data_from_response(self._summary_response, ["connection", "diff"])
+        return self._get_data_from_response(self._summary_response, ["connection", "diff"], self._summary_table_name)
 
     @property
     def sum_pool_accepted_jobs(self) -> Union[int, str]:
@@ -505,7 +531,7 @@ class XMRigProperties:
         """
         if self._summary_response is not None:
             log.debug(self._summary_response["connection"]["accepted"])
-        return self._get_data_from_response(self._summary_response, ["connection", "accepted"])
+        return self._get_data_from_response(self._summary_response, ["connection", "accepted"], self._summary_table_name)
 
     @property
     def sum_pool_rejected_jobs(self) -> Union[int, str]:
@@ -517,7 +543,7 @@ class XMRigProperties:
         """
         if self._summary_response is not None:
             log.debug(self._summary_response["connection"]["rejected"])
-        return self._get_data_from_response(self._summary_response,  ["connection", "rejected"])
+        return self._get_data_from_response(self._summary_response,  ["connection", "rejected"], self._summary_table_name)
 
     @property
     def sum_pool_average_time(self) -> Union[int, str]:
@@ -529,7 +555,7 @@ class XMRigProperties:
         """
         if self._summary_response is not None:
             log.debug(self._summary_response["connection"]["avg_time"])
-        return self._get_data_from_response(self._summary_response, ["connection", "avg_time"])
+        return self._get_data_from_response(self._summary_response, ["connection", "avg_time"], self._summary_table_name)
 
     @property
     def sum_pool_average_time_ms(self) -> Union[int, str]:
@@ -541,7 +567,7 @@ class XMRigProperties:
         """
         if self._summary_response is not None:
             log.debug(self._summary_response["connection"]["avg_time_ms"])
-        return self._get_data_from_response(self._summary_response, ["connection", "avg_time_ms"])
+        return self._get_data_from_response(self._summary_response, ["connection", "avg_time_ms"], self._summary_table_name)
 
     @property
     def sum_pool_total_hashes(self) -> Union[int, str]:
@@ -553,7 +579,7 @@ class XMRigProperties:
         """
         if self._summary_response is not None:
             log.debug(self._summary_response["connection"]["hashes_total"])
-        return self._get_data_from_response(self._summary_response, ["connection", "hashes_total"])
+        return self._get_data_from_response(self._summary_response, ["connection", "hashes_total"], self._summary_table_name)
 
     @property
     def sum_version(self) -> str:
@@ -565,7 +591,7 @@ class XMRigProperties:
         """
         if self._summary_response is not None:
             log.debug(self._summary_response["version"])
-        return self._get_data_from_response(self._summary_response, ["version"])
+        return self._get_data_from_response(self._summary_response, ["version"], self._summary_table_name)
 
     @property
     def sum_kind(self) -> str:
@@ -577,7 +603,7 @@ class XMRigProperties:
         """
         if self._summary_response is not None:
             log.debug(self._summary_response["kind"])
-        return self._get_data_from_response(self._summary_response, ["kind"])
+        return self._get_data_from_response(self._summary_response, ["kind"], self._summary_table_name)
 
     @property
     def sum_ua(self) -> str:
@@ -589,7 +615,7 @@ class XMRigProperties:
         """
         if self._summary_response is not None:
             log.debug(self._summary_response["ua"])
-        return self._get_data_from_response(self._summary_response, ["ua"])
+        return self._get_data_from_response(self._summary_response, ["ua"], self._summary_table_name)
 
     @property
     def sum_cpu_info(self) -> Union[Dict[str, Any], str]:
@@ -601,7 +627,7 @@ class XMRigProperties:
         """
         if self._summary_response is not None:
             log.debug(self._summary_response["cpu"])
-        return self._get_data_from_response(self._summary_response, ["cpu"])
+        return self._get_data_from_response(self._summary_response, ["cpu"], self._summary_table_name)
 
     @property
     def sum_cpu_brand(self) -> str:
@@ -613,7 +639,7 @@ class XMRigProperties:
         """
         if self._summary_response is not None:
             log.debug(self._summary_response["cpu"]["brand"])
-        return self._get_data_from_response(self._summary_response, ["cpu", "brand"])
+        return self._get_data_from_response(self._summary_response, ["cpu", "brand"], self._summary_table_name)
 
     @property
     def sum_cpu_family(self) -> Union[int, str]:
@@ -625,7 +651,7 @@ class XMRigProperties:
         """
         if self._summary_response is not None:
             log.debug(self._summary_response["cpu"]["family"])
-        return self._get_data_from_response(self._summary_response, ["cpu", "family"])
+        return self._get_data_from_response(self._summary_response, ["cpu", "family"], self._summary_table_name)
 
     @property
     def sum_cpu_model(self) -> Union[int, str]:
@@ -637,7 +663,7 @@ class XMRigProperties:
         """
         if self._summary_response is not None:
             log.debug(self._summary_response["cpu"]["model"])
-        return self._get_data_from_response(self._summary_response, ["cpu", "model"])
+        return self._get_data_from_response(self._summary_response, ["cpu", "model"], self._summary_table_name)
 
     @property
     def sum_cpu_stepping(self) -> Union[int, str]:
@@ -649,7 +675,7 @@ class XMRigProperties:
         """
         if self._summary_response is not None:
             log.debug(self._summary_response["cpu"]["stepping"])
-        return self._get_data_from_response(self._summary_response,  ["cpu", "stepping"])
+        return self._get_data_from_response(self._summary_response,  ["cpu", "stepping"], self._summary_table_name)
 
     @property
     def sum_cpu_proc_info(self) -> Union[int, str]:
@@ -661,7 +687,7 @@ class XMRigProperties:
         """
         if self._summary_response is not None:
             log.debug(self._summary_response["cpu"]["proc_info"])
-        return self._get_data_from_response(self._summary_response, ["cpu", "proc_info"])
+        return self._get_data_from_response(self._summary_response, ["cpu", "proc_info"], self._summary_table_name)
 
     @property
     def sum_cpu_aes(self) -> Union[bool, str]:
@@ -673,7 +699,7 @@ class XMRigProperties:
         """
         if self._summary_response is not None:
             log.debug(self._summary_response["cpu"]["aes"])
-        return self._get_data_from_response(self._summary_response, ["cpu", "aes"])
+        return self._get_data_from_response(self._summary_response, ["cpu", "aes"], self._summary_table_name)
 
     @property
     def sum_cpu_avx2(self) -> Union[bool, str]:
@@ -685,7 +711,7 @@ class XMRigProperties:
         """
         if self._summary_response is not None:
             log.debug(self._summary_response["cpu"]["avx2"])
-        return self._get_data_from_response(self._summary_response, ["cpu", "avx2"])
+        return self._get_data_from_response(self._summary_response, ["cpu", "avx2"], self._summary_table_name)
 
     @property
     def sum_cpu_x64(self) -> Union[bool, str]:
@@ -697,7 +723,7 @@ class XMRigProperties:
         """
         if self._summary_response is not None:
             log.debug(self._summary_response["cpu"]["x64"])
-        return self._get_data_from_response(self._summary_response, ["cpu", "x64"])
+        return self._get_data_from_response(self._summary_response, ["cpu", "x64"], self._summary_table_name)
 
     @property
     def sum_cpu_64_bit(self) -> Union[bool, str]:
@@ -709,7 +735,7 @@ class XMRigProperties:
         """
         if self._summary_response is not None:
             log.debug(self._summary_response["cpu"]["64_bit"])
-        return self._get_data_from_response(self._summary_response, ["cpu", "64_bit"])
+        return self._get_data_from_response(self._summary_response, ["cpu", "64_bit"], self._summary_table_name)
 
     @property
     def sum_cpu_l2(self) -> Union[int, str]:
@@ -721,7 +747,7 @@ class XMRigProperties:
         """
         if self._summary_response is not None:
             log.debug(self._summary_response["cpu"]["l2"])
-        return self._get_data_from_response(self._summary_response, ["cpu", "l2"])
+        return self._get_data_from_response(self._summary_response, ["cpu", "l2"], self._summary_table_name)
 
     @property
     def sum_cpu_l3(self) -> Union[int, str]:
@@ -733,7 +759,7 @@ class XMRigProperties:
         """
         if self._summary_response is not None:
             log.debug(self._summary_response["cpu"]["l3"])
-        return self._get_data_from_response(self._summary_response, ["cpu", "l3"])
+        return self._get_data_from_response(self._summary_response, ["cpu", "l3"], self._summary_table_name)
 
     @property
     def sum_cpu_cores(self) -> Union[int, str]:
@@ -745,7 +771,7 @@ class XMRigProperties:
         """
         if self._summary_response is not None:
             log.debug(self._summary_response["cpu"]["cores"])
-        return self._get_data_from_response(self._summary_response, ["cpu", "cores"])
+        return self._get_data_from_response(self._summary_response, ["cpu", "cores"], self._summary_table_name)
 
     @property
     def sum_cpu_threads(self) -> Union[int, str]:
@@ -757,7 +783,7 @@ class XMRigProperties:
         """
         if self._summary_response is not None:
             log.debug(self._summary_response["cpu"]["threads"])
-        return self._get_data_from_response(self._summary_response, ["cpu", "threads"])
+        return self._get_data_from_response(self._summary_response, ["cpu", "threads"], self._summary_table_name)
 
     @property
     def sum_cpu_packages(self) -> Union[int, str]:
@@ -769,7 +795,7 @@ class XMRigProperties:
         """
         if self._summary_response is not None:
             log.debug(self._summary_response["cpu"]["packages"])
-        return self._get_data_from_response(self._summary_response, ["cpu", "packages"])
+        return self._get_data_from_response(self._summary_response, ["cpu", "packages"], self._summary_table_name)
 
     @property
     def sum_cpu_nodes(self) -> Union[int, str]:
@@ -781,7 +807,7 @@ class XMRigProperties:
         """
         if self._summary_response is not None:
             log.debug(self._summary_response["cpu"]["nodes"])
-        return self._get_data_from_response(self._summary_response, ["cpu", "nodes"])
+        return self._get_data_from_response(self._summary_response, ["cpu", "nodes"], self._summary_table_name)
 
     @property
     def sum_cpu_backend(self) -> str:
@@ -793,7 +819,7 @@ class XMRigProperties:
         """
         if self._summary_response is not None:
             log.debug(self._summary_response["cpu"]["backend"])
-        return self._get_data_from_response(self._summary_response,  ["cpu", "backend"])
+        return self._get_data_from_response(self._summary_response,  ["cpu", "backend"], self._summary_table_name)
 
     @property
     def sum_cpu_msr(self) -> str:
@@ -805,7 +831,7 @@ class XMRigProperties:
         """
         if self._summary_response is not None:
             log.debug(self._summary_response["cpu"]["msr"])
-        return self._get_data_from_response(self._summary_response, ["cpu", "msr"])
+        return self._get_data_from_response(self._summary_response, ["cpu", "msr"], self._summary_table_name)
 
     @property
     def sum_cpu_assembly(self) -> str:
@@ -817,7 +843,7 @@ class XMRigProperties:
         """
         if self._summary_response is not None:
             log.debug(self._summary_response["cpu"]["assembly"])
-        return self._get_data_from_response(self._summary_response,  ["cpu", "assembly"])
+        return self._get_data_from_response(self._summary_response,  ["cpu", "assembly"], self._summary_table_name)
 
     @property
     def sum_cpu_arch(self) -> str:
@@ -829,7 +855,7 @@ class XMRigProperties:
         """
         if self._summary_response is not None:
             log.debug(self._summary_response["cpu"]["arch"])
-        return self._get_data_from_response(self._summary_response, ["cpu", "arch"])
+        return self._get_data_from_response(self._summary_response, ["cpu", "arch"], self._summary_table_name)
 
     @property
     def sum_cpu_flags(self) -> Union[List[str], str]:
@@ -841,7 +867,7 @@ class XMRigProperties:
         """
         if self._summary_response is not None:
             log.debug(self._summary_response["cpu"]["flags"])
-        return self._get_data_from_response(self._summary_response, ["cpu", "flags"])
+        return self._get_data_from_response(self._summary_response, ["cpu", "flags"], self._summary_table_name)
 
     @property
     def sum_donate_level(self) -> Union[int, str]:
@@ -853,7 +879,7 @@ class XMRigProperties:
         """
         if self._summary_response is not None:
             log.debug(self._summary_response["donate_level"])
-        return self._get_data_from_response(self._summary_response, ["donate_level"])
+        return self._get_data_from_response(self._summary_response, ["donate_level"], self._summary_table_name)
 
     @property
     def sum_paused(self) -> Union[bool, str]:
@@ -865,7 +891,7 @@ class XMRigProperties:
         """
         if self._summary_response is not None:
             log.debug(self._summary_response["paused"])
-        return self._get_data_from_response(self._summary_response, ["paused"])
+        return self._get_data_from_response(self._summary_response, ["paused"], self._summary_table_name)
 
     @property
     def sum_algorithms(self) -> Union[List[str], str]:
@@ -877,7 +903,7 @@ class XMRigProperties:
         """
         if self._summary_response is not None:
             log.debug(self._summary_response["algorithms"])
-        return self._get_data_from_response(self._summary_response, ["algorithms"])
+        return self._get_data_from_response(self._summary_response, ["algorithms"], self._summary_table_name)
 
     @property
     def sum_hashrates(self) -> Union[Dict[str, Any], str]:
@@ -889,7 +915,7 @@ class XMRigProperties:
         """
         if self._summary_response is not None:
             log.debug(self._summary_response["hashrate"])
-        return self._get_data_from_response(self._summary_response, ["hashrate"])
+        return self._get_data_from_response(self._summary_response, ["hashrate"], self._summary_table_name)
 
     @property
     def sum_hashrate_10s(self) -> Union[float, str]:
@@ -901,7 +927,7 @@ class XMRigProperties:
         """
         if self._summary_response is not None:
             log.debug(self._summary_response["hashrate"]["total"][0])
-        return self._get_data_from_response(self._summary_response, ["hashrate", "total", 0])
+        return self._get_data_from_response(self._summary_response, ["hashrate", "total", 0], self._summary_table_name)
 
     @property
     def sum_hashrate_1m(self) -> Union[float, str]:
@@ -913,7 +939,7 @@ class XMRigProperties:
         """
         if self._summary_response is not None:
             log.debug(self._summary_response["hashrate"]["total"][1])
-        return self._get_data_from_response(self._summary_response, ["hashrate", "total", 1])
+        return self._get_data_from_response(self._summary_response, ["hashrate", "total", 1], self._summary_table_name)
 
     @property
     def sum_hashrate_15m(self) -> Union[float, str]:
@@ -925,7 +951,7 @@ class XMRigProperties:
         """
         if self._summary_response is not None:
             log.debug(self._summary_response["hashrate"]["total"][2])
-        return self._get_data_from_response(self._summary_response, ["hashrate", "total", 2])
+        return self._get_data_from_response(self._summary_response, ["hashrate", "total", 2], self._summary_table_name)
 
     @property
     def sum_hashrate_highest(self) -> Union[float, str]:
@@ -937,7 +963,7 @@ class XMRigProperties:
         """
         if self._summary_response is not None:
             log.debug(self._summary_response["hashrate"]["highest"])
-        return self._get_data_from_response(self._summary_response, ["hashrate", "highest"])
+        return self._get_data_from_response(self._summary_response, ["hashrate", "highest"], self._summary_table_name)
 
     @property
     def sum_hugepages(self) -> Union[List[Dict[str, Any]], str]:
@@ -949,7 +975,11 @@ class XMRigProperties:
         """
         if self._summary_response is not None:
             log.debug(self._summary_response["hugepages"])
-        return self._get_data_from_response(self._summary_response, ["hugepages"])
+        return self._get_data_from_response(self._summary_response, ["hugepages"], self._summary_table_name)
+
+    ###############################
+    # Data from backends endpoint #
+    ###############################
 
     @property
     def enabled_backends(self) -> Union[List[str], str]:
@@ -960,7 +990,7 @@ class XMRigProperties:
             list: Enabled backends, or "N/A" if not available.
         """
         backend_types = []
-        for i in self._get_data_from_response(self._backends_response, []):
+        for i in self._get_data_from_response(self._backends_response, [], self._backends_table_name):
             if "type" in i and i["enabled"] == True:
                 backend_types.append(i["type"])
         if self._backends_response is not None:
@@ -977,7 +1007,7 @@ class XMRigProperties:
         """
         if self._backends_response is not None:
             log.debug(self._backends_response[0]["type"])
-        return self._get_data_from_response(self._backends_response, [0, "type"])
+        return self._get_data_from_response(self._backends_response, [0, "type"], self._backends_table_name)
 
     @property
     def be_cpu_enabled(self) -> Union[bool, str]:
@@ -989,7 +1019,7 @@ class XMRigProperties:
         """
         if self._backends_response is not None:
             log.debug(self._backends_response[0]["enabled"])
-        return self._get_data_from_response(self._backends_response, [0, "enabled"])
+        return self._get_data_from_response(self._backends_response, [0, "enabled"], self._backends_table_name)
 
     @property
     def be_cpu_algo(self) -> str:
@@ -1001,7 +1031,7 @@ class XMRigProperties:
         """
         if self._backends_response is not None:
             log.debug(self._backends_response[0]["algo"])
-        return self._get_data_from_response(self._backends_response, [0, "algo"])
+        return self._get_data_from_response(self._backends_response, [0, "algo"], self._backends_table_name)
 
     @property
     def be_cpu_profile(self) -> str:
@@ -1013,7 +1043,7 @@ class XMRigProperties:
         """
         if self._backends_response is not None:
             log.debug(self._backends_response[0]["profile"])
-        return self._get_data_from_response(self._backends_response, [0, "profile"])
+        return self._get_data_from_response(self._backends_response, [0, "profile"], self._backends_table_name)
 
     @property
     def be_cpu_hw_aes(self) -> Union[bool, str]:
@@ -1025,7 +1055,7 @@ class XMRigProperties:
         """
         if self._backends_response is not None:
             log.debug(self._backends_response[0]["hw-aes"])
-        return self._get_data_from_response(self._backends_response, [0, "hw-aes"])
+        return self._get_data_from_response(self._backends_response, [0, "hw-aes"], self._backends_table_name)
 
     @property
     def be_cpu_priority(self) -> Union[int, str]:
@@ -1037,7 +1067,7 @@ class XMRigProperties:
         """
         if self._backends_response is not None:
             log.debug(self._backends_response[0]["priority"])
-        return self._get_data_from_response(self._backends_response, [0, "priority"])
+        return self._get_data_from_response(self._backends_response, [0, "priority"], self._backends_table_name)
 
     @property
     def be_cpu_msr(self) -> Union[bool, str]:
@@ -1049,7 +1079,7 @@ class XMRigProperties:
         """
         if self._backends_response is not None:
             log.debug(self._backends_response[0]["msr"])
-        return self._get_data_from_response(self._backends_response, [0, "msr"])
+        return self._get_data_from_response(self._backends_response, [0, "msr"], self._backends_table_name)
 
     @property
     def be_cpu_asm(self) -> str:
@@ -1061,7 +1091,7 @@ class XMRigProperties:
         """
         if self._backends_response is not None:
             log.debug(self._backends_response[0]["asm"])
-        return self._get_data_from_response(self._backends_response, [0, "asm"])
+        return self._get_data_from_response(self._backends_response, [0, "asm"], self._backends_table_name)
 
     @property
     def be_cpu_argon2_impl(self) -> str:
@@ -1073,7 +1103,7 @@ class XMRigProperties:
         """
         if self._backends_response is not None:
             log.debug(self._backends_response[0]["argon2-impl"])
-        return self._get_data_from_response(self._backends_response, [0, "argon2-impl"])
+        return self._get_data_from_response(self._backends_response, [0, "argon2-impl"], self._backends_table_name)
 
     @property
     def be_cpu_hugepages(self) -> Union[List[Dict[str, Any]], str]:
@@ -1085,7 +1115,7 @@ class XMRigProperties:
         """
         if self._backends_response is not None:
             log.debug(self._backends_response[0]["hugepages"])
-        return self._get_data_from_response(self._backends_response, [0, "hugepages"])
+        return self._get_data_from_response(self._backends_response, [0, "hugepages"], self._backends_table_name)
 
     @property
     def be_cpu_memory(self) -> Union[int, str]:
@@ -1097,7 +1127,7 @@ class XMRigProperties:
         """
         if self._backends_response is not None:
             log.debug(self._backends_response[0]["memory"])
-        return self._get_data_from_response(self._backends_response, [0, "memory"])
+        return self._get_data_from_response(self._backends_response, [0, "memory"], self._backends_table_name)
 
     @property
     def be_cpu_hashrates(self) -> Union[List[float], str]:
@@ -1109,7 +1139,7 @@ class XMRigProperties:
         """
         if self._backends_response is not None:
             log.debug(self._backends_response[0]["hashrate"])
-        return self._get_data_from_response(self._backends_response, [0, "hashrate"])
+        return self._get_data_from_response(self._backends_response, [0, "hashrate"], self._backends_table_name)
 
     @property
     def be_cpu_hashrate_10s(self) -> Union[float, str]:
@@ -1121,7 +1151,7 @@ class XMRigProperties:
         """
         if self._backends_response is not None:
             log.debug(self._backends_response[0]["hashrate"][0])
-        return self._get_data_from_response(self._backends_response, [0, "hashrate", 0])
+        return self._get_data_from_response(self._backends_response, [0, "hashrate", 0], self._backends_table_name)
 
     @property
     def be_cpu_hashrate_1m(self) -> Union[float, str]:
@@ -1133,7 +1163,7 @@ class XMRigProperties:
         """
         if self._backends_response is not None:
             log.debug(self._backends_response[0]["hashrate"][1])
-        return self._get_data_from_response(self._backends_response, [0, "hashrate", 1])
+        return self._get_data_from_response(self._backends_response, [0, "hashrate", 1], self._backends_table_name)
 
     @property
     def be_cpu_hashrate_15m(self) -> Union[float, str]:
@@ -1145,8 +1175,9 @@ class XMRigProperties:
         """
         if self._backends_response is not None:
             log.debug(self._backends_response[0]["hashrate"][2])
-        return self._get_data_from_response(self._backends_response, [0, "hashrate", 2])
-
+        return self._get_data_from_response(self._backends_response, [0, "hashrate", 2], self._backends_table_name)
+    
+    # TODO: Check all property logic is correct for anything related to threads
     @property
     def be_cpu_threads(self) -> Union[List[Dict[str, Any]], str]:
         """
@@ -1157,7 +1188,7 @@ class XMRigProperties:
         """
         if self._backends_response is not None:
             log.debug(self._backends_response[0]["threads"])
-        return self._get_data_from_response(self._backends_response, [0, "threads"])
+        return self._get_data_from_response(self._backends_response, [0, "threads"], self._backends_table_name)
 
     @property
     def be_cpu_threads_intensity(self) -> Union[List[int], str]:
@@ -1169,7 +1200,7 @@ class XMRigProperties:
         """
         intensities = []
         if self._backends_response is not None:
-            for i in self._get_data_from_response(self._backends_response, [0, "threads"]):
+            for i in self._get_data_from_response(self._backends_response, [0, "threads"], self._backends_table_name):
                 intensities.append(i["intensity"])
         log.debug(intensities)
         return intensities
@@ -1184,7 +1215,7 @@ class XMRigProperties:
         """
         affinities = []
         if self._backends_response is not None:
-            for i in self._get_data_from_response(self._backends_response, [0, "threads"]):
+            for i in self._get_data_from_response(self._backends_response, [0, "threads"], self._backends_table_name):
                 affinities.append(i["affinity"])
         log.debug(affinities)
         return affinities
@@ -1199,7 +1230,7 @@ class XMRigProperties:
         """
         avs = []
         if self._backends_response is not None:
-            for i in self._get_data_from_response(self._backends_response, [0, "threads"]):
+            for i in self._get_data_from_response(self._backends_response, [0, "threads"], self._backends_table_name):
                 avs.append(i["av"])
         log.debug(avs)
         return avs
@@ -1214,7 +1245,7 @@ class XMRigProperties:
         """
         hashrates_10s = []
         if self._backends_response is not None:
-            for i in self._get_data_from_response(self._backends_response, [0, "threads"]):
+            for i in self._get_data_from_response(self._backends_response, [0, "threads"], self._backends_table_name):
                 hashrates_10s.append(i["hashrate"][0])
         log.debug(hashrates_10s)
         return hashrates_10s
@@ -1229,7 +1260,7 @@ class XMRigProperties:
         """
         hashrates_1m = []
         if self._backends_response is not None:
-            for i in self._get_data_from_response(self._backends_response, [0, "threads"]):
+            for i in self._get_data_from_response(self._backends_response, [0, "threads"], self._backends_table_name):
                 hashrates_1m.append(i["hashrate"][1])
         log.debug(hashrates_1m)
         return hashrates_1m
@@ -1244,7 +1275,7 @@ class XMRigProperties:
         """
         hashrates_15m = []
         if self._backends_response is not None:
-            for i in self._get_data_from_response(self._backends_response, [0, "threads"]):
+            for i in self._get_data_from_response(self._backends_response, [0, "threads"], self._backends_table_name):
                 hashrates_15m.append(i["hashrate"][2])
         log.debug(hashrates_15m)
         return hashrates_15m
@@ -1259,7 +1290,7 @@ class XMRigProperties:
         """
         if self._backends_response is not None:
             log.debug(self._backends_response[1]["type"])
-        return self._get_data_from_response(self._backends_response, [1, "type"])
+        return self._get_data_from_response(self._backends_response, [1, "type"], self._backends_table_name)
 
     @property
     def be_opencl_enabled(self) -> Union[bool, str]:
@@ -1271,7 +1302,7 @@ class XMRigProperties:
         """
         if self._backends_response is not None:
             log.debug(self._backends_response[1]["enabled"])
-        return self._get_data_from_response(self._backends_response, [1, "enabled"])
+        return self._get_data_from_response(self._backends_response, [1, "enabled"], self._backends_table_name)
 
     @property
     def be_opencl_algo(self) -> str:
@@ -1283,7 +1314,7 @@ class XMRigProperties:
         """
         if self._backends_response is not None:
             log.debug(self._backends_response[1]["algo"])
-        return self._get_data_from_response(self._backends_response, [1, "algo"])
+        return self._get_data_from_response(self._backends_response, [1, "algo"], self._backends_table_name)
 
     @property
     def be_opencl_profile(self) -> str:
@@ -1295,7 +1326,7 @@ class XMRigProperties:
         """
         if self._backends_response is not None:
             log.debug(self._backends_response[1]["profile"])
-        return self._get_data_from_response(self._backends_response, [1, "profile"])
+        return self._get_data_from_response(self._backends_response, [1, "profile"], self._backends_table_name)
 
     @property
     def be_opencl_platform(self) -> Union[Dict[str, Any], str]:
@@ -1307,7 +1338,7 @@ class XMRigProperties:
         """
         if self._backends_response is not None:
             log.debug(self._backends_response[1]["platform"])
-        return self._get_data_from_response(self._backends_response, [1, "platform"])
+        return self._get_data_from_response(self._backends_response, [1, "platform"], self._backends_table_name)
 
     @property
     def be_opencl_platform_index(self) -> Union[int, str]:
@@ -1319,7 +1350,7 @@ class XMRigProperties:
         """
         if self._backends_response is not None:
             log.debug(self._backends_response[1]["platform"]["index"])
-        return self._get_data_from_response(self._backends_response, [1, "platform", "index"])
+        return self._get_data_from_response(self._backends_response, [1, "platform", "index"], self._backends_table_name)
 
     @property
     def be_opencl_platform_profile(self) -> str:
@@ -1331,7 +1362,7 @@ class XMRigProperties:
         """
         if self._backends_response is not None:
             log.debug(self._backends_response[1]["platform"]["profile"])
-        return self._get_data_from_response(self._backends_response, [1, "platform", "profile"])
+        return self._get_data_from_response(self._backends_response, [1, "platform", "profile"], self._backends_table_name)
 
     @property
     def be_opencl_platform_version(self) -> str:
@@ -1343,7 +1374,7 @@ class XMRigProperties:
         """
         if self._backends_response is not None:
             log.debug(self._backends_response[1]["platform"]["version"])
-        return self._get_data_from_response(self._backends_response, [1, "platform", "version"])
+        return self._get_data_from_response(self._backends_response, [1, "platform", "version"], self._backends_table_name)
 
     @property
     def be_opencl_platform_name(self) -> str:
@@ -1355,7 +1386,7 @@ class XMRigProperties:
         """
         if self._backends_response is not None:
             log.debug(self._backends_response[1]["platform"]["name"])
-        return self._get_data_from_response(self._backends_response, [1, "platform", "name"])
+        return self._get_data_from_response(self._backends_response, [1, "platform", "name"], self._backends_table_name)
 
     @property
     def be_opencl_platform_vendor(self) -> str:
@@ -1367,7 +1398,7 @@ class XMRigProperties:
         """
         if self._backends_response is not None:
             log.debug(self._backends_response[1]["platform"]["vendor"])
-        return self._get_data_from_response(self._backends_response, [1, "platform", "vendor"])
+        return self._get_data_from_response(self._backends_response, [1, "platform", "vendor"], self._backends_table_name)
 
     @property
     def be_opencl_platform_extensions(self) -> str:
@@ -1379,7 +1410,7 @@ class XMRigProperties:
         """
         if self._backends_response is not None:
             log.debug(self._backends_response[1]["platform"]["extensions"])
-        return self._get_data_from_response(self._backends_response, [1, "platform", "extensions"])
+        return self._get_data_from_response(self._backends_response, [1, "platform", "extensions"], self._backends_table_name)
 
     @property
     def be_opencl_hashrates(self) -> Union[List[float], str]:
@@ -1391,7 +1422,7 @@ class XMRigProperties:
         """
         if self._backends_response is not None:
             log.debug(self._backends_response[1]["hashrate"])
-        return self._get_data_from_response(self._backends_response, [1, "hashrate"])
+        return self._get_data_from_response(self._backends_response, [1, "hashrate"], self._backends_table_name)
 
     @property
     def be_opencl_hashrate_10s(self) -> Union[float, str]:
@@ -1403,7 +1434,7 @@ class XMRigProperties:
         """
         if self._backends_response is not None:
             log.debug(self._backends_response[1]["hashrate"][0])
-        return self._get_data_from_response(self._backends_response, [1, "hashrate", 0])
+        return self._get_data_from_response(self._backends_response, [1, "hashrate", 0], self._backends_table_name)
 
     @property
     def be_opencl_hashrate_1m(self) -> Union[float, str]:
@@ -1415,7 +1446,7 @@ class XMRigProperties:
         """
         if self._backends_response is not None:
             log.debug(self._backends_response[1]["hashrate"][1])
-        return self._get_data_from_response(self._backends_response, [1, "hashrate", 1])
+        return self._get_data_from_response(self._backends_response, [1, "hashrate", 1], self._backends_table_name)
 
     @property
     def be_opencl_hashrate_15m(self) -> Union[float, str]:
@@ -1427,7 +1458,7 @@ class XMRigProperties:
         """
         if self._backends_response is not None:
             log.debug(self._backends_response[1]["hashrate"][2])
-        return self._get_data_from_response(self._backends_response, [1, "hashrate", 2])
+        return self._get_data_from_response(self._backends_response, [1, "hashrate", 2], self._backends_table_name)
 
     @property
     def be_opencl_threads(self) -> Union[Dict[str, Any], str]:
@@ -1439,7 +1470,7 @@ class XMRigProperties:
         """
         if self._backends_response is not None:
             log.debug(self._backends_response[1]["threads"][0])
-        return self._get_data_from_response(self._backends_response, [1, "threads", 0])
+        return self._get_data_from_response(self._backends_response, [1, "threads", 0], self._backends_table_name)
 
     @property
     def be_opencl_threads_index(self) -> Union[int, str]:
@@ -1451,7 +1482,7 @@ class XMRigProperties:
         """
         if self._backends_response is not None:
             log.debug(self._backends_response[1]["threads"][0]["index"])
-        return self._get_data_from_response(self._backends_response, [1, "threads", 0, "index"])
+        return self._get_data_from_response(self._backends_response, [1, "threads", 0, "index"], self._backends_table_name)
 
     @property
     def be_opencl_threads_intensity(self) -> Union[int, str]:
@@ -1463,7 +1494,7 @@ class XMRigProperties:
         """
         if self._backends_response is not None:
             log.debug(self._backends_response[1]["threads"][0]["intensity"])
-        return self._get_data_from_response(self._backends_response, [1, "threads", 0, "intensity"])
+        return self._get_data_from_response(self._backends_response, [1, "threads", 0, "intensity"], self._backends_table_name)
 
     @property
     def be_opencl_threads_worksize(self) -> Union[int, str]:
@@ -1475,7 +1506,7 @@ class XMRigProperties:
         """
         if self._backends_response is not None:
             log.debug(self._backends_response[1]["threads"][0]["worksize"])
-        return self._get_data_from_response(self._backends_response, [1, "threads", 0, "worksize"])
+        return self._get_data_from_response(self._backends_response, [1, "threads", 0, "worksize"], self._backends_table_name)
 
     @property
     def be_opencl_threads_amount(self) -> Union[List[int], str]:
@@ -1487,7 +1518,7 @@ class XMRigProperties:
         """
         if self._backends_response is not None:
             log.debug(self._backends_response[1]["threads"][0]["threads"])
-        return self._get_data_from_response(self._backends_response, [1, "threads", 0, "threads"])
+        return self._get_data_from_response(self._backends_response, [1, "threads", 0, "threads"], self._backends_table_name)
 
     @property
     def be_opencl_threads_unroll(self) -> Union[int, str]:
@@ -1499,7 +1530,7 @@ class XMRigProperties:
         """
         if self._backends_response is not None:
             log.debug(self._backends_response[1]["threads"][0]["unroll"])
-        return self._get_data_from_response(self._backends_response, [1, "threads", 0, "unroll"])
+        return self._get_data_from_response(self._backends_response, [1, "threads", 0, "unroll"], self._backends_table_name)
 
     @property
     def be_opencl_threads_affinity(self) -> Union[int, str]:
@@ -1511,7 +1542,7 @@ class XMRigProperties:
         """
         if self._backends_response is not None:
             log.debug(self._backends_response[1]["threads"][0]["affinity"])
-        return self._get_data_from_response(self._backends_response, [1, "threads", 0, "affinity"])
+        return self._get_data_from_response(self._backends_response, [1, "threads", 0, "affinity"], self._backends_table_name)
 
     @property
     def be_opencl_threads_hashrates(self) -> Union[List[float], str]:
@@ -1523,7 +1554,7 @@ class XMRigProperties:
         """
         if self._backends_response is not None:
             log.debug(self._backends_response[1]["threads"][0]["hashrate"])
-        return self._get_data_from_response(self._backends_response, [1, "threads", 0, "hashrate"])
+        return self._get_data_from_response(self._backends_response, [1, "threads", 0, "hashrate"], self._backends_table_name)
 
     @property
     def be_opencl_threads_hashrate_10s(self) -> Union[float, str]:
@@ -1535,7 +1566,7 @@ class XMRigProperties:
         """
         if self._backends_response is not None:
             log.debug(self._backends_response[1]["threads"][0]["hashrate"][0])
-        return self._get_data_from_response(self._backends_response, [1, "threads", 0, "hashrate", 0])
+        return self._get_data_from_response(self._backends_response, [1, "threads", 0, "hashrate", 0], self._backends_table_name)
 
     @property
     def be_opencl_threads_hashrate_1m(self) -> Union[float, str]:
@@ -1547,7 +1578,7 @@ class XMRigProperties:
         """
         if self._backends_response is not None:
             log.debug(self._backends_response[1]["threads"][0]["hashrate"][1])
-        return self._get_data_from_response(self._backends_response, [1, "threads", 0, "hashrate", 1])
+        return self._get_data_from_response(self._backends_response, [1, "threads", 0, "hashrate", 1], self._backends_table_name)
 
     @property
     def be_opencl_threads_hashrate_15m(self) -> Union[float, str]:
@@ -1559,7 +1590,7 @@ class XMRigProperties:
         """
         if self._backends_response is not None:
             log.debug(self._backends_response[1]["threads"][0]["hashrate"][2])
-        return self._get_data_from_response(self._backends_response, [1, "threads", 0, "hashrate", 2])
+        return self._get_data_from_response(self._backends_response, [1, "threads", 0, "hashrate", 2], self._backends_table_name)
 
     @property
     def be_opencl_threads_board(self) -> str:
@@ -1571,7 +1602,7 @@ class XMRigProperties:
         """
         if self._backends_response is not None:
             log.debug(self._backends_response[1]["threads"][0]["board"])
-        return self._get_data_from_response(self._backends_response, [1, "threads", 0, "board"])
+        return self._get_data_from_response(self._backends_response, [1, "threads", 0, "board"], self._backends_table_name)
 
     @property
     def be_opencl_threads_name(self) -> str:
@@ -1583,7 +1614,7 @@ class XMRigProperties:
         """
         if self._backends_response is not None:
             log.debug(self._backends_response[1]["threads"][0]["name"])
-        return self._get_data_from_response(self._backends_response, [1, "threads", 0, "name"])
+        return self._get_data_from_response(self._backends_response, [1, "threads", 0, "name"], self._backends_table_name)
 
     @property
     def be_opencl_threads_bus_id(self) -> str:
@@ -1595,7 +1626,7 @@ class XMRigProperties:
         """
         if self._backends_response is not None:
             log.debug(self._backends_response[1]["threads"][0]["bus_id"])
-        return self._get_data_from_response(self._backends_response, [1, "threads", 0, "bus_id"])
+        return self._get_data_from_response(self._backends_response, [1, "threads", 0, "bus_id"], self._backends_table_name)
 
     @property
     def be_opencl_threads_cu(self) -> Union[int, str]:
@@ -1607,7 +1638,7 @@ class XMRigProperties:
         """
         if self._backends_response is not None:
             log.debug(self._backends_response[1]["threads"][0]["cu"])
-        return self._get_data_from_response(self._backends_response, [1, "threads", 0, "cu"])
+        return self._get_data_from_response(self._backends_response, [1, "threads", 0, "cu"], self._backends_table_name)
 
     @property
     def be_opencl_threads_global_mem(self) -> Union[int, str]:
@@ -1619,7 +1650,7 @@ class XMRigProperties:
         """
         if self._backends_response is not None:
             log.debug(self._backends_response[1]["threads"][0]["global_mem"])
-        return self._get_data_from_response(self._backends_response, [1, "threads", 0, "global_mem"])
+        return self._get_data_from_response(self._backends_response, [1, "threads", 0, "global_mem"], self._backends_table_name)
 
     @property
     def be_opencl_threads_health(self) -> Union[Dict[str, Any], str]:
@@ -1631,7 +1662,7 @@ class XMRigProperties:
         """
         if self._backends_response is not None:
             log.debug(self._backends_response[1]["threads"][0]["health"])
-        return self._get_data_from_response(self._backends_response, [1, "threads", 0, "health"])
+        return self._get_data_from_response(self._backends_response, [1, "threads", 0, "health"], self._backends_table_name)
 
     @property
     def be_opencl_threads_health_temp(self) -> Union[int, str]:
@@ -1643,7 +1674,7 @@ class XMRigProperties:
         """
         if self._backends_response is not None:
             log.debug(self._backends_response[1]["threads"][0]["health"]["temperature"])
-        return self._get_data_from_response(self._backends_response, [1, "threads", 0, "health", "temperature"])
+        return self._get_data_from_response(self._backends_response, [1, "threads", 0, "health", "temperature"], self._backends_table_name)
 
     @property
     def be_opencl_threads_health_power(self) -> Union[int, str]:
@@ -1655,7 +1686,7 @@ class XMRigProperties:
         """
         if self._backends_response is not None:
             log.debug(self._backends_response[1]["threads"][0]["health"]["power"])
-        return self._get_data_from_response(self._backends_response, [1, "threads", 0, "health", "power"])
+        return self._get_data_from_response(self._backends_response, [1, "threads", 0, "health", "power"], self._backends_table_name)
 
     @property
     def be_opencl_threads_health_clock(self) -> Union[int, str]:
@@ -1667,7 +1698,7 @@ class XMRigProperties:
         """
         if self._backends_response is not None:
             log.debug(self._backends_response[1]["threads"][0]["health"]["clock"])
-        return self._get_data_from_response(self._backends_response, [1, "threads", 0, "health", "clock"])
+        return self._get_data_from_response(self._backends_response, [1, "threads", 0, "health", "clock"], self._backends_table_name)
 
     @property
     def be_opencl_threads_health_mem_clock(self) -> Union[int, str]:
@@ -1679,7 +1710,7 @@ class XMRigProperties:
         """
         if self._backends_response is not None:
             log.debug(self._backends_response[1]["threads"][0]["health"]["mem_clock"])
-        return self._get_data_from_response(self._backends_response, [1, "threads", 0, "health", "mem_clock"])
+        return self._get_data_from_response(self._backends_response, [1, "threads", 0, "health", "mem_clock"], self._backends_table_name)
 
     @property
     def be_opencl_threads_health_rpm(self) -> Union[int, str]:
@@ -1691,7 +1722,7 @@ class XMRigProperties:
         """
         if self._backends_response is not None:
             log.debug(self._backends_response[1]["threads"][0]["health"]["rpm"])
-        return self._get_data_from_response(self._backends_response, [1, "threads", 0, "health", "rpm"])
+        return self._get_data_from_response(self._backends_response, [1, "threads", 0, "health", "rpm"], self._backends_table_name)
 
     @property
     def be_cuda_type(self) -> str:
@@ -1703,7 +1734,7 @@ class XMRigProperties:
         """
         if self._backends_response is not None:
             log.debug(self._backends_response[2]["type"])
-        return self._get_data_from_response(self._backends_response, [2, "type"])
+        return self._get_data_from_response(self._backends_response, [2, "type"], self._backends_table_name)
 
     @property
     def be_cuda_enabled(self) -> Union[bool, str]:
@@ -1715,7 +1746,7 @@ class XMRigProperties:
         """
         if self._backends_response is not None:
             log.debug(self._backends_response[2]["enabled"])
-        return self._get_data_from_response(self._backends_response, [2, "enabled"])
+        return self._get_data_from_response(self._backends_response, [2, "enabled"], self._backends_table_name)
 
     @property
     def be_cuda_algo(self) -> str:
@@ -1727,7 +1758,7 @@ class XMRigProperties:
         """
         if self._backends_response is not None:
             log.debug(self._backends_response[2]["algo"])
-        return self._get_data_from_response(self._backends_response, [2, "algo"])
+        return self._get_data_from_response(self._backends_response, [2, "algo"], self._backends_table_name)
 
     @property
     def be_cuda_profile(self) -> str:
@@ -1739,7 +1770,7 @@ class XMRigProperties:
         """
         if self._backends_response is not None:
             log.debug(self._backends_response[2]["profile"])
-        return self._get_data_from_response(self._backends_response, [2, "profile"])
+        return self._get_data_from_response(self._backends_response, [2, "profile"], self._backends_table_name)
 
     @property
     def be_cuda_versions(self) -> Union[Dict[str, Any], str]:
@@ -1751,7 +1782,7 @@ class XMRigProperties:
         """
         if self._backends_response is not None:
             log.debug(self._backends_response[2]["versions"])
-        return self._get_data_from_response(self._backends_response, [2, "versions"])
+        return self._get_data_from_response(self._backends_response, [2, "versions"], self._backends_table_name)
 
     @property
     def be_cuda_runtime(self) -> str:
@@ -1763,7 +1794,7 @@ class XMRigProperties:
         """
         if self._backends_response is not None:
             log.debug(self._backends_response[2]["versions"]["cuda-runtime"])
-        return self._get_data_from_response(self._backends_response, [2, "versions", "cuda-runtime"])
+        return self._get_data_from_response(self._backends_response, [2, "versions", "cuda-runtime"], self._backends_table_name)
 
     @property
     def be_cuda_driver(self) -> str:
@@ -1775,7 +1806,7 @@ class XMRigProperties:
         """
         if self._backends_response is not None:
             log.debug(self._backends_response[2]["versions"]["cuda-driver"])
-        return self._get_data_from_response(self._backends_response, [2, "versions", "cuda-driver"])
+        return self._get_data_from_response(self._backends_response, [2, "versions", "cuda-driver"], self._backends_table_name)
 
     @property
     def be_cuda_plugin(self) -> str:
@@ -1787,7 +1818,7 @@ class XMRigProperties:
         """
         if self._backends_response is not None:
             log.debug(self._backends_response[2]["versions"]["plugin"])
-        return self._get_data_from_response(self._backends_response, [2, "versions", "plugin"])
+        return self._get_data_from_response(self._backends_response, [2, "versions", "plugin"], self._backends_table_name)
 
     @property
     def be_cuda_hashrates(self) -> Union[List[float], str]:
@@ -1799,7 +1830,7 @@ class XMRigProperties:
         """
         if self._backends_response is not None:
             log.debug(self._backends_response[2]["hashrate"])
-        return self._get_data_from_response(self._backends_response, [2, "hashrate"])
+        return self._get_data_from_response(self._backends_response, [2, "hashrate"], self._backends_table_name)
 
     @property
     def be_cuda_hashrate_10s(self) -> Union[float, str]:
@@ -1811,7 +1842,7 @@ class XMRigProperties:
         """
         if self._backends_response is not None:
             log.debug(self._backends_response[2]["hashrate"][0])
-        return self._get_data_from_response(self._backends_response, [2, "hashrate", 0])
+        return self._get_data_from_response(self._backends_response, [2, "hashrate", 0], self._backends_table_name)
 
     @property
     def be_cuda_hashrate_1m(self) -> Union[float, str]:
@@ -1823,7 +1854,7 @@ class XMRigProperties:
         """
         if self._backends_response is not None:
             log.debug(self._backends_response[2]["hashrate"][1])
-        return self._get_data_from_response(self._backends_response, [2, "hashrate", 1])
+        return self._get_data_from_response(self._backends_response, [2, "hashrate", 1], self._backends_table_name)
 
     @property
     def be_cuda_hashrate_15m(self) -> Union[float, str]:
@@ -1835,7 +1866,7 @@ class XMRigProperties:
         """
         if self._backends_response is not None:
             log.debug(self._backends_response[2]["hashrate"][2])
-        return self._get_data_from_response(self._backends_response, [2, "hashrate", 2])
+        return self._get_data_from_response(self._backends_response, [2, "hashrate", 2], self._backends_table_name)
 
     @property
     def be_cuda_threads(self) -> Union[Dict[str, Any], str]:
@@ -1847,7 +1878,7 @@ class XMRigProperties:
         """
         if self._backends_response is not None:
             log.debug(self._backends_response[2]["threads"][0])
-        return self._get_data_from_response(self._backends_response, [2, "threads", 0])
+        return self._get_data_from_response(self._backends_response, [2, "threads", 0], self._backends_table_name)
 
     @property
     def be_cuda_threads_index(self) -> Union[int, str]:
@@ -1859,7 +1890,7 @@ class XMRigProperties:
         """
         if self._backends_response is not None:
             log.debug(self._backends_response[2]["threads"][0]["index"])
-        return self._get_data_from_response(self._backends_response, [2, "threads", 0, "index"])
+        return self._get_data_from_response(self._backends_response, [2, "threads", 0, "index"], self._backends_table_name)
 
     @property
     def be_cuda_threads_amount(self) -> Union[int, str]:
@@ -1871,7 +1902,7 @@ class XMRigProperties:
         """
         if self._backends_response is not None:
             log.debug(self._backends_response[2]["threads"][0]["threads"])
-        return self._get_data_from_response(self._backends_response, [2, "threads", 0, "threads"])
+        return self._get_data_from_response(self._backends_response, [2, "threads", 0, "threads"], self._backends_table_name)
 
     @property
     def be_cuda_threads_blocks(self) -> Union[int, str]:
@@ -1883,7 +1914,7 @@ class XMRigProperties:
         """
         if self._backends_response is not None:
             log.debug(self._backends_response[2]["threads"][0]["blocks"])
-        return self._get_data_from_response(self._backends_response, [2, "threads", 0, "blocks"])
+        return self._get_data_from_response(self._backends_response, [2, "threads", 0, "blocks"], self._backends_table_name)
 
     @property
     def be_cuda_threads_bfactor(self) -> Union[int, str]:
@@ -1895,7 +1926,7 @@ class XMRigProperties:
         """
         if self._backends_response is not None:
             log.debug(self._backends_response[2]["threads"][0]["bfactor"])
-        return self._get_data_from_response(self._backends_response, [2, "threads", 0, "bfactor"])
+        return self._get_data_from_response(self._backends_response, [2, "threads", 0, "bfactor"], self._backends_table_name)
 
     @property
     def be_cuda_threads_bsleep(self) -> Union[int, str]:
@@ -1907,7 +1938,7 @@ class XMRigProperties:
         """
         if self._backends_response is not None:
             log.debug(self._backends_response[2]["threads"][0]["bsleep"])
-        return self._get_data_from_response(self._backends_response, [2, "threads", 0, "bsleep"])
+        return self._get_data_from_response(self._backends_response, [2, "threads", 0, "bsleep"], self._backends_table_name)
 
     @property
     def be_cuda_threads_affinity(self) -> Union[int, str]:
@@ -1919,7 +1950,7 @@ class XMRigProperties:
         """
         if self._backends_response is not None:
             log.debug(self._backends_response[2]["threads"][0]["affinity"])
-        return self._get_data_from_response(self._backends_response, [2, "threads", 0, "affinity"])
+        return self._get_data_from_response(self._backends_response, [2, "threads", 0, "affinity"], self._backends_table_name)
 
     @property
     def be_cuda_threads_dataset_host(self) -> Union[bool, str]:
@@ -1931,7 +1962,7 @@ class XMRigProperties:
         """
         if self._backends_response is not None:
             log.debug(self._backends_response[2]["threads"][0]["dataset_host"])
-        return self._get_data_from_response(self._backends_response, [2, "threads", 0, "dataset_host"])
+        return self._get_data_from_response(self._backends_response, [2, "threads", 0, "dataset_host"], self._backends_table_name)
 
     @property
     def be_cuda_threads_hashrates(self) -> Union[List[float], str]:
@@ -1943,7 +1974,7 @@ class XMRigProperties:
         """
         if self._backends_response is not None:
             log.debug(self._backends_response[2]["threads"][0]["hashrate"])
-        return self._get_data_from_response(self._backends_response, [2, "threads", 0, "hashrate"])
+        return self._get_data_from_response(self._backends_response, [2, "threads", 0, "hashrate"], self._backends_table_name)
 
     @property
     def be_cuda_threads_hashrate_10s(self) -> Union[float, str]:
@@ -1955,7 +1986,7 @@ class XMRigProperties:
         """
         if self._backends_response is not None:
             log.debug(self._backends_response[2]["threads"][0]["hashrate"][0])
-        return self._get_data_from_response(self._backends_response, [2, "threads", 0, "hashrate", 0])
+        return self._get_data_from_response(self._backends_response, [2, "threads", 0, "hashrate", 0], self._backends_table_name)
 
     @property
     def be_cuda_threads_hashrate_1m(self) -> Union[float, str]:
@@ -1967,7 +1998,7 @@ class XMRigProperties:
         """
         if self._backends_response is not None:
             log.debug(self._backends_response[2]["threads"][0]["hashrate"][1])
-        return self._get_data_from_response(self._backends_response, [2, "threads", 0, "hashrate", 1])
+        return self._get_data_from_response(self._backends_response, [2, "threads", 0, "hashrate", 1], self._backends_table_name)
 
     @property
     def be_cuda_threads_hashrate_15m(self) -> Union[float, str]:
@@ -1979,7 +2010,7 @@ class XMRigProperties:
         """
         if self._backends_response is not None:
             log.debug(self._backends_response[2]["threads"][0]["hashrate"][2])
-        return self._get_data_from_response(self._backends_response, [2, "threads", 0, "hashrate", 2])
+        return self._get_data_from_response(self._backends_response, [2, "threads", 0, "hashrate", 2], self._backends_table_name)
 
     @property
     def be_cuda_threads_name(self) -> str:
@@ -1991,7 +2022,7 @@ class XMRigProperties:
         """
         if self._backends_response is not None:
             log.debug(self._backends_response[2]["threads"][0]["name"])
-        return self._get_data_from_response(self._backends_response, [2, "threads", 0, "name"])
+        return self._get_data_from_response(self._backends_response, [2, "threads", 0, "name"], self._backends_table_name)
 
     @property
     def be_cuda_threads_bus_id(self) -> str:
@@ -2003,7 +2034,7 @@ class XMRigProperties:
         """
         if self._backends_response is not None:
             log.debug(self._backends_response[2]["threads"][0]["bus_id"])
-        return self._get_data_from_response(self._backends_response, [2, "threads", 0, "bus_id"])
+        return self._get_data_from_response(self._backends_response, [2, "threads", 0, "bus_id"], self._backends_table_name)
 
     @property
     def be_cuda_threads_smx(self) -> Union[int, str]:
@@ -2015,7 +2046,7 @@ class XMRigProperties:
         """
         if self._backends_response is not None:
             log.debug(self._backends_response[2]["threads"][0]["smx"])
-        return self._get_data_from_response(self._backends_response, [2, "threads", 0, "smx"])
+        return self._get_data_from_response(self._backends_response, [2, "threads", 0, "smx"], self._backends_table_name)
 
     @property
     def be_cuda_threads_arch(self) -> Union[int, str]:
@@ -2027,7 +2058,7 @@ class XMRigProperties:
         """
         if self._backends_response is not None:
             log.debug(self._backends_response[2]["threads"][0]["arch"])
-        return self._get_data_from_response(self._backends_response, [2, "threads", 0, "arch"])
+        return self._get_data_from_response(self._backends_response, [2, "threads", 0, "arch"], self._backends_table_name)
 
     @property
     def be_cuda_threads_global_mem(self) -> Union[int, str]:
@@ -2039,7 +2070,7 @@ class XMRigProperties:
         """
         if self._backends_response is not None:
             log.debug(self._backends_response[2]["threads"][0]["global_mem"])
-        return self._get_data_from_response(self._backends_response, [2, "threads", 0, "global_mem"])
+        return self._get_data_from_response(self._backends_response, [2, "threads", 0, "global_mem"], self._backends_table_name)
 
     @property
     def be_cuda_threads_clock(self) -> Union[int, str]:
@@ -2051,7 +2082,7 @@ class XMRigProperties:
         """
         if self._backends_response is not None:
             log.debug(self._backends_response[2]["threads"][0]["clock"])
-        return self._get_data_from_response(self._backends_response, [2, "threads", 0, "clock"])
+        return self._get_data_from_response(self._backends_response, [2, "threads", 0, "clock"], self._backends_table_name)
 
     @property
     def be_cuda_threads_memory_clock(self) -> Union[int, str]:
@@ -2063,5 +2094,5 @@ class XMRigProperties:
         """
         if self._backends_response is not None:
             log.debug(self._backends_response[2]["threads"][0]["memory_clock"])
-        return self._get_data_from_response(self._backends_response, [2, "threads", 0, "memory_clock"])
+        return self._get_data_from_response(self._backends_response, [2, "threads", 0, "memory_clock"], self._backends_table_name)
 
