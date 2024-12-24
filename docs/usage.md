@@ -4,8 +4,9 @@ The module can be installed from PyPi or Github with pip:
 
 ```
 pip install xmrig-api
-# or to install from the Github repository
-pip install xmrig-api@git+https://github.com/hreikin/xmrig-api.git@main
+
+# Or to install from the Github repository
+pip install xmrig-api@git+https://github.com/hreikin/xmrig-api.git@main     # Can use a tag, commit hash, branch, etc
 ```
 
 ## Usage
