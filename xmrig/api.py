@@ -127,14 +127,17 @@ class XMRigAPI:
             bool: True if the cached data is successfully updated or False if an error occurred.
         """
         try:
-            summary_response = requests.get(
-                self._summary_url, headers=self._headers)
+            summary_response = requests.get(self._summary_url, headers=self._headers)
             if summary_response.status_code == 401:
                 raise XMRigAuthorizationError()
             # Raise an HTTPError for bad responses (4xx and 5xx)
             summary_response.raise_for_status()
-            self._summary_response = summary_response.json()
-            self._update_properties_cache()
+            try:
+                self._summary_response = summary_response.json()
+            except requests.exceptions.JSONDecodeError as e:
+                log.error(f"An error occurred decoding the summary response: {e}")
+                return False
+            self._update_properties_cache()         #TODO: edit this methods definition to take a single response instead of updating all at every call
             log.debug(f"Summary endpoint successfully fetched.")
             if self._db_engine is not None:
                 _insert_data_to_db(self._summary_response, f"{self._miner_name}-summary", self._db_engine)
@@ -142,11 +145,8 @@ class XMRigAPI:
         except requests.exceptions.RequestException as e:
             log.error(f"An error occurred while connecting to {self._summary_url}: {e}")
             return False
-        except requests.exceptions.JSONDecodeError as e:
-            log.error(f"An error occurred decoding the response: {e}")
-            return False
         except XMRigAuthorizationError as e:
-            log.error(f"An error occurred updating the summary: {e}")
+            log.error(f"An authorization error occurred updating the summary: {e}")
             raise XMRigAuthorizationError() from e
         except Exception as e:
             log.error(f"An error occurred updating the summary: {e}")
@@ -160,14 +160,17 @@ class XMRigAPI:
             bool: True if the cached data is successfully updated or False if an error occurred.
         """
         try:
-            backends_response = requests.get(
-                self._backends_url, headers=self._headers)
+            backends_response = requests.get(self._backends_url, headers=self._headers)
             if backends_response.status_code == 401:
                 raise XMRigAuthorizationError()
             # Raise an HTTPError for bad responses (4xx and 5xx)
             backends_response.raise_for_status()
-            self._backends_response = backends_response.json()
-            self._update_properties_cache()
+            try:
+                self._backends_response = backends_response.json()
+            except requests.exceptions.JSONDecodeError as e:
+                log.error(f"An error occurred decoding the backends response: {e}")
+                return False
+            self._update_properties_cache()         #TODO: edit this methods definition to take a single response instead of updating all at every call
             log.debug(f"Backends endpoint successfully fetched.")
             if self._db_engine is not None:
                 _insert_data_to_db(self._backends_response, f"{self._miner_name}-backends", self._db_engine)
@@ -175,11 +178,8 @@ class XMRigAPI:
         except requests.exceptions.RequestException as e:
             log.error(f"An error occurred while connecting to {self._backends_url}: {e}")
             return False
-        except requests.exceptions.JSONDecodeError as e:
-            log.error(f"An error occurred decoding the response: {e}")
-            return False
         except XMRigAuthorizationError as e:
-            log.error(f"An error occurred updating the backends: {e}")
+            log.error(f"An authorization error occurred updating the backends: {e}")
             raise XMRigAuthorizationError() from e
         except Exception as e:
             log.error(f"An error occurred updating the backends: {e}")
@@ -193,14 +193,17 @@ class XMRigAPI:
             bool: True if the cached data is successfully updated, or False if an error occurred.
         """
         try:
-            config_response = requests.get(
-                self._config_url, headers=self._headers)
+            config_response = requests.get(self._config_url, headers=self._headers)
             if config_response.status_code == 401:
                 raise XMRigAuthorizationError()
             # Raise an HTTPError for bad responses (4xx and 5xx)
             config_response.raise_for_status()
-            self._config_response = config_response.json()
-            self._update_properties_cache()
+            try:
+                self._config_response = config_response.json()
+            except requests.exceptions.JSONDecodeError as e:
+                log.error(f"An error occurred decoding the config response: {e}")
+                return False
+            self._update_properties_cache()         #TODO: edit this methods definition to take a single response instead of updating all at every call
             log.debug(f"Config endpoint successfully fetched.")
             if self._db_engine is not None:
                 _insert_data_to_db(self._config_response, f"{self._miner_name}-config", self._db_engine)
@@ -208,11 +211,8 @@ class XMRigAPI:
         except requests.exceptions.RequestException as e:
             log.error(f"An error occurred while connecting to {self._config_url}: {e}")
             return False
-        except requests.exceptions.JSONDecodeError as e:
-            log.error(f"An error occurred decoding the response: {e}")
-            return False
         except XMRigAuthorizationError as e:
-            log.error(f"An error occurred updating the config: {e}")
+            log.error(f"An authorization error occurred updating the config: {e}")
             raise XMRigAuthorizationError() from e
         except Exception as e:
             log.error(f"An error occurred updating the config: {e}")
@@ -229,13 +229,12 @@ class XMRigAPI:
             bool: True if the config was changed successfully, or False if an error occurred.
         """
         try:
-            self._post_config_response = requests.post(
-                self._config_url, json=config, headers=self._headers)
+            self._post_config_response = requests.post(self._config_url, json=config, headers=self._headers)
             if self._post_config_response.status_code == 401:
                 raise XMRigAuthorizationError()
             # Raise an HTTPError for bad responses (4xx and 5xx)
             self._post_config_response.raise_for_status()
-            self._update_properties_cache()
+            self._update_properties_cache()         #TODO: edit this methods definition to take a single response instead of updating all at every call
             log.debug(f"Config endpoint successfully updated.")
             return True
         except requests.exceptions.RequestException as e:
