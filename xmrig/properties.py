@@ -7,9 +7,7 @@ from typing import Any, Dict, List, Union
 from datetime import timedelta
 from xmrig.helpers import log
 from sqlalchemy.engine import Engine
-from sqlalchemy.sql import text
 from json import JSONDecodeError
-import json
 
 class XMRigProperties:
     """
@@ -66,8 +64,6 @@ class XMRigProperties:
         """
         return "N/A"
 
-    # TODO: Remove "if self._summary_response is not None:", "if self._backends_response is not None:" checks and 
-    # TODO: log statements.
     # TODO: Add config data points to properties.
 
     ############################
