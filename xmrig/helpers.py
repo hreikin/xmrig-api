@@ -77,7 +77,6 @@ class XMRigConnectionError(Exception):
         self.message = message
         super().__init__(self.message)
 
-# TODO: Move to XMRigManager class as a static method
 def _init_db(db_url: str) -> Engine:
     """
     Initializes the database engine.
@@ -96,7 +95,6 @@ def _init_db(db_url: str) -> Engine:
         log.error(f"An error occurred initializing the database: {e}")
         raise XMRigAPIError() from e
 
-# TODO: Move to XMRigProperties class
 def _insert_data_to_db(json_data: Dict[str, Any], table_name: str, engine: Engine) -> None:
     """
     Inserts JSON data into the specified database table.
@@ -116,7 +114,7 @@ def _insert_data_to_db(json_data: Dict[str, Any], table_name: str, engine: Engin
                 # Normalize pools data
                 pools_df = pd.json_normalize(pools)
                 # Rename columns to avoid conflicts with the main dataframe
-                pools_df.columns = [f"pool.{col}" for col in pools_df.columns]
+                pools_df.columns = [f"pools.{col}" for col in pools_df.columns]
                 # Merge the pools data with the main dataframe
                 df = pd.concat([df, pools_df], axis=1)
         # "threads"
