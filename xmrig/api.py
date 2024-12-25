@@ -21,7 +21,6 @@ from typing import Optional, Dict, Any
 # TODO: Is helpers.py file already tested by the XMRigAPI and XMRigManager tests?
 # TODO: Add config.json properties to the XMRigProperties class.
 # TODO: Properties should fallback to using the database if the cached data is not available.
-# TODO: Handle JSONDecodeError and exception from missing table/data within database to continue running and return "N/A" for the property.
 
 class XMRigAPI:
     """
