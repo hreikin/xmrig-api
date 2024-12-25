@@ -119,21 +119,29 @@ def _insert_data_to_db(json_data: Dict[str, Any], table_name: str, engine: Engin
                 # Merge the pools data with the main dataframe
                 df = pd.concat([df, pools_df], axis=1)
 
-        # TODO: doesnt currently work as intended, inserts extra columns but also inserts extra tables for any 
-        # TODO: thread other than the first. These extra tables should be the data for each column. At present 
-        # TODO: each tables threads columns are the same.
+        # Ensure threads data is merged correctly with the corresponding entry
+        # Currently inserts an extra row instead of merging the data with the current row
         if isinstance(json_data, list):
             for entry in json_data:
                 if "threads" in entry:
                     threads = entry["threads"]
                     if threads:
+                        entry_df = pd.json_normalize(entry)
                         for thread in threads:
                             # Normalize threads data
-                            threads_df = pd.json_normalize(threads)
+                            threads_df = pd.json_normalize(thread)
                             # Rename columns to avoid conflicts with the main dataframe
-                            threads_df.columns = [f"{json_data.index(entry)}_thread_{col}_{threads.index(thread)}" for col in threads_df.columns]
-                            # Merge the threads data with the main dataframe
-                            df = pd.concat([df, threads_df], axis=1)
+                            if json_data.index(entry) == 0:
+                                prefix = "CPU"
+                            if json_data.index(entry) == 1:
+                                prefix = "openCL"
+                            if json_data.index(entry) == 2:
+                                prefix = "CUDA"
+                            threads_df.columns = [f"{prefix}_thread_{threads.index(thread)}_{col}" for col in threads_df.columns]
+                            # Merge the threads data with the entry dataframe
+                            entry_df = pd.concat([entry_df, threads_df], axis=1)
+                        # Merge the entry dataframe with the main dataframe
+                        df = pd.concat([df, entry_df], axis=0, ignore_index=True)
 
         # Convert lists to JSON strings
         for column in df.columns:
