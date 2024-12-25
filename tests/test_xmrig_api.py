@@ -10,11 +10,11 @@ class TestXMRigAPI(unittest.TestCase):
         with patch.object(XMRigAPI, 'get_all_responses', return_value=True):
             self.api = XMRigAPI(miner_name="test_miner", ip="127.0.0.1", port="8080", access_token="fake-token", tls_enabled=False)
         
-        with open("examples/api/summary.json", "r") as f:
+        with open("api/summary.json", "r") as f:
             self.api._summary_response = json.load(f)
-        with open("examples/api/backends.json", "r") as f:
+        with open("api/backends.json", "r") as f:
             self.api._backends_response = json.load(f)
-        with open("examples/api/config.json", "r") as f:
+        with open("api/config.json", "r") as f:
             self.api._config_response = json.load(f)
 
     @patch("requests.get")
