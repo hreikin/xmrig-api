@@ -9,6 +9,8 @@ from xmrig.helpers import log
 from sqlalchemy.engine import Engine
 from json import JSONDecodeError
 
+# TODO: Fix backends property table names and keys for database after recent changes.
+
 class XMRigProperties:
     """
     A class to represent and cache properties and statistics from the XMRig miner's API responses.
@@ -18,13 +20,13 @@ class XMRigProperties:
         backends_response (Dict[str, Any]): Cached backends endpoint data.
         config_response (Dict[str, Any]): Cached config endpoint data.
     """
-    def __init__(self, summary_response: Dict[str, Any], backends_response: Dict[str, Any], config_response: Dict[str, Any], db_engine: Engine, miner_name: str):
+    def __init__(self, summary_response: Dict[str, Any], backends_response: List[Dict[str, Any]], config_response: Dict[str, Any], db_engine: Engine, miner_name: str):
         self._summary_response = summary_response
         self._backends_response = backends_response
         self._config_response = config_response
         self._db_engine = db_engine
         self._summary_table_name = f"'{miner_name}-summary'"
-        self._backends_table_name = f"'{miner_name}-backends'"
+        self._backends_table_names = [f"'{miner_name}-cpu-backend'", f"'{miner_name}-opencl-backend'", f"'{miner_name}-cuda-backend'"]
         self._config_table_name = f"'{miner_name}-config'"
     
     def _get_data_from_response(self, response: Dict[str, Any], keys: List[Union[str, int]], fallback_table_name: str) -> Union[Any, str]:
@@ -70,7 +72,6 @@ class XMRigProperties:
     # Full data from endpoints #
     ############################
 
-    # TODO: May require special handling for db
     @property
     def summary(self) -> Union[Dict[str, Any], str]:
         """
@@ -94,7 +95,6 @@ class XMRigProperties:
             log.debug(self._backends_response)
         return self._get_data_from_response(self._backends_response, [], self._backends_table_name)
 
-    # TODO: May require special handling for db
     @property
     def config(self) -> Union[Dict[str, Any], str]:
         """
@@ -990,7 +990,6 @@ class XMRigProperties:
         """
         return self._get_data_from_response(self._backends_response, [0, "hashrate", 2], self._backends_table_name)
     
-    # TODO: Check all property logic is correct for anything related to threads
     @property
     def be_cpu_threads(self) -> Union[List[Dict[str, Any]], str]:
         """
@@ -1229,7 +1228,6 @@ class XMRigProperties:
         """
         return self._get_data_from_response(self._backends_response, [1, "hashrate", 2], self._backends_table_name)
 
-    # TODO: May require special handling for db
     @property
     def be_opencl_threads(self) -> Union[Dict[str, Any], str]:
         """
@@ -1240,7 +1238,6 @@ class XMRigProperties:
         """
         return self._get_data_from_response(self._backends_response, [1, "threads", 0], self._backends_table_name)
 
-    # TODO: May require special handling for db
     @property
     def be_opencl_threads_index(self) -> Union[int, str]:
         """
@@ -1251,7 +1248,6 @@ class XMRigProperties:
         """
         return self._get_data_from_response(self._backends_response, [1, "threads", 0, "index"], self._backends_table_name)
 
-    # TODO: May require special handling for db
     @property
     def be_opencl_threads_intensity(self) -> Union[int, str]:
         """
@@ -1262,7 +1258,6 @@ class XMRigProperties:
         """
         return self._get_data_from_response(self._backends_response, [1, "threads", 0, "intensity"], self._backends_table_name)
 
-    # TODO: May require special handling for db
     @property
     def be_opencl_threads_worksize(self) -> Union[int, str]:
         """
@@ -1273,7 +1268,6 @@ class XMRigProperties:
         """
         return self._get_data_from_response(self._backends_response, [1, "threads", 0, "worksize"], self._backends_table_name)
 
-    # TODO: May require special handling for db
     @property
     def be_opencl_threads_amount(self) -> Union[List[int], str]:
         """
@@ -1284,7 +1278,6 @@ class XMRigProperties:
         """
         return self._get_data_from_response(self._backends_response, [1, "threads", 0, "threads"], self._backends_table_name)
 
-    # TODO: May require special handling for db
     @property
     def be_opencl_threads_unroll(self) -> Union[int, str]:
         """
@@ -1295,7 +1288,6 @@ class XMRigProperties:
         """
         return self._get_data_from_response(self._backends_response, [1, "threads", 0, "unroll"], self._backends_table_name)
 
-    # TODO: May require special handling for db
     @property
     def be_opencl_threads_affinity(self) -> Union[int, str]:
         """
@@ -1306,7 +1298,6 @@ class XMRigProperties:
         """
         return self._get_data_from_response(self._backends_response, [1, "threads", 0, "affinity"], self._backends_table_name)
 
-    # TODO: May require special handling for db
     @property
     def be_opencl_threads_hashrates(self) -> Union[List[float], str]:
         """
@@ -1317,7 +1308,6 @@ class XMRigProperties:
         """
         return self._get_data_from_response(self._backends_response, [1, "threads", 0, "hashrate"], self._backends_table_name)
 
-    # TODO: May require special handling for db
     @property
     def be_opencl_threads_hashrate_10s(self) -> Union[float, str]:
         """
@@ -1328,7 +1318,6 @@ class XMRigProperties:
         """
         return self._get_data_from_response(self._backends_response, [1, "threads", 0, "hashrate", 0], self._backends_table_name)
 
-    # TODO: May require special handling for db
     @property
     def be_opencl_threads_hashrate_1m(self) -> Union[float, str]:
         """
@@ -1339,7 +1328,6 @@ class XMRigProperties:
         """
         return self._get_data_from_response(self._backends_response, [1, "threads", 0, "hashrate", 1], self._backends_table_name)
 
-    # TODO: May require special handling for db
     @property
     def be_opencl_threads_hashrate_15m(self) -> Union[float, str]:
         """
@@ -1350,7 +1338,6 @@ class XMRigProperties:
         """
         return self._get_data_from_response(self._backends_response, [1, "threads", 0, "hashrate", 2], self._backends_table_name)
 
-    # TODO: May require special handling for db
     @property
     def be_opencl_threads_board(self) -> str:
         """
@@ -1361,7 +1348,6 @@ class XMRigProperties:
         """
         return self._get_data_from_response(self._backends_response, [1, "threads", 0, "board"], self._backends_table_name)
 
-    # TODO: May require special handling for db
     @property
     def be_opencl_threads_name(self) -> str:
         """
@@ -1372,7 +1358,6 @@ class XMRigProperties:
         """
         return self._get_data_from_response(self._backends_response, [1, "threads", 0, "name"], self._backends_table_name)
 
-    # TODO: May require special handling for db
     @property
     def be_opencl_threads_bus_id(self) -> str:
         """
@@ -1383,7 +1368,6 @@ class XMRigProperties:
         """
         return self._get_data_from_response(self._backends_response, [1, "threads", 0, "bus_id"], self._backends_table_name)
 
-    # TODO: May require special handling for db
     @property
     def be_opencl_threads_cu(self) -> Union[int, str]:
         """
@@ -1394,7 +1378,6 @@ class XMRigProperties:
         """
         return self._get_data_from_response(self._backends_response, [1, "threads", 0, "cu"], self._backends_table_name)
 
-    # TODO: May require special handling for db
     @property
     def be_opencl_threads_global_mem(self) -> Union[int, str]:
         """
@@ -1405,7 +1388,6 @@ class XMRigProperties:
         """
         return self._get_data_from_response(self._backends_response, [1, "threads", 0, "global_mem"], self._backends_table_name)
 
-    # TODO: May require special handling for db
     @property
     def be_opencl_threads_health(self) -> Union[Dict[str, Any], str]:
         """
@@ -1416,7 +1398,6 @@ class XMRigProperties:
         """
         return self._get_data_from_response(self._backends_response, [1, "threads", 0, "health"], self._backends_table_name)
 
-    # TODO: May require special handling for db
     @property
     def be_opencl_threads_health_temp(self) -> Union[int, str]:
         """
@@ -1427,7 +1408,6 @@ class XMRigProperties:
         """
         return self._get_data_from_response(self._backends_response, [1, "threads", 0, "health", "temperature"], self._backends_table_name)
 
-    # TODO: May require special handling for db
     @property
     def be_opencl_threads_health_power(self) -> Union[int, str]:
         """
@@ -1438,7 +1418,6 @@ class XMRigProperties:
         """
         return self._get_data_from_response(self._backends_response, [1, "threads", 0, "health", "power"], self._backends_table_name)
 
-    # TODO: May require special handling for db
     @property
     def be_opencl_threads_health_clock(self) -> Union[int, str]:
         """
@@ -1449,7 +1428,6 @@ class XMRigProperties:
         """
         return self._get_data_from_response(self._backends_response, [1, "threads", 0, "health", "clock"], self._backends_table_name)
 
-    # TODO: May require special handling for db
     @property
     def be_opencl_threads_health_mem_clock(self) -> Union[int, str]:
         """
@@ -1460,7 +1438,6 @@ class XMRigProperties:
         """
         return self._get_data_from_response(self._backends_response, [1, "threads", 0, "health", "mem_clock"], self._backends_table_name)
 
-    # TODO: May require special handling for db
     @property
     def be_opencl_threads_health_rpm(self) -> Union[int, str]:
         """
