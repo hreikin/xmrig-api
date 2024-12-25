@@ -212,7 +212,7 @@ Private Functions:
     helpers:
         - _init_db
         - _insert_data_to_db
-        - _delete_miner_from_db
+        - _delete_all_miner_data_from_db
 """
 
 from .api import XMRigAPI

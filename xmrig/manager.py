@@ -13,7 +13,7 @@ It includes functionalities for:
 """
 import requests
 from xmrig.api import XMRigAPI
-from xmrig.helpers import _init_db, _delete_miner_from_db, log, XMRigAPIError
+from xmrig.helpers import _init_db, _delete_all_miner_data_from_db, log, XMRigAPIError
 from typing import Callable, Optional, List
 
 class XMRigManager:
@@ -69,7 +69,7 @@ class XMRigManager:
                 raise ValueError(f"Miner with name '{miner_name}' does not exist.")
             
             if self._db_url is not None:
-                _delete_miner_from_db(miner_name, self._db_engine)
+                _delete_all_miner_data_from_db(miner_name, self._db_engine)
             del self._miners[miner_name]
             log.info(f"Miner '{miner_name}' removed from manager.")
         except Exception as e:

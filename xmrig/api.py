@@ -136,7 +136,7 @@ class XMRigAPI:
             except requests.exceptions.JSONDecodeError as e:
                 log.error(f"An error occurred decoding the summary response: {e}")
                 return False
-            self._update_properties_cache()         #TODO: edit this methods definition to take a single response instead of updating all at every call
+            self._update_properties_cache()
             log.debug(f"Summary endpoint successfully fetched.")
             if self._db_engine is not None:
                 _insert_data_to_db(self._summary_response, f"{self._miner_name}-summary", self._db_engine)

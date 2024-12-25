@@ -77,6 +77,7 @@ class XMRigConnectionError(Exception):
         self.message = message
         super().__init__(self.message)
 
+# TODO: Move to XMRigManager class as a static method
 def _init_db(db_url: str) -> Engine:
     """
     Initializes the database engine.
@@ -95,7 +96,7 @@ def _init_db(db_url: str) -> Engine:
         log.error(f"An error occurred initializing the database: {e}")
         raise XMRigAPIError() from e
 
-#TODO: May need refactoring to flatten the JSON correctly/completely before inserting into the database
+# TODO: Move to XMRigProperties class
 def _insert_data_to_db(json_data: Dict[str, Any], table_name: str, engine: Engine) -> None:
     """
     Inserts JSON data into the specified database table.
@@ -108,8 +109,7 @@ def _insert_data_to_db(json_data: Dict[str, Any], table_name: str, engine: Engin
     try:
         # Normalize nested JSON
         df = pd.json_normalize(json_data)
-
-
+        # "pools"
         if "pools" in json_data:
             pools = json_data["pools"]
             if pools:
@@ -119,7 +119,6 @@ def _insert_data_to_db(json_data: Dict[str, Any], table_name: str, engine: Engin
                 pools_df.columns = [f"pool.{col}" for col in pools_df.columns]
                 # Merge the pools data with the main dataframe
                 df = pd.concat([df, pools_df], axis=1)
-            
         # "threads"
         if "threads" in json_data:
             threads = json_data["threads"]
@@ -131,26 +130,21 @@ def _insert_data_to_db(json_data: Dict[str, Any], table_name: str, engine: Engin
                     threads_df.columns = [f"thread.{prefix}.{col}" for col in threads_df.columns]
                     # Merge the threads data with the main dataframe
                     df = pd.concat([df, threads_df], axis=1)
-
         # Convert lists to JSON strings
         for column in df.columns:
             if df[column].apply(lambda x: isinstance(x, list)).any():
                 df[column] = df[column].apply(json.dumps)
-
         # Add a timestamp column and a column for a copy of the full unflattened json data
         df.insert(0, 'timestamp', datetime.now())
         df.insert(1, 'full_json', json.dumps(json_data))
-
-
         # Insert data into the database
         df.to_sql(table_name, engine, if_exists='append', index=False)
-
         log.debug("Data inserted successfully")
     except Exception as e:
         log.error(f"An error occurred inserting data to the database: {e}")
         raise XMRigAPIError() from e
 
-def _delete_miner_from_db(miner_name: str, engine: Engine) -> None:
+def _delete_all_miner_data_from_db(miner_name: str, engine: Engine) -> None:
     """
     Deletes all tables related to a specific miner from the database.
 
@@ -159,6 +153,7 @@ def _delete_miner_from_db(miner_name: str, engine: Engine) -> None:
         engine (Engine): SQLAlchemy engine instance.
     """
     try:
+        # TODO: Update backends tablenames to match the new format
         # Use quotes to avoid SQL syntax errors
         backends_table = f"'{miner_name}-backends'"
         config_table = f"'{miner_name}-config'"
@@ -168,7 +163,6 @@ def _delete_miner_from_db(miner_name: str, engine: Engine) -> None:
             connection.execute(text(f"DROP TABLE IF EXISTS {backends_table}"))
             connection.execute(text(f"DROP TABLE IF EXISTS {config_table}"))
             connection.execute(text(f"DROP TABLE IF EXISTS {summary_table}"))
-
         log.debug(f"All tables for '{miner_name}' have been deleted from the database")
     except Exception as e:
         log.error(f"An error occurred deleting miner '{miner_name}' from the database: {e}")
