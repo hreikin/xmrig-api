@@ -101,5 +101,5 @@ This example demonstrates how to use the XMRigManager to manage multiple XMRig m
 This full example demonstrates various functionalities of the XMRigManager. It shows how to configure logging, add and remove miners, list all miners, update endpoints, pause/resume miners, start/stop miners, and update the miner's config.
 
 ```python title="full_example.py" linenums="1"
-{% include "../full-example.py" %}
+{% include "../examples/full-example.py" %}
 ```
