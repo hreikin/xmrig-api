@@ -109,39 +109,28 @@ def _insert_data_to_db(json_data: Dict[str, Any], table_name: str, engine: Engin
         # Normalize nested JSON
         df = pd.json_normalize(json_data)
 
+
         if "pools" in json_data:
             pools = json_data["pools"]
             if pools:
                 # Normalize pools data
                 pools_df = pd.json_normalize(pools)
                 # Rename columns to avoid conflicts with the main dataframe
-                pools_df.columns = [f"pool_{col}" for col in pools_df.columns]
+                pools_df.columns = [f"pool.{col}" for col in pools_df.columns]
                 # Merge the pools data with the main dataframe
                 df = pd.concat([df, pools_df], axis=1)
-
-        # Ensure threads data is merged correctly with the corresponding entry
-        # Currently inserts an extra row instead of merging the data with the current row
-        if isinstance(json_data, list):
-            for entry in json_data:
-                if "threads" in entry:
-                    threads = entry["threads"]
-                    if threads:
-                        entry_df = pd.json_normalize(entry)
-                        for thread in threads:
-                            # Normalize threads data
-                            threads_df = pd.json_normalize(thread)
-                            # Rename columns to avoid conflicts with the main dataframe
-                            if json_data.index(entry) == 0:
-                                prefix = "CPU"
-                            if json_data.index(entry) == 1:
-                                prefix = "openCL"
-                            if json_data.index(entry) == 2:
-                                prefix = "CUDA"
-                            threads_df.columns = [f"{prefix}_thread_{threads.index(thread)}_{col}" for col in threads_df.columns]
-                            # Merge the threads data with the entry dataframe
-                            entry_df = pd.concat([entry_df, threads_df], axis=1)
-                        # Merge the entry dataframe with the main dataframe
-                        df = pd.concat([df, entry_df], axis=0, ignore_index=True)
+            
+        # "threads"
+        if "threads" in json_data:
+            threads = json_data["threads"]
+            if threads:
+                for thread_item in threads:
+                    prefix = threads.index(thread_item)
+                    threads_df = pd.json_normalize(thread_item)
+                    # Rename columns to avoid conflicts with the main dataframe
+                    threads_df.columns = [f"thread.{prefix}.{col}" for col in threads_df.columns]
+                    # Merge the threads data with the main dataframe
+                    df = pd.concat([df, threads_df], axis=1)
 
         # Convert lists to JSON strings
         for column in df.columns:
@@ -151,6 +140,7 @@ def _insert_data_to_db(json_data: Dict[str, Any], table_name: str, engine: Engin
         # Add a timestamp column and a column for a copy of the full unflattened json data
         df.insert(0, 'timestamp', datetime.now())
         df.insert(1, 'full_json', json.dumps(json_data))
+
 
         # Insert data into the database
         df.to_sql(table_name, engine, if_exists='append', index=False)
