@@ -95,6 +95,7 @@ def _init_db(db_url: str) -> Engine:
         log.error(f"An error occurred initializing the database: {e}")
         raise XMRigAPIError() from e
 
+#TODO: May need refactoring to flatten the JSON correctly/completely before inserting into the database
 def _insert_data_to_db(json_data: Dict[str, Any], table_name: str, engine: Engine) -> None:
     """
     Inserts JSON data into the specified database table.
@@ -107,6 +108,32 @@ def _insert_data_to_db(json_data: Dict[str, Any], table_name: str, engine: Engin
     try:
         # Normalize nested JSON
         df = pd.json_normalize(json_data)
+
+        if "pools" in json_data:
+            pools = json_data["pools"]
+            if pools:
+                # Normalize pools data
+                pools_df = pd.json_normalize(pools)
+                # Rename columns to avoid conflicts with the main dataframe
+                pools_df.columns = [f"pool_{col}" for col in pools_df.columns]
+                # Merge the pools data with the main dataframe
+                df = pd.concat([df, pools_df], axis=1)
+
+        # TODO: doesnt currently work as intended, inserts extra columns but also inserts extra tables for any 
+        # TODO: thread other than the first. These extra tables should be the data for each column. At present 
+        # TODO: each tables threads columns are the same.
+        if isinstance(json_data, list):
+            for entry in json_data:
+                if "threads" in entry:
+                    threads = entry["threads"]
+                    if threads:
+                        for thread in threads:
+                            # Normalize threads data
+                            threads_df = pd.json_normalize(threads)
+                            # Rename columns to avoid conflicts with the main dataframe
+                            threads_df.columns = [f"{json_data.index(entry)}_thread_{col}_{threads.index(thread)}" for col in threads_df.columns]
+                            # Merge the threads data with the main dataframe
+                            df = pd.concat([df, threads_df], axis=1)
 
         # Convert lists to JSON strings
         for column in df.columns:
