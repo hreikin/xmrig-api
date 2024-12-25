@@ -29,13 +29,14 @@ class XMRigProperties:
         self._backends_table_names = [f"'{miner_name}-cpu-backend'", f"'{miner_name}-opencl-backend'", f"'{miner_name}-cuda-backend'"]
         self._config_table_name = f"'{miner_name}-config'"
     
-    def _get_data_from_response(self, response: Dict[str, Any], keys: List[Union[str, int]], fallback_table_name: str) -> Union[Any, str]:
+    def _get_data_from_response(self, response: Union[Dict[str, Any], List[Dict[str, Any]]], keys: List[Union[str, int]], fallback_table_name: Union[str, List[str]]) -> Union[Any, str]:
         """
         Retrieves the data from the response using the provided keys. Falls back to the database if the data is not available.
 
         Args:
-            response (Dict[str, Any]): The response data.
+            response (Union[Dict[str, Any], List[Dict[str, Any]]]): The response data.
             keys (List[Union[str, int]]): The keys to use to retrieve the data.
+            fallback_table_name (Union[str, List[str]]): The table name or list of table names to use for fallback database retrieval.
 
         Returns:
             Union[Any, str]: The retrieved data, or a default string value of "N/A" if not available.
@@ -51,18 +52,19 @@ class XMRigProperties:
         except (KeyError, TypeError, JSONDecodeError) as e:
             log.error(f"An error occurred fetching the data from the response using the provided keys, trying database: {e}")
             try:
-                self._get_data_from_db(fallback_table_name, keys, self._db_engine)
+                return self._get_data_from_db(fallback_table_name, keys, self._db_engine)
             except Exception as db_e:
                 log.error(f"An error occurred fetching the data from the database: {db_e}")
                 return "N/A"
     
     # TODO: Finish implementing this method.
-    def _get_data_from_db(self, table_name: str, keys: list, engine: Engine) -> None:
+    def _get_data_from_db(self, table_name: Union[str, List[str]], keys: List[Union[str, int]], engine: Engine) -> None:
         """
         Retrieves the data from the database using the provided table name.
 
         Args:
-            table_name (str): The name of the table to use to retrieve the data.
+            table_name (Union[str, List[str]]): The name of the table or list of table names to use to retrieve the data.
+            keys (List[Union[str, int]]): The keys to use to retrieve the data.
             engine (Engine): The SQLAlchemy engine instance.
         """
         return "N/A"
