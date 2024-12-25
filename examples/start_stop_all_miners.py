@@ -1,30 +1,12 @@
-import logging
+from .env import log, name_a, ip_a, port_a, access_token_a, tls_enabled_a, name_b, ip_b, port_b, access_token_b, tls_enabled_b
 from xmrig import XMRigManager
 
-# Configure the root logger
-logging.basicConfig(
-    level=logging.INFO,  # Set the log level for the entire application, change to DEBUG to print all responses.
-    format='[%(asctime)s - %(name)s] - %(levelname)s - %(message)s',  # Consistent format
-    handlers=[
-        logging.FileHandler("app.log"),  # Log to a file
-        logging.StreamHandler()  # Log to console
-    ]
-)
-log = logging.getLogger("ExampleLog")
-
-log.info("###############################################################################################################################")
-log.info("## Please ensure you have a running XMRig instance to connect to and have updated the connection details within the example. ##")
-log.info("###############################################################################################################################")
-
-# Pause/resume all miners
 manager = XMRigManager()
-
-log.info("Adding miners to the manager")
-manager.add_miner("Miner1", "127.0.0.1", "37841", "SECRET", tls_enabled=False)
-manager.add_miner("Miner2", "127.0.0.1", "37842", "SECRET", tls_enabled=False)
-
+manager.add_miner(name_a, ip_a, port_a, access_token_a, tls_enabled_a)
+manager.add_miner(name_b, ip_b, port_b, access_token_b, tls_enabled_b)
+miner_a = manager.get_miner(name_a)
+miner_b = manager.get_miner(name_b)
 log.info("Stopping all miners")
 manager.perform_action_on_all("stop")
-
 log.info("Starting all miners")
 manager.perform_action_on_all("start")
