@@ -7,31 +7,28 @@ import pandas as pd
 import json
 
 # TODO: More refactoring required (probably elsewhere, maybe here as well) to get methods to work with the rest of the codebase
-# TODO: Refactor methods after making @staticmethods so they can be called without an instance of the class, move db_url to init_db, and remove self from all @staticmethods
-# TODO: leave init_db as a class method and make it set the engine value rather than return it, create a @staticmethod to return the engine, and use that in the other methods
 
 class XMRigDatabase:
-    def __init__(self, db_url: str):
-        self._engines = {}
-        self._db_url = db_url
+    _engines = {}
 
-    def init_db(self) -> Engine:
+    @classmethod
+    def init_db(cls, db_url: str) -> Engine:
         """
-        Initializes the database engine.
+        Initializes the database engine, if it already exists, it returns the existing engine.
 
         Returns:
             Engine: SQLAlchemy engine instance.
         """
         try:
-            if self._db_url not in self._engines:
-                self._engines[self._db_url] = create_engine(self._db_url)
-            return self._engines[self._db_url]
+            if db_url not in cls._engines:
+                cls._engines[db_url] = create_engine(db_url)
+            return cls._engines[db_url]
         except Exception as e:
             log.error(f"An error occurred initializing the database: {e}")
             raise XMRigAPIError() from e
     
     @staticmethod
-    def insert_data_to_db(self, json_data: Dict[str, Any], table_name: str, engine: Engine) -> None:
+    def insert_data_to_db(json_data: Dict[str, Any], table_name: str, engine: Engine) -> None:
         """
         Inserts JSON data into the specified database table.
 
@@ -80,7 +77,7 @@ class XMRigDatabase:
     
     # TODO: Finish implementing this method.
     @staticmethod
-    def get_data_from_db(self, table_name: Union[str, List[str]], keys: List[Union[str, int]], engine: Engine) -> None:
+    def get_data_from_db(table_name: Union[str, List[str]], keys: List[Union[str, int]], engine: Engine) -> None:
         """
         Retrieves the data from the database using the provided table name.
 
@@ -107,7 +104,7 @@ class XMRigDatabase:
         return "N/A"
 
     @staticmethod
-    def delete_all_miner_data_from_db(self, miner_name: str, engine: Engine) -> None:
+    def delete_all_miner_data_from_db(miner_name: str, engine: Engine) -> None:
         """
         Deletes all tables related to a specific miner from the database.
 
