@@ -56,33 +56,6 @@ class XMRigProperties:
             except Exception as db_e:
                 log.error(f"An error occurred fetching the data from the database: {db_e}")
                 return "N/A"
-    
-    # TODO: Finish implementing this method.
-    def _get_data_from_db(self, table_name: Union[str, List[str]], keys: List[Union[str, int]], engine: Engine) -> None:
-        """
-        Retrieves the data from the database using the provided table name.
-
-        Args:
-            table_name (Union[str, List[str]]): The name of the table or list of table names to use to retrieve the data.
-            keys (List[Union[str, int]]): The keys to use to retrieve the data.
-            engine (Engine): The SQLAlchemy engine instance.
-        """
-        column_name = ""
-        # handle column names for config.json "pools"
-        # needs properties creating for config.json datapoints
-        if "pools" in keys:
-            pass
-        # handle column names for backends.json "threads"
-        elif "threads" in keys:
-            column_name += "threads"
-        # handle default column names
-        else:
-            for key in keys:
-                if not isinstance(key, int):
-                    column_name += f"{key}."
-            column_name = column_name[:-1]
-
-        return "N/A"
 
     # TODO: Add config data points to properties.
 
