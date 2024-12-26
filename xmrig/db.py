@@ -14,7 +14,7 @@ from sqlalchemy import create_engine, text
 from sqlalchemy.engine import Engine
 from xmrig.helpers import log, XMRigAPIError
 from datetime import datetime
-from typing import Dict, Any, Union, List, Optional
+from typing import Dict, Any, Union, List
 import pandas as pd
 import json
 
@@ -39,6 +39,7 @@ class XMRigDatabase:
             log.error(f"An error occurred initializing the database: {e}")
             raise XMRigAPIError(f"Could not parse SQLAlchemy URL from string '{db_url}'") from e
     
+    # TODO: Refactor to only insert the full_json data
     @staticmethod
     def insert_data_to_db(json_data: Dict[str, Any], table_name: str, engine: Engine) -> None:
         """
@@ -50,36 +51,12 @@ class XMRigDatabase:
             engine (Engine): SQLAlchemy engine instance.
         """
         try:
-            # Normalize nested JSON
-            df = pd.json_normalize(json_data)
-            # "pools"
-            if "pools" in json_data:
-                pools = json_data["pools"]
-                if pools:
-                    # Normalize pools data
-                    pools_df = pd.json_normalize(pools)
-                    # Rename columns to avoid conflicts with the main dataframe
-                    pools_df.columns = [f"pools.{col}" for col in pools_df.columns]
-                    # Merge the pools data with the main dataframe
-                    df = pd.concat([df, pools_df], axis=1)
-            # "threads"
-            if "threads" in json_data:
-                threads = json_data["threads"]
-                if threads:
-                    for thread_item in threads:
-                        prefix = threads.index(thread_item)
-                        threads_df = pd.json_normalize(thread_item)
-                        # Rename columns to avoid conflicts with the main dataframe
-                        threads_df.columns = [f"thread.{prefix}.{col}" for col in threads_df.columns]
-                        # Merge the threads data with the main dataframe
-                        df = pd.concat([df, threads_df], axis=1)
-            # Convert lists to JSON strings
-            for column in df.columns:
-                if df[column].apply(lambda x: isinstance(x, list)).any():
-                    df[column] = df[column].apply(json.dumps)
-            # Add a timestamp column and a column for a copy of the full unflattened json data
-            df.insert(0, 'timestamp', datetime.now())
-            df.insert(1, 'full_json', json.dumps(json_data))
+            # Create a dataframe with the required columns and data
+            data = {
+                'timestamp': [datetime.now()],
+                'full_json': [json.dumps(json_data)]
+            }
+            df = pd.DataFrame(data)
             # Insert data into the database
             df.to_sql(table_name, engine, if_exists='append', index=False)
             log.debug("Data inserted successfully")
@@ -87,7 +64,7 @@ class XMRigDatabase:
             log.error(f"An error occurred inserting data to the database: {e}")
             raise XMRigAPIError() from e
     
-    # TODO: Test this methods functionality against the properties available in the XMRig API module
+    # TODO: Refactor to only get the full_json data and then use the json keys to access the correct data
     @staticmethod
     def get_data_from_db(table_name: Union[str, List[str]], keys: List[Union[str, int]], engine: Engine) -> Any:
         """
@@ -98,27 +75,21 @@ class XMRigDatabase:
             keys (List[Union[str, int]]): The keys to use to retrieve the data.
             engine (Engine): The SQLAlchemy engine instance.
         """
-        column_name = ""
-        special_names = ["hashrate", "pools", "threads"]
-        # create the normal column_name first, then check for special names
-        for key in keys:
-            if not isinstance(key, int):
-                column_name += f"{key}."
-        column_name = column_name[:-1]
-        # TODO: The "pools" needs properties creating for config.json datapoints before it will work
-        # if the name is special, overwrite the column_name
-        for name in special_names:
-            if name in keys:
-                column_name = name
-                # break out of the loop if a special name is found so the order of the special_names list doesn't matter
-                break
+        column_name = "full_json"
         try:
-            # Use quotes to avoid SQL syntax errors
-            # fetch the most recent result
+            # connect to the database and fetch the data in column_name from the table_name
             with engine.connect() as connection:
-                result = connection.execute(text(f"SELECT '{column_name}' FROM '{table_name}' ORDER BY timestamp DESC LIMIT 1"))
-                for row in result:
-                    return row[0]
+                result = connection.execute(text(f"SELECT {column_name} FROM {table_name} ORDER BY timestamp DESC LIMIT 1"))
+                # fetch the last item from the result
+                data = result.fetchone()
+                if data:
+                    data = json.loads(data[0])
+                    # use the list of keys/indices to access the correct data
+                    if len(keys) > 0:
+                        for key in keys:
+                            data = data[key]
+                    return data
+                return "N/A"
         except Exception as e:
             log.error(f"An error occurred retrieving data from the database: {e}")
             raise XMRigAPIError() from e
