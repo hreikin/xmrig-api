@@ -13,8 +13,9 @@ Classes:
 """
 
 import requests
-from xmrig.helpers import log, _insert_data_to_db, XMRigAPIError, XMRigConnectionError, XMRigAuthorizationError
+from xmrig.helpers import log, XMRigAPIError, XMRigConnectionError, XMRigAuthorizationError
 from xmrig.properties import XMRigProperties
+from xmrig.db import XMRigDatabase
 from sqlalchemy.engine import Engine
 from typing import Optional, Dict, Any
 
@@ -139,7 +140,7 @@ class XMRigAPI:
             self._update_properties_cache()
             log.debug(f"Summary endpoint successfully fetched.")
             if self._db_engine is not None:
-                _insert_data_to_db(self._summary_response, f"{self._miner_name}-summary", self._db_engine)
+                XMRigDatabase.insert_data_to_db(self._summary_response, f"{self._miner_name}-summary", self._db_engine)
             return True
         except requests.exceptions.RequestException as e:
             log.error(f"An error occurred while connecting to {self._summary_url}: {e}")
@@ -180,9 +181,9 @@ class XMRigAPI:
                         prefix = "opencl"
                     if self._backends_response.index(backend) == 2:
                         prefix = "cuda"
-                    _insert_data_to_db(backend, f"{self._miner_name}-{prefix}-backend", self._db_engine)
+                    XMRigDatabase.insert_data_to_db(backend, f"{self._miner_name}-{prefix}-backend", self._db_engine)
 
-                # _insert_data_to_db(self._backends_response, f"{self._miner_name}-backends", self._db_engine)
+                # XMRigDatabase.insert_data_to_db(self._backends_response, f"{self._miner_name}-backends", self._db_engine)
             return True
         except requests.exceptions.RequestException as e:
             log.error(f"An error occurred while connecting to {self._backends_url}: {e}")
@@ -215,7 +216,7 @@ class XMRigAPI:
             self._update_properties_cache()         #TODO: edit this methods definition to take a single response instead of updating all at every call
             log.debug(f"Config endpoint successfully fetched.")
             if self._db_engine is not None:
-                _insert_data_to_db(self._config_response, f"{self._miner_name}-config", self._db_engine)
+                XMRigDatabase.insert_data_to_db(self._config_response, f"{self._miner_name}-config", self._db_engine)
             return True
         except requests.exceptions.RequestException as e:
             log.error(f"An error occurred while connecting to {self._config_url}: {e}")
