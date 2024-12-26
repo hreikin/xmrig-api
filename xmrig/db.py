@@ -93,7 +93,6 @@ class XMRigDatabase:
         except Exception as e:
             log.error(f"An error occurred retrieving data from the database: {e}")
             raise XMRigAPIError() from e
-        return "N/A"
 
     @staticmethod
     def delete_all_miner_data_from_db(miner_name: str, engine: Engine) -> None:
