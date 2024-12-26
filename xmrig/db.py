@@ -77,7 +77,7 @@ class XMRigDatabase:
     
     # TODO: Finish implementing this method.
     @staticmethod
-    def get_data_from_db(table_name: Union[str, List[str]], keys: List[Union[str, int]], engine: Engine) -> Optional[pd.DataFrame]:
+    def get_data_from_db(table_name: Union[str, List[str]], keys: List[Union[str, int]], engine: Engine) -> Any:
         """
         Retrieves the data from the database using the provided table name.
 
