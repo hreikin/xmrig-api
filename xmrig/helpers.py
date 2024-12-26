@@ -12,16 +12,8 @@ It includes:
 """
 
 import logging
-import json
-import pandas as pd
-from sqlalchemy import create_engine, text
-from sqlalchemy.engine import Engine
-from datetime import datetime
-from typing import Dict, Any
 
 log = logging.getLogger("XMRigAPI")
-
-_engines = {}
 
 class XMRigAPIError(Exception):
     """
