@@ -22,7 +22,7 @@ class XMRigManager:
     A class to manage multiple XMRig miners via their APIs.
     """
 
-    def __init__(self, api_factory: Callable = XMRigAPI, db_url: str = 'sqlite:///xmrig-api.db'):
+    def __init__(self, api_factory: Callable[..., XMRigAPI] = XMRigAPI, db_url: str = 'sqlite:///xmrig-api.db'):
         """
         Initializes the manager with an empty collection of miners.
 

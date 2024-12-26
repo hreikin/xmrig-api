@@ -2,7 +2,7 @@ from sqlalchemy import create_engine, text
 from sqlalchemy.engine import Engine
 from xmrig.helpers import log, XMRigAPIError
 from datetime import datetime
-from typing import Dict, Any, Union, List
+from typing import Dict, Any, Union, List, Optional
 import pandas as pd
 import json
 
@@ -77,7 +77,7 @@ class XMRigDatabase:
     
     # TODO: Finish implementing this method.
     @staticmethod
-    def get_data_from_db(table_name: Union[str, List[str]], keys: List[Union[str, int]], engine: Engine) -> None:
+    def get_data_from_db(table_name: Union[str, List[str]], keys: List[Union[str, int]], engine: Engine) -> Optional[pd.DataFrame]:
         """
         Retrieves the data from the database using the provided table name.
 
@@ -100,7 +100,6 @@ class XMRigDatabase:
                 if not isinstance(key, int):
                     column_name += f"{key}."
             column_name = column_name[:-1]
-
         return "N/A"
 
     @staticmethod

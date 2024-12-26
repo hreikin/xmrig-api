@@ -23,7 +23,7 @@ class XMRigAPIError(Exception):
         message (str): Error message explaining the API issue.
     """
 
-    def __init__(self, message: str = "An error occurred with the XMRig API."):
+    def __init__(self, message: str = "An error occurred with the XMRig API.") -> None:
         """
         Initialize the API error.
 
@@ -41,7 +41,7 @@ class XMRigAuthorizationError(Exception):
         message (str): Error message explaining the authorization issue.
     """
 
-    def __init__(self, message: str = "Access token is required but not provided. Please provide a valid access token."):
+    def __init__(self, message: str = "Access token is required but not provided. Please provide a valid access token.") -> None:
         """
         Initialize the authorization error.
 
@@ -59,7 +59,7 @@ class XMRigConnectionError(Exception):
         message (str): Error message explaining the connection issue.
     """
 
-    def __init__(self, message: str = "Failed to connect to the XMRig API. Please check the IP, port, and network connection."):
+    def __init__(self, message: str = "Failed to connect to the XMRig API. Please check the IP, port, and network connection.") -> None:
         """
         Initialize the connection error.
 

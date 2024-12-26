@@ -47,7 +47,7 @@ class XMRigAPI:
         _db_engine (Engine): SQLAlchemy engine instance for database operations.
     """
 
-    def __init__(self, miner_name: str, ip: str, port: int, access_token: Optional[str] = None, tls_enabled: bool = False, db_engine: Optional[Engine] = None):
+    def __init__(self, miner_name: str, ip: str, port: int, access_token: Optional[str] = None, tls_enabled: bool = False, db_engine: Optional[Engine] = None) -> None:
         """
         Initializes the XMRig instance with the provided IP, port, and access token.
 
