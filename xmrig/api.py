@@ -46,7 +46,7 @@ class XMRigAPI:
         _db_engine (Engine): SQLAlchemy engine instance for database operations.
     """
 
-    def __init__(self, miner_name: str, ip: str, port: int, access_token: Optional[str] = None, tls_enabled: bool = False, db_engine: Optional[Engine] = None) -> None:
+    def __init__(self, miner_name: str, ip: str, port: int, access_token: Optional[str] = None, tls_enabled: bool = False, db_url: str = None) -> None:
         """
         Initializes the XMRig instance with the provided IP, port, and access token.
 
@@ -68,7 +68,10 @@ class XMRigAPI:
         self._base_url = f"http://{ip}:{port}"
         if tls_enabled == True:
             self._base_url = f"https://{ip}:{port}"
-        self._db_engine = db_engine
+        self._db_url = db_url
+        self._db_engine = None
+        if self._db_url is not None:
+            self._db_engine = XMRigDatabase.init_db(self._db_url)
         self._json_rpc_url = f"{self._base_url}/json_rpc"
         self._summary_url = f"{self._base_url}/2/summary"
         self._backends_url = f"{self._base_url}/2/backends"
@@ -90,10 +93,11 @@ class XMRigAPI:
             "jsonrpc": "2.0",
             "id": 1,
         }
-        self.data = XMRigProperties(self._summary_response, self._backends_response, self._config_response, self._db_engine, self._miner_name)
+        self.data = XMRigProperties(self._summary_response, self._backends_response, self._config_response, self._miner_name, self._db_url)
         self.get_all_responses()
         log.info(f"XMRigAPI initialized for {self._base_url}")
     
+    # TODO: Move to properties.py
     def _update_properties_cache(self) -> None:
         """
         Sets the properties for the XMRigAPI instance.
@@ -101,7 +105,7 @@ class XMRigAPI:
         Args:
             data (Dict[str, Any]): Data to set as properties.
         """
-        self.data = XMRigProperties(self._summary_response, self._backends_response, self._config_response, self._db_engine, self._miner_name)
+        self.data = XMRigProperties(self._summary_response, self._backends_response, self._config_response, self._miner_name, self._db_url)
 
     def set_auth_header(self) -> bool:
         """

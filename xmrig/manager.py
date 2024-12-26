@@ -54,7 +54,7 @@ class XMRigManager:
                 raise ValueError(f"Miner with name '{miner_name}' already exists.")
 
             # Use the injected factory to create the API instance
-            self._miners[miner_name] = self._api_factory(miner_name, ip, port, access_token, tls_enabled, self._db_engine)
+            self._miners[miner_name] = self._api_factory(miner_name, ip, port, access_token, tls_enabled, self._db_url)
             log.info(f"Miner '{miner_name}' added to manager.")
         except Exception as e:
             log.error(f"An error occurred adding miner '{miner_name}': {e}")

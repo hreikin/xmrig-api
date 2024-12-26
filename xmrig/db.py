@@ -37,7 +37,7 @@ class XMRigDatabase:
             return cls._engines[db_url]
         except Exception as e:
             log.error(f"An error occurred initializing the database: {e}")
-            raise XMRigAPIError() from e
+            raise XMRigAPIError(f"Could not parse SQLAlchemy URL from string '{db_url}'") from e
     
     @staticmethod
     def insert_data_to_db(json_data: Dict[str, Any], table_name: str, engine: Engine) -> None:
@@ -87,7 +87,7 @@ class XMRigDatabase:
             log.error(f"An error occurred inserting data to the database: {e}")
             raise XMRigAPIError() from e
     
-    # TODO: Finish implementing this method.
+    # TODO: Test this methods functionality against the properties available in the XMRig API module
     @staticmethod
     def get_data_from_db(table_name: Union[str, List[str]], keys: List[Union[str, int]], engine: Engine) -> Any:
         """
@@ -101,11 +101,11 @@ class XMRigDatabase:
         column_name = ""
         special_names = ["hashrate", "pools", "threads"]
         # create the normal column_name first, then check for special names
-        # "pools" needs properties creating for config.json datapoints before it will work
         for key in keys:
             if not isinstance(key, int):
                 column_name += f"{key}."
         column_name = column_name[:-1]
+        # TODO: The "pools" needs properties creating for config.json datapoints before it will work
         # if the name is special, overwrite the column_name
         for name in special_names:
             if name in keys:

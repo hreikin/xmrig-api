@@ -18,7 +18,7 @@ from xmrig.db import XMRigDatabase
 from sqlalchemy.engine import Engine
 from json import JSONDecodeError
 
-# TODO: Fix backends property table names and keys for database after recent changes.
+# TODO: Fix "threads" and "hashrate" property logic for database functionality after recent changes.
 
 class XMRigProperties:
     """
@@ -29,11 +29,14 @@ class XMRigProperties:
         backends_response (Dict[str, Any]): Cached backends endpoint data.
         config_response (Dict[str, Any]): Cached config endpoint data.
     """
-    def __init__(self, summary_response: Dict[str, Any], backends_response: List[Dict[str, Any]], config_response: Dict[str, Any], miner_name: str, db_engine: Optional[Engine] = None):
+    def __init__(self, summary_response: Dict[str, Any], backends_response: List[Dict[str, Any]], config_response: Dict[str, Any], miner_name: str, db_url: str = None):
         self._summary_response = summary_response
         self._backends_response = backends_response
         self._config_response = config_response
-        self._db_engine = db_engine
+        self._db_url = db_url
+        self._db_engine = None
+        if self._db_url is not None:
+            self._db_engine = XMRigDatabase.init_db(self._db_url)
         self._summary_table_name = f"'{miner_name}-summary'"
         self._backends_table_names = [f"'{miner_name}-cpu-backend'", f"'{miner_name}-opencl-backend'", f"'{miner_name}-cuda-backend'"]
         self._config_table_name = f"'{miner_name}-config'"
