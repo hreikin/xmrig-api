@@ -13,7 +13,8 @@ It includes functionalities for:
 """
 import requests
 from xmrig.api import XMRigAPI
-from xmrig.helpers import _init_db, _delete_all_miner_data_from_db, log, XMRigAPIError
+from xmrig.helpers import log, XMRigAPIError
+from xmrig.db import XMRigDatabase
 from typing import Callable, Optional, List
 
 class XMRigManager:
@@ -32,8 +33,9 @@ class XMRigManager:
         self._miners = {}
         self._api_factory = api_factory
         self._db_url = db_url
+        self._db_engine = None
         if self._db_url is not None:
-            self._db_engine = _init_db(self._db_url)
+            self._db_engine = XMRigDatabase.init_db(self._db_url)
 
     def add_miner(self, miner_name: str, ip: str, port: int, access_token: Optional[str] = None, tls_enabled: bool = False) -> None:
         """
@@ -68,8 +70,8 @@ class XMRigManager:
             if miner_name not in self._miners:
                 raise ValueError(f"Miner with name '{miner_name}' does not exist.")
             
-            if self._db_url is not None:
-                _delete_all_miner_data_from_db(miner_name, self._db_engine)
+            if self._db_engine is not None:
+                XMRigDatabase.delete_all_miner_data_from_db(miner_name, self._db_engine)
             del self._miners[miner_name]
             log.info(f"Miner '{miner_name}' removed from manager.")
         except Exception as e:
