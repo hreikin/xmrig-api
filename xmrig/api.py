@@ -101,9 +101,6 @@ class XMRigAPI:
     def _update_properties_cache(self) -> None:
         """
         Sets the properties for the XMRigAPI instance.
-
-        Args:
-            data (Dict[str, Any]): Data to set as properties.
         """
         self.data = XMRigProperties(self._summary_response, self._backends_response, self._config_response, self._miner_name, self._db_url)
 
