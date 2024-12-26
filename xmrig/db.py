@@ -2,7 +2,7 @@ from sqlalchemy import create_engine, text
 from sqlalchemy.engine import Engine
 from xmrig.helpers import log, XMRigAPIError
 from datetime import datetime
-from typing import Dict, Any
+from typing import Dict, Any, Union, List
 import pandas as pd
 import json
 
@@ -18,7 +18,7 @@ class XMRigDatabase:
         self._engines = {}
         self._db_url = db_url
         
-    def _init_db(self) -> Engine:
+    def init_db(self) -> Engine:
         """
         Initializes the database engine.
 
@@ -34,7 +34,7 @@ class XMRigDatabase:
             raise XMRigAPIError() from e
     
 
-    def _insert_data_to_db(self, json_data: Dict[str, Any], table_name: str, engine: Engine) -> None:
+    def insert_data_to_db(self, json_data: Dict[str, Any], table_name: str, engine: Engine) -> None:
         """
         Inserts JSON data into the specified database table.
 
@@ -80,8 +80,35 @@ class XMRigDatabase:
         except Exception as e:
             log.error(f"An error occurred inserting data to the database: {e}")
             raise XMRigAPIError() from e
+    
+    # TODO: Finish implementing this method.
+    def get_data_from_db(self, table_name: Union[str, List[str]], keys: List[Union[str, int]], engine: Engine) -> None:
+        """
+        Retrieves the data from the database using the provided table name.
 
-    def _delete_all_miner_data_from_db(self, miner_name: str, engine: Engine) -> None:
+        Args:
+            table_name (Union[str, List[str]]): The name of the table or list of table names to use to retrieve the data.
+            keys (List[Union[str, int]]): The keys to use to retrieve the data.
+            engine (Engine): The SQLAlchemy engine instance.
+        """
+        column_name = ""
+        # handle column names for config.json "pools"
+        # needs properties creating for config.json datapoints
+        if "pools" in keys:
+            pass
+        # handle column names for backends.json "threads"
+        elif "threads" in keys:
+            column_name += "threads"
+        # handle default column names
+        else:
+            for key in keys:
+                if not isinstance(key, int):
+                    column_name += f"{key}."
+            column_name = column_name[:-1]
+
+        return "N/A"
+
+    def delete_all_miner_data_from_db(self, miner_name: str, engine: Engine) -> None:
         """
         Deletes all tables related to a specific miner from the database.
 
