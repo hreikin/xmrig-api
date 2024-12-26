@@ -105,7 +105,8 @@ class XMRigProperties:
             try:
                 all_backends.append(self._get_data_from_response(self._backends_response, [], backend_table))
             # suppress exceptions for missing backends, allows handling of extra backends from xmrig-mo
-            except Exception() as e:
+            # the exception still prints to the log, but the program continues, needs research to see if i can suppress the exception completely
+            except Exception:
                 continue
         all_backends = [i for i in all_backends if i != "N/A"]
         return all_backends
