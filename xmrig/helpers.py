@@ -65,3 +65,60 @@ class XMRigConnectionError(Exception):
         """
         self.message = message
         super().__init__(self.message)
+
+class XMRigDatabaseError(Exception):
+    """
+    Exception raised when a database error occurs with the XMRig API.
+
+    Attributes:
+        message (str): Error message explaining the database issue.
+    """
+
+    # TODO: Fill in the default message with a more specific database error message
+    def __init__(self, message: str = "An error occurred with the XMRig database. Please check the database configuration.") -> None:
+        """
+        Initialize the database error.
+
+        Args:
+            message (str): Error message. Defaults to a generic database error message.
+        """
+        self.message = message
+        super().__init__(self.message)
+
+class XMRigManagerError(Exception):
+    """
+    Exception raised when a manager error occurs with the XMRig API.
+
+    Attributes:
+        message (str): Error message explaining the manager issue.
+    """
+
+    # TODO: Fill in the default message with a more specific manager error message
+    def __init__(self, message: str = "An error occurred with the XMRig manager. Please check the manager configuration.") -> None:
+        """
+        Initialize the manager error.
+
+        Args:
+            message (str): Error message. Defaults to a generic manager error message.
+        """
+        self.message = message
+        super().__init__(self.message)
+
+class XMRigPropertiesError(Exception):
+    """
+    Exception raised when a properties error occurs with the XMRig API.
+
+    Attributes:
+        message (str): Error message explaining the properties issue.
+    """
+    
+    # TODO: Fill in the default message with a more specific properties error message
+    def __init__(self, message: str = "An error occurred retrieving properties from the XMRig API. Please check the API response.") -> None:
+        """
+        Initialize the properties error.
+
+        Args:
+            message (str): Error message. Defaults to a generic properties error message.
+        """
+        self.message = message
+        super().__init__(self.message)
