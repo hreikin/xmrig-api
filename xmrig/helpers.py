@@ -6,9 +6,6 @@ It includes:
 
 - Logging configuration for the XMRig API.
 - Custom exception classes for handling specific API errors.
-- Database initialization and operations for storing and managing miner data.
-- Functions for inserting data into the database.
-- Functions for deleting miner-related tables from the database.
 """
 
 import logging

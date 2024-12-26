@@ -10,6 +10,7 @@ It includes functionalities for:
 - Performing actions (e.g., pause, resume, stop) on all managed miners.
 - Updating all miners' cached data.
 - Listing all managed miners.
+- Deleting all miner-related data from the database.
 """
 import requests
 from xmrig.api import XMRigAPI

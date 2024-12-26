@@ -7,9 +7,8 @@ It includes functionalities for:
 - Fetching status and managing configurations.
 - Controlling the mining process.
 - Storing collected data in a database.
-
-Classes:
-    XMRigAPI: A class to interact with the XMRig miner API.
+- Retrieving and caching properties and statistics from the API responses.
+- Fallback to the database if the data is not available in the cached responses.
 """
 
 import requests

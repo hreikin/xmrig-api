@@ -7,6 +7,9 @@ and store collected data in a database. It includes functionalities for:
 - Fetching status and managing configurations.
 - Controlling the mining process.
 - Performing actions on all miners.
+- Retrieving and caching properties and statistics from the API responses.
+- Fallback to the database if the data is not available in the cached responses.
+- Deleting all miner-related data from the database.
 
 Classes:
     XMRigAPI: Interacts with the XMRig miner API.
@@ -15,12 +18,14 @@ Classes:
     XMRigConnectionError: Custom exception for connection errors.
     XMRigManager: Manages multiple XMRig miners via their APIs.
     XMRigProperties: Retrieves and caches properties and statistics from the XMRig miner's API responses.
+    XMRigDatabase: Handles database operations for storing and managing miner data.
 
 Modules:
     api: Contains the XMRigAPI class and related functionalities.
     manager: Contains the XMRigManager class for managing multiple miners.
-    helpers: Configures logging and handles database operations for the module.
+    helpers: Configures logging and handles custom exceptions.
     properties: Contains the XMRigProperties class for retrieving and caching properties.
+    db: Contains the XMRigDatabase class for database operations.
 
 Public Functions:
     XMRigAPI:
@@ -34,6 +39,22 @@ Public Functions:
         - resume_miner
         - stop_miner
         - start_miner
+
+    XMRigManager:
+        - add_miner
+        - remove_miner
+        - get_miner
+        - perform_action_on_all
+        - get_all_miners_endpoints
+        - list_miners
+
+    XMRigDatabase:
+        - init_db
+        - insert_data_to_db
+        - get_data_from_db
+        - delete_all_miner_data_from_db
+
+    XMRigProperties:
         - summary
         - backends
         - config
@@ -200,19 +221,10 @@ Public Functions:
         - be_cuda_threads_clock
         - be_cuda_threads_memory_clock
 
-    XMRigManager:
-        - add_miner
-        - remove_miner
-        - get_miner
-        - perform_action_on_all
-        - get_all_miners_endpoints
-        - list_miners
-
-Private Functions:
-    helpers:
-        - _init_db
-        - _insert_data_to_db
-        - _delete_all_miner_data_from_db
+    Exceptions:
+        - XMRigAPIError
+        - XMRigAuthorizationError
+        - XMRigConnectionError
 """
 
 from .api import XMRigAPI
@@ -228,4 +240,4 @@ __license__ = "MIT"
 __description__ = "This module provides objects to interact with the XMRig miner API, manage multiple miners, and store collected data in a database."
 __url__ = "https://hreikin.co.uk/xmrig-api"
 
-__all__ = ["XMRigAPI", "XMRigAPIError", "XMRigAuthorizationError", "XMRigDatabase", "XMRigConnectionError", "XMRigManager"]
+__all__ = ["XMRigAPI", "XMRigAPIError", "XMRigAuthorizationError", "XMRigConnectionError", "XMRigDatabase", "XMRigManager", "XMRigProperties", ]

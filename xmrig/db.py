@@ -1,3 +1,15 @@
+"""
+XMRig Database module.
+
+This module provides the XMRigDatabase class for database operations related to the XMRig miner.
+It includes functionalities for:
+
+- Initializing the database engine.
+- Inserting data into the database.
+- Retrieving data from the database.
+- Deleting all miner-related data from the database.
+"""
+
 from sqlalchemy import create_engine, text
 from sqlalchemy.engine import Engine
 from xmrig.helpers import log, XMRigAPIError

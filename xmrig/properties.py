@@ -1,6 +1,14 @@
 """
 This module provides the XMRigProperties class, which is used to retrieve and cache various
-properties and statistics from the XMRig miner's API responses.
+properties and statistics from the XMRig miner's API responses. It also includes functionality
+to fallback to the database if the data is not available in the cached responses.
+
+Features:
+- Retrieve and cache summary endpoint data.
+- Retrieve and cache backends endpoint data.
+- Retrieve and cache config endpoint data.
+- Fallback to database retrieval if data is not available in cached responses.
+- Provide various properties to access specific data points from the cached responses.
 """
 
 from typing import Any, Dict, List, Union, Optional
