@@ -1,6 +1,7 @@
 import unittest, json
 from unittest.mock import patch
 from xmrig.api import XMRigAPI
+from xmrig.properties import XMRigProperties
 
 class TestXMRigAPI(unittest.TestCase):
     """Unit tests for the XMRigAPI class."""
@@ -9,14 +10,15 @@ class TestXMRigAPI(unittest.TestCase):
         """Set up the test environment."""
         with patch.object(XMRigAPI, 'get_all_responses', return_value=True):
             self.api = XMRigAPI(miner_name="test_miner", ip="127.0.0.1", port="8080", access_token="fake-token", tls_enabled=False)
-        
         with open("api/summary.json", "r") as f:
             self.api._summary_response = json.load(f)
         with open("api/backends.json", "r") as f:
             self.api._backends_response = json.load(f)
         with open("api/config.json", "r") as f:
             self.api._config_response = json.load(f)
-        
+        # Mock the XMRigProperties class
+        # self.api.data = XMRigProperties(self.api._summary_response, self.api._backends_response, self.api._config_response, "test_miner")
+
         self.api._update_properties_cache()
     
     def test_summary_property(self):
@@ -171,12 +173,12 @@ class TestXMRigAPI(unittest.TestCase):
         self.assertIsInstance(result, int)
 
     def test_sum_pool_tls_property(self):
-        """Test that the 'sum_pool_tls' property returns a boolean or None."""
+        """Test that the 'sum_pool_tls' property returns a boolean."""
         result = self.api.data.sum_pool_tls
         self.assertIsInstance(result, (bool, type(None)))
 
     def test_sum_pool_tls_fingerprint_property(self):
-        """Test that the 'sum_pool_tls_fingerprint' property returns a string or None."""
+        """Test that the 'sum_pool_tls_fingerprint' property returns a string."""
         result = self.api.data.sum_pool_tls_fingerprint
         self.assertIsInstance(result, (str, type(None)))
 
@@ -356,19 +358,19 @@ class TestXMRigAPI(unittest.TestCase):
         self.assertIsInstance(result, dict)
 
     def test_sum_hashrate_10s_property(self):
-        """Test that the 'sum_hashrate_10s' property returns a float or None."""
+        """Test that the 'sum_hashrate_10s' property returns a float."""
         result = self.api.data.sum_hashrate_10s
-        self.assertIsInstance(result, (float, type(None)))
+        self.assertIsInstance(result, float)
 
     def test_sum_hashrate_1m_property(self):
-        """Test that the 'sum_hashrate_1m' property returns a float or None."""
+        """Test that the 'sum_hashrate_1m' property returns a float."""
         result = self.api.data.sum_hashrate_1m
-        self.assertIsInstance(result, (float, type(None)))
+        self.assertIsInstance(result, float)
 
     def test_sum_hashrate_15m_property(self):
-        """Test that the 'sum_hashrate_15m' property returns a float or None."""
+        """Test that the 'sum_hashrate_15m' property returns a float."""
         result = self.api.data.sum_hashrate_15m
-        self.assertIsInstance(result, (float, type(None)))
+        self.assertIsInstance(result, float)
 
     def test_sum_hashrate_highest_property(self):
         """Test that the 'sum_hashrate_highest' property returns a float."""
@@ -384,7 +386,7 @@ class TestXMRigAPI(unittest.TestCase):
         """Test that the 'backends' property returns a list containing dictionaries with a 'type' key."""
         result = self.api.data.backends
         self.assertIsInstance(result, list)
-        self.assertIn("type", result[0])
+        self.assertIn("type", result[0][0])
 
     def test_enabled_backends_property(self):
         """Test that the 'enabled_backends' property returns a list."""
