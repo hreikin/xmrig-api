@@ -6,18 +6,15 @@ from typing import Dict, Any, Union, List
 import pandas as pd
 import json
 
-# TODO: More refactoring required (probably elsewhere, maybe here as well) to get _insert_data_to_db 
-# TODO: and _delete_all_miner_data_from_db to work with the rest of the codebase
-# TODO: Pass through the db object to the XMRigAPI class, set the engine within init, and call the 
-# TODO: _insert_data_to_db method from the API class, look into args/kwargs instead of setting a 
-# TODO: default value in the class definition
-# TODO: Remove _ prefix from method names
+# TODO: More refactoring required (probably elsewhere, maybe here as well) to get methods to work with the rest of the codebase
+# TODO: Refactor methods after making @staticmethods so they can be called without an instance of the class, move db_url to init_db, and remove self from all @staticmethods
+# TODO: leave init_db as a class method and make it set the engine value rather than return it, create a @staticmethod to return the engine, and use that in the other methods
 
 class XMRigDatabase:
     def __init__(self, db_url: str):
         self._engines = {}
         self._db_url = db_url
-        
+
     def init_db(self) -> Engine:
         """
         Initializes the database engine.
@@ -33,7 +30,7 @@ class XMRigDatabase:
             log.error(f"An error occurred initializing the database: {e}")
             raise XMRigAPIError() from e
     
-
+    @staticmethod
     def insert_data_to_db(self, json_data: Dict[str, Any], table_name: str, engine: Engine) -> None:
         """
         Inserts JSON data into the specified database table.
@@ -82,6 +79,7 @@ class XMRigDatabase:
             raise XMRigAPIError() from e
     
     # TODO: Finish implementing this method.
+    @staticmethod
     def get_data_from_db(self, table_name: Union[str, List[str]], keys: List[Union[str, int]], engine: Engine) -> None:
         """
         Retrieves the data from the database using the provided table name.
@@ -108,6 +106,7 @@ class XMRigDatabase:
 
         return "N/A"
 
+    @staticmethod
     def delete_all_miner_data_from_db(self, miner_name: str, engine: Engine) -> None:
         """
         Deletes all tables related to a specific miner from the database.
