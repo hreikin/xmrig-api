@@ -6,8 +6,10 @@ properties and statistics from the XMRig miner's API responses.
 from typing import Any, Dict, List, Union
 from datetime import timedelta
 from xmrig.helpers import log
+from xmrig.db import XMRigDatabase
 from sqlalchemy.engine import Engine
 from json import JSONDecodeError
+from typing import Optional
 
 # TODO: Fix backends property table names and keys for database after recent changes.
 
@@ -20,7 +22,7 @@ class XMRigProperties:
         backends_response (Dict[str, Any]): Cached backends endpoint data.
         config_response (Dict[str, Any]): Cached config endpoint data.
     """
-    def __init__(self, summary_response: Dict[str, Any], backends_response: List[Dict[str, Any]], config_response: Dict[str, Any], db_engine: Engine, miner_name: str):
+    def __init__(self, summary_response: Dict[str, Any], backends_response: List[Dict[str, Any]], config_response: Dict[str, Any], miner_name: str, db_engine: Optional[Engine] = None):
         self._summary_response = summary_response
         self._backends_response = backends_response
         self._config_response = config_response
@@ -50,11 +52,15 @@ class XMRigProperties:
                 data = data
             return data
         except (KeyError, TypeError, JSONDecodeError) as e:
-            log.error(f"An error occurred fetching the data from the response using the provided keys, trying database: {e}")
-            try:
-                return self._get_data_from_db(fallback_table_name, keys, self._db_engine)
-            except Exception as db_e:
-                log.error(f"An error occurred fetching the data from the database: {db_e}")
+            if self._db_engine is not None:
+                log.error(f"An error occurred fetching the data from the response using the provided keys, trying database: {e}")
+                try:
+                    return XMRigDatabase.get_data_from_db(fallback_table_name, keys, self._db_engine)
+                except Exception as db_e:
+                    log.error(f"An error occurred fetching the data from the database: {db_e}")
+                    return "N/A"
+            else:
+                log.error(f"An error occurred fetching the data from the response using the provided keys: {e}")
                 return "N/A"
 
     # TODO: Add config data points to properties.
