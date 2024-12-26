@@ -99,19 +99,29 @@ class XMRigDatabase:
             engine (Engine): The SQLAlchemy engine instance.
         """
         column_name = ""
-        # handle column names for config.json "pools"
-        # needs properties creating for config.json datapoints
-        if "pools" in keys:
-            pass
-        # handle column names for backends.json "threads"
-        elif "threads" in keys:
-            column_name += "threads"
-        # handle default column names
-        else:
-            for key in keys:
-                if not isinstance(key, int):
-                    column_name += f"{key}."
-            column_name = column_name[:-1]
+        special_names = ["hashrate", "pools", "threads"]
+        # create the normal column_name first, then check for special names
+        # "pools" needs properties creating for config.json datapoints before it will work
+        for key in keys:
+            if not isinstance(key, int):
+                column_name += f"{key}."
+        column_name = column_name[:-1]
+        # if the name is special, overwrite the column_name
+        for name in special_names:
+            if name in keys:
+                column_name = name
+                # break out of the loop if a special name is found so the order of the special_names list doesn't matter
+                break
+        try:
+            # Use quotes to avoid SQL syntax errors
+            # fetch the most recent result
+            with engine.connect() as connection:
+                result = connection.execute(text(f"SELECT '{column_name}' FROM '{table_name}' ORDER BY timestamp DESC LIMIT 1"))
+                for row in result:
+                    return row[0]
+        except Exception as e:
+            log.error(f"An error occurred retrieving data from the database: {e}")
+            raise XMRigAPIError() from e
         return "N/A"
 
     @staticmethod
