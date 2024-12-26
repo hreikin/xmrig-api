@@ -11,11 +11,10 @@ Features:
 - Provide various properties to access specific data points from the cached responses.
 """
 
-from typing import Any, Dict, List, Union, Optional
+from typing import Any, Dict, List, Union
 from datetime import timedelta
 from xmrig.helpers import log
 from xmrig.db import XMRigDatabase
-from sqlalchemy.engine import Engine
 from json import JSONDecodeError
 
 # TODO: Fix "threads" and "hashrate" property logic for database functionality after recent changes.
@@ -60,10 +59,13 @@ class XMRigProperties:
                     data = data[key]
             else:
                 data = data
-            return data
+            if data is not None:
+                return data
+            else:
+                raise KeyError("Data is None.")
         except (KeyError, TypeError, JSONDecodeError) as e:
             if self._db_engine is not None:
-                log.error(f"An error occurred fetching the data from the response using the provided keys, trying database: {e}")
+                log.debug(f"An error occurred fetching the data from the response using the provided keys, trying database: {e}")
                 try:
                     return XMRigDatabase.get_data_from_db(fallback_table_name, keys, self._db_engine)
                 except Exception as db_e:
@@ -87,7 +89,7 @@ class XMRigProperties:
         Returns:
             dict: Current summary response, or "N/A" if not available.
         """
-        return dict(self._get_data_from_response(self._summary_response, [], self._summary_table_name))
+        return self._get_data_from_response(self._summary_response, [], self._summary_table_name)
 
     # TODO: May require special handling for db
     @property
@@ -98,7 +100,15 @@ class XMRigProperties:
         Returns:
             list: Current backends response, or "N/A" if not available.
         """
-        return self._get_data_from_response(self._backends_response, [], self._backends_table_names)
+        all_backends = []
+        for backend_table in self._backends_table_names:
+            try:
+                all_backends.append(self._get_data_from_response(self._backends_response, [], backend_table))
+            # suppress exceptions for missing backends, allows handling of extra backends from xmrig-mo
+            except Exception() as e:
+                continue
+        all_backends = [i for i in all_backends if i != "N/A"]
+        return all_backends
 
     @property
     def config(self) -> Union[Dict[str, Any], str]:
@@ -108,7 +118,7 @@ class XMRigProperties:
         Returns:
             dict: Current config response, or "N/A" if not available.
         """
-        return dict(self._get_data_from_response(self._config_response, [], self._config_table_name))
+        return self._get_data_from_response(self._config_response, [], self._config_table_name)
     
     ##############################
     # Data from summary endpoint #
@@ -848,11 +858,16 @@ class XMRigProperties:
         Returns:
             list: Enabled backends, or "N/A" if not available.
         """
-        backend_types = []
-        for i in self._get_data_from_response(self._backends_response, [], self._backends_table_names):
-            if "type" in i and i["enabled"] == True:
-                backend_types.append(i["type"])
-        return backend_types
+        all_backend_types = []
+        for backend_table in self._backends_table_names:
+            try:
+                all_backend_types.append(self._get_data_from_response(self._backends_response, ["type"], backend_table))
+            # suppress exceptions for missing backends, allows handling of extra backends from xmrig-mo
+            except Exception:
+                continue
+        # edit all_backend_types to remove any value that is "N/A"
+        all_backend_types = [i for i in all_backend_types if i != "N/A"]
+        return all_backend_types
 
     @property
     def be_cpu_type(self) -> Union[str, Any]:
@@ -862,7 +877,7 @@ class XMRigProperties:
         Returns:
             str: CPU backend type, or "N/A" if not available.
         """
-        return self._get_data_from_response(self._backends_response, [0, "type"], self._backends_table_names)
+        return self._get_data_from_response(self._backends_response, ["type"], self._backends_table_names[0])
 
     @property
     def be_cpu_enabled(self) -> Union[bool, Any]:
@@ -872,7 +887,7 @@ class XMRigProperties:
         Returns:
             bool: CPU backend enabled status, or "N/A" if not available.
         """
-        return self._get_data_from_response(self._backends_response, [0, "enabled"], self._backends_table_names)
+        return self._get_data_from_response(self._backends_response, ["enabled"], self._backends_table_names[0])
 
     @property
     def be_cpu_algo(self) -> Union[str, Any]:
@@ -882,7 +897,7 @@ class XMRigProperties:
         Returns:
             str: CPU backend algorithm, or "N/A" if not available.
         """
-        return self._get_data_from_response(self._backends_response, [0, "algo"], self._backends_table_names)
+        return self._get_data_from_response(self._backends_response, ["algo"], self._backends_table_names[0])
 
     @property
     def be_cpu_profile(self) -> Union[str, Any]:
@@ -892,7 +907,7 @@ class XMRigProperties:
         Returns:
             str: CPU backend profile, or "N/A" if not available.
         """
-        return self._get_data_from_response(self._backends_response, [0, "profile"], self._backends_table_names)
+        return self._get_data_from_response(self._backends_response, ["profile"], self._backends_table_names[0])
 
     @property
     def be_cpu_hw_aes(self) -> Union[bool, Any]:
@@ -902,7 +917,7 @@ class XMRigProperties:
         Returns:
             bool: CPU backend hardware AES support status, or "N/A" if not available.
         """
-        return self._get_data_from_response(self._backends_response, [0, "hw-aes"], self._backends_table_names)
+        return self._get_data_from_response(self._backends_response, ["hw-aes"], self._backends_table_names[0])
 
     @property
     def be_cpu_priority(self) -> Union[int, Any]:
@@ -912,7 +927,7 @@ class XMRigProperties:
         Returns:
             int: CPU backend priority, or "N/A" if not available.
         """
-        return self._get_data_from_response(self._backends_response, [0, "priority"], self._backends_table_names)
+        return self._get_data_from_response(self._backends_response, ["priority"], self._backends_table_names[0])
 
     @property
     def be_cpu_msr(self) -> Union[bool, Any]:
@@ -922,7 +937,7 @@ class XMRigProperties:
         Returns:
             bool: CPU backend MSR support status, or "N/A" if not available.
         """
-        return self._get_data_from_response(self._backends_response, [0, "msr"], self._backends_table_names)
+        return self._get_data_from_response(self._backends_response, ["msr"], self._backends_table_names[0])
 
     @property
     def be_cpu_asm(self) -> Union[str, Any]:
@@ -932,7 +947,7 @@ class XMRigProperties:
         Returns:
             str: CPU backend assembly information, or "N/A" if not available.
         """
-        return self._get_data_from_response(self._backends_response, [0, "asm"], self._backends_table_names)
+        return self._get_data_from_response(self._backends_response, ["asm"], self._backends_table_names[0])
 
     @property
     def be_cpu_argon2_impl(self) -> Union[str, Any]:
@@ -942,7 +957,7 @@ class XMRigProperties:
         Returns:
             str: CPU backend Argon2 implementation, or "N/A" if not available.
         """
-        return self._get_data_from_response(self._backends_response, [0, "argon2-impl"], self._backends_table_names)
+        return self._get_data_from_response(self._backends_response, ["argon2-impl"], self._backends_table_names[0])
 
     @property
     def be_cpu_hugepages(self) -> Union[List[Dict[str, Any]], Any]:
@@ -952,7 +967,7 @@ class XMRigProperties:
         Returns:
             list: CPU backend hugepages information, or "N/A" if not available.
         """
-        return self._get_data_from_response(self._backends_response, [0, "hugepages"], self._backends_table_names)
+        return self._get_data_from_response(self._backends_response, ["hugepages"], self._backends_table_names[0])
 
     @property
     def be_cpu_memory(self) -> Union[int, Any]:
@@ -962,7 +977,7 @@ class XMRigProperties:
         Returns:
             int: CPU backend memory information, or "N/A" if not available.
         """
-        return self._get_data_from_response(self._backends_response, [0, "memory"], self._backends_table_names)
+        return self._get_data_from_response(self._backends_response, ["memory"], self._backends_table_names[0])
 
     @property
     def be_cpu_hashrates(self) -> Union[List[float], Any]:
@@ -972,7 +987,7 @@ class XMRigProperties:
         Returns:
             list: CPU backend hashrates, or "N/A" if not available.
         """
-        return self._get_data_from_response(self._backends_response, [0, "hashrate"], self._backends_table_names)
+        return self._get_data_from_response(self._backends_response, ["hashrate"], self._backends_table_names[0])
 
     # TODO: Edit the keys to return the "total" list then use the remaining keys to get the specific 
     # TODO: data to return, this will make it work easily with the _get_data_from_db logic required for 
@@ -985,7 +1000,7 @@ class XMRigProperties:
         Returns:
             float: CPU backend hashrate for the last 10 seconds, or "N/A" if not available.
         """
-        return self._get_data_from_response(self._backends_response, [0, "hashrate", 0], self._backends_table_names)
+        return self._get_data_from_response(self._backends_response, ["hashrate", 0], self._backends_table_names[0])
 
     # TODO: Edit the keys to return the "total" list then use the remaining keys to get the specific 
     # TODO: data to return, this will make it work easily with the _get_data_from_db logic required for 
@@ -998,7 +1013,7 @@ class XMRigProperties:
         Returns:
             float: CPU backend hashrate for the last 1 minute, or "N/A" if not available.
         """
-        return self._get_data_from_response(self._backends_response, [0, "hashrate", 1], self._backends_table_names)
+        return self._get_data_from_response(self._backends_response, ["hashrate", 1], self._backends_table_names[0])
 
     # TODO: Edit the keys to return the "total" list then use the remaining keys to get the specific 
     # TODO: data to return, this will make it work easily with the _get_data_from_db logic required for 
@@ -1011,7 +1026,7 @@ class XMRigProperties:
         Returns:
             float: CPU backend hashrate for the last 15 minutes, or "N/A" if not available.
         """
-        return self._get_data_from_response(self._backends_response, [0, "hashrate", 2], self._backends_table_names)
+        return self._get_data_from_response(self._backends_response, ["hashrate", 2], self._backends_table_names[0])
     
     @property
     def be_cpu_threads(self) -> Union[List[Dict[str, Any]], Any]:
@@ -1021,7 +1036,7 @@ class XMRigProperties:
         Returns:
             list: CPU backend threads information, or "N/A" if not available.
         """
-        return self._get_data_from_response(self._backends_response, [0, "threads"], self._backends_table_names)
+        return self._get_data_from_response(self._backends_response, ["threads"], self._backends_table_names[0])
 
     @property
     def be_cpu_threads_intensity(self) -> Union[List[int], Any]:
@@ -1032,7 +1047,7 @@ class XMRigProperties:
             list: CPU backend threads intensity information, or "N/A" if not available.
         """
         intensities = []
-        for i in self._get_data_from_response(self._backends_response, [0, "threads"], self._backends_table_names):
+        for i in self._get_data_from_response(self._backends_response, ["threads"], self._backends_table_names[0]):
                 intensities.append(i["intensity"])
         return intensities
 
@@ -1045,7 +1060,7 @@ class XMRigProperties:
             list: CPU backend threads affinity information, or "N/A" if not available.
         """
         affinities = []
-        for i in self._get_data_from_response(self._backends_response, [0, "threads"], self._backends_table_names):
+        for i in self._get_data_from_response(self._backends_response, ["threads"], self._backends_table_names[0]):
                 affinities.append(i["affinity"])
         return affinities
 
@@ -1058,7 +1073,7 @@ class XMRigProperties:
             list: CPU backend threads AV information, or "N/A" if not available.
         """
         avs = []
-        for i in self._get_data_from_response(self._backends_response, [0, "threads"], self._backends_table_names):
+        for i in self._get_data_from_response(self._backends_response, ["threads"], self._backends_table_names[0]):
                 avs.append(i["av"])
         return avs
 
@@ -1071,7 +1086,7 @@ class XMRigProperties:
             list: CPU backend threads hashrates for the last 10 seconds, or "N/A" if not available.
         """
         hashrates_10s = []
-        for i in self._get_data_from_response(self._backends_response, [0, "threads"], self._backends_table_names):
+        for i in self._get_data_from_response(self._backends_response, ["threads"], self._backends_table_names[0]):
                 hashrates_10s.append(i["hashrate"][0])
         return hashrates_10s
 
@@ -1084,7 +1099,7 @@ class XMRigProperties:
             list: CPU backend threads hashrates for the last 1 minute, or "N/A" if not available.
         """
         hashrates_1m = []
-        for i in self._get_data_from_response(self._backends_response, [0, "threads"], self._backends_table_names):
+        for i in self._get_data_from_response(self._backends_response, ["threads"], self._backends_table_names[0]):
                 hashrates_1m.append(i["hashrate"][1])
         return hashrates_1m
 
@@ -1097,7 +1112,7 @@ class XMRigProperties:
             list: CPU backend threads hashrates for the last 15 minutes, or "N/A" if not available.
         """
         hashrates_15m = []
-        for i in self._get_data_from_response(self._backends_response, [0, "threads"], self._backends_table_names):
+        for i in self._get_data_from_response(self._backends_response, ["threads"], self._backends_table_names[0]):
                 hashrates_15m.append(i["hashrate"][2])
         return hashrates_15m
 
@@ -1109,7 +1124,7 @@ class XMRigProperties:
         Returns:
             str: OpenCL backend type, or "N/A" if not available.
         """
-        return self._get_data_from_response(self._backends_response, [1, "type"], self._backends_table_names)
+        return self._get_data_from_response(self._backends_response, ["type"], self._backends_table_names[1])
 
     @property
     def be_opencl_enabled(self) -> Union[bool, Any]:
@@ -1119,7 +1134,7 @@ class XMRigProperties:
         Returns:
             bool: OpenCL backend enabled status, or "N/A" if not available.
         """
-        return self._get_data_from_response(self._backends_response, [1, "enabled"], self._backends_table_names)
+        return self._get_data_from_response(self._backends_response, ["enabled"], self._backends_table_names[1])
 
     @property
     def be_opencl_algo(self) -> Union[str, Any]:
@@ -1129,7 +1144,7 @@ class XMRigProperties:
         Returns:
             str: OpenCL backend algorithm, or "N/A" if not available.
         """
-        return self._get_data_from_response(self._backends_response, [1, "algo"], self._backends_table_names)
+        return self._get_data_from_response(self._backends_response, ["algo"], self._backends_table_names[1])
 
     @property
     def be_opencl_profile(self) -> Union[str, Any]:
@@ -1139,7 +1154,7 @@ class XMRigProperties:
         Returns:
             str: OpenCL backend profile, or "N/A" if not available.
         """
-        return self._get_data_from_response(self._backends_response, [1, "profile"], self._backends_table_names)
+        return self._get_data_from_response(self._backends_response, ["profile"], self._backends_table_names[1])
 
     @property
     def be_opencl_platform(self) -> Union[Dict[str, Any], Any]:
@@ -1149,7 +1164,7 @@ class XMRigProperties:
         Returns:
             dict: OpenCL backend platform information, or "N/A" if not available.
         """
-        return self._get_data_from_response(self._backends_response, [1, "platform"], self._backends_table_names)
+        return self._get_data_from_response(self._backends_response, ["platform"], self._backends_table_names[1])
 
     @property
     def be_opencl_platform_index(self) -> Union[int, Any]:
@@ -1159,7 +1174,7 @@ class XMRigProperties:
         Returns:
             int: OpenCL backend platform index, or "N/A" if not available.
         """
-        return self._get_data_from_response(self._backends_response, [1, "platform", "index"], self._backends_table_names)
+        return self._get_data_from_response(self._backends_response, ["platform", "index"], self._backends_table_names[1])
 
     @property
     def be_opencl_platform_profile(self) -> Union[str, Any]:
@@ -1169,7 +1184,7 @@ class XMRigProperties:
         Returns:
             str: OpenCL backend platform profile, or "N/A" if not available.
         """
-        return self._get_data_from_response(self._backends_response, [1, "platform", "profile"], self._backends_table_names)
+        return self._get_data_from_response(self._backends_response, ["platform", "profile"], self._backends_table_names[1])
 
     @property
     def be_opencl_platform_version(self) -> Union[str, Any]:
@@ -1179,7 +1194,7 @@ class XMRigProperties:
         Returns:
             str: OpenCL backend platform version, or "N/A" if not available.
         """
-        return self._get_data_from_response(self._backends_response, [1, "platform", "version"], self._backends_table_names)
+        return self._get_data_from_response(self._backends_response, ["platform", "version"], self._backends_table_names[1])
 
     @property
     def be_opencl_platform_name(self) -> Union[str, Any]:
@@ -1189,7 +1204,7 @@ class XMRigProperties:
         Returns:
             str: OpenCL backend platform name, or "N/A" if not available.
         """
-        return self._get_data_from_response(self._backends_response, [1, "platform", "name"], self._backends_table_names)
+        return self._get_data_from_response(self._backends_response, ["platform", "name"], self._backends_table_names[1])
 
     @property
     def be_opencl_platform_vendor(self) -> Union[str, Any]:
@@ -1199,7 +1214,7 @@ class XMRigProperties:
         Returns:
             str: OpenCL backend platform vendor, or "N/A" if not available.
         """
-        return self._get_data_from_response(self._backends_response, [1, "platform", "vendor"], self._backends_table_names)
+        return self._get_data_from_response(self._backends_response, ["platform", "vendor"], self._backends_table_names[1])
 
     @property
     def be_opencl_platform_extensions(self) -> Union[str, Any]:
@@ -1209,7 +1224,7 @@ class XMRigProperties:
         Returns:
             str: OpenCL backend platform extensions, or "N/A" if not available.
         """
-        return self._get_data_from_response(self._backends_response, [1, "platform", "extensions"], self._backends_table_names)
+        return self._get_data_from_response(self._backends_response, ["platform", "extensions"], self._backends_table_names[1])
 
     @property
     def be_opencl_hashrates(self) -> Union[List[float], Any]:
@@ -1219,7 +1234,7 @@ class XMRigProperties:
         Returns:
             list: OpenCL backend hashrates, or "N/A" if not available.
         """
-        return self._get_data_from_response(self._backends_response, [1, "hashrate"], self._backends_table_names)
+        return self._get_data_from_response(self._backends_response, ["hashrate"], self._backends_table_names[1])
 
     # TODO: Edit the keys to return the "total" list then use the remaining keys to get the specific 
     # TODO: data to return, this will make it work easily with the _get_data_from_db logic required for 
@@ -1232,7 +1247,7 @@ class XMRigProperties:
         Returns:
             float: OpenCL backend hashrate for the last 10 seconds, or "N/A" if not available.
         """
-        return self._get_data_from_response(self._backends_response, [1, "hashrate", 0], self._backends_table_names)
+        return self._get_data_from_response(self._backends_response, ["hashrate", 0], self._backends_table_names[1])
 
     # TODO: Edit the keys to return the "total" list then use the remaining keys to get the specific 
     # TODO: data to return, this will make it work easily with the _get_data_from_db logic required for 
@@ -1245,7 +1260,7 @@ class XMRigProperties:
         Returns:
             float: OpenCL backend hashrate for the last 1 minute, or "N/A" if not available.
         """
-        return self._get_data_from_response(self._backends_response, [1, "hashrate", 1], self._backends_table_names)
+        return self._get_data_from_response(self._backends_response, ["hashrate", 1], self._backends_table_names[1])
 
     # TODO: Edit the keys to return the "total" list then use the remaining keys to get the specific 
     # TODO: data to return, this will make it work easily with the _get_data_from_db logic required for 
@@ -1258,7 +1273,7 @@ class XMRigProperties:
         Returns:
             float: OpenCL backend hashrate for the last 15 minutes, or "N/A" if not available.
         """
-        return self._get_data_from_response(self._backends_response, [1, "hashrate", 2], self._backends_table_names)
+        return self._get_data_from_response(self._backends_response, ["hashrate", 2], self._backends_table_names[1])
 
     # TODO: Edit the keys to return the "threads" list then use the remaining keys to get the specific 
     # TODO: data to return, this will make it work easily with the _get_data_from_db logic required for 
@@ -1271,7 +1286,7 @@ class XMRigProperties:
         Returns:
             dict: OpenCL backend threads information, or "N/A" if not available.
         """
-        return self._get_data_from_response(self._backends_response, [1, "threads", 0], self._backends_table_names)
+        return self._get_data_from_response(self._backends_response, ["threads", 0], self._backends_table_names[1])
 
     # TODO: Edit the keys to return the "threads" list then use the remaining keys to get the specific 
     # TODO: data to return, this will make it work easily with the _get_data_from_db logic required for 
@@ -1284,7 +1299,7 @@ class XMRigProperties:
         Returns:
             int: OpenCL backend threads index, or "N/A" if not available.
         """
-        return self._get_data_from_response(self._backends_response, [1, "threads", 0, "index"], self._backends_table_names)
+        return self._get_data_from_response(self._backends_response, ["threads", 0, "index"], self._backends_table_names[1])
 
     # TODO: Edit the keys to return the "threads" list then use the remaining keys to get the specific 
     # TODO: data to return, this will make it work easily with the _get_data_from_db logic required for 
@@ -1297,7 +1312,7 @@ class XMRigProperties:
         Returns:
             int: OpenCL backend threads intensity, or "N/A" if not available.
         """
-        return self._get_data_from_response(self._backends_response, [1, "threads", 0, "intensity"], self._backends_table_names)
+        return self._get_data_from_response(self._backends_response, ["threads", 0, "intensity"], self._backends_table_names[1])
 
     # TODO: Edit the keys to return the "threads" list then use the remaining keys to get the specific 
     # TODO: data to return, this will make it work easily with the _get_data_from_db logic required for 
@@ -1310,7 +1325,7 @@ class XMRigProperties:
         Returns:
             int: OpenCL backend threads worksize, or "N/A" if not available.
         """
-        return self._get_data_from_response(self._backends_response, [1, "threads", 0, "worksize"], self._backends_table_names)
+        return self._get_data_from_response(self._backends_response, ["threads", 0, "worksize"], self._backends_table_names[1])
 
     # TODO: Edit the keys to return the "threads" list then use the remaining keys to get the specific 
     # TODO: data to return, this will make it work easily with the _get_data_from_db logic required for 
@@ -1323,7 +1338,7 @@ class XMRigProperties:
         Returns:
             list: OpenCL backend threads amount, or "N/A" if not available.
         """
-        return self._get_data_from_response(self._backends_response, [1, "threads", 0, "threads"], self._backends_table_names)
+        return self._get_data_from_response(self._backends_response, ["threads", 0, "threads"], self._backends_table_names[1])
 
     # TODO: Edit the keys to return the "threads" list then use the remaining keys to get the specific 
     # TODO: data to return, this will make it work easily with the _get_data_from_db logic required for 
@@ -1336,7 +1351,7 @@ class XMRigProperties:
         Returns:
             int: OpenCL backend threads unroll, or "N/A" if not available.
         """
-        return self._get_data_from_response(self._backends_response, [1, "threads", 0, "unroll"], self._backends_table_names)
+        return self._get_data_from_response(self._backends_response, ["threads", 0, "unroll"], self._backends_table_names[1])
 
     # TODO: Edit the keys to return the "threads" list then use the remaining keys to get the specific 
     # TODO: data to return, this will make it work easily with the _get_data_from_db logic required for 
@@ -1350,7 +1365,7 @@ class XMRigProperties:
             int: OpenCL backend threads affinity, or "N/A" if not available.
         """
         
-        return self._get_data_from_response(self._backends_response, [1, "threads", 0, "affinity"], self._backends_table_names)
+        return self._get_data_from_response(self._backends_response, ["threads", 0, "affinity"], self._backends_table_names[1])
 
     # TODO: Edit the keys to return the "threads" list then use the remaining keys to get the specific 
     # TODO: data to return, this will make it work easily with the _get_data_from_db logic required for 
@@ -1363,7 +1378,7 @@ class XMRigProperties:
         Returns:
             list: OpenCL backend threads hashrates, or "N/A" if not available.
         """
-        return self._get_data_from_response(self._backends_response, [1, "threads", 0, "hashrate"], self._backends_table_names)
+        return self._get_data_from_response(self._backends_response, ["threads", 0, "hashrate"], self._backends_table_names[1])
 
     # TODO: Edit the keys to return the "threads" list then use the remaining keys to get the specific 
     # TODO: data to return, this will make it work easily with the _get_data_from_db logic required for 
@@ -1379,7 +1394,7 @@ class XMRigProperties:
         Returns:
             float: OpenCL backend threads hashrate for the last 10 seconds, or "N/A" if not available.
         """
-        return self._get_data_from_response(self._backends_response, [1, "threads", 0, "hashrate", 0], self._backends_table_names)
+        return self._get_data_from_response(self._backends_response, ["threads", 0, "hashrate", 0], self._backends_table_names[1])
 
     # TODO: Edit the keys to return the "threads" list then use the remaining keys to get the specific 
     # TODO: data to return, this will make it work easily with the _get_data_from_db logic required for 
@@ -1395,7 +1410,7 @@ class XMRigProperties:
         Returns:
             float: OpenCL backend threads hashrate for the last 1 minute, or "N/A" if not available.
         """
-        return self._get_data_from_response(self._backends_response, [1, "threads", 0, "hashrate", 1], self._backends_table_names)
+        return self._get_data_from_response(self._backends_response, ["threads", 0, "hashrate", 1], self._backends_table_names[1])
 
     # TODO: Edit the keys to return the "threads" list then use the remaining keys to get the specific 
     # TODO: data to return, this will make it work easily with the _get_data_from_db logic required for 
@@ -1411,7 +1426,7 @@ class XMRigProperties:
         Returns:
             float: OpenCL backend threads hashrate for the last 15 minutes, or "N/A" if not available.
         """
-        return self._get_data_from_response(self._backends_response, [1, "threads", 0, "hashrate", 2], self._backends_table_names)
+        return self._get_data_from_response(self._backends_response, ["threads", 0, "hashrate", 2], self._backends_table_names[1])
 
     # TODO: Edit the keys to return the "threads" list then use the remaining keys to get the specific 
     # TODO: data to return, this will make it work easily with the _get_data_from_db logic required for 
@@ -1424,7 +1439,7 @@ class XMRigProperties:
         Returns:
             str: OpenCL backend threads board information, or "N/A" if not available.
         """
-        return self._get_data_from_response(self._backends_response, [1, "threads", 0, "board"], self._backends_table_names)
+        return self._get_data_from_response(self._backends_response, ["threads", 0, "board"], self._backends_table_names[1])
 
     # TODO: Edit the keys to return the "threads" list then use the remaining keys to get the specific 
     # TODO: data to return, this will make it work easily with the _get_data_from_db logic required for 
@@ -1437,7 +1452,7 @@ class XMRigProperties:
         Returns:
             str: OpenCL backend threads name, or "N/A" if not available.
         """
-        return self._get_data_from_response(self._backends_response, [1, "threads", 0, "name"], self._backends_table_names)
+        return self._get_data_from_response(self._backends_response, ["threads", 0, "name"], self._backends_table_names[1])
 
     # TODO: Edit the keys to return the "threads" list then use the remaining keys to get the specific 
     # TODO: data to return, this will make it work easily with the _get_data_from_db logic required for 
@@ -1450,7 +1465,7 @@ class XMRigProperties:
         Returns:
             str: OpenCL backend threads bus ID, or "N/A" if not available.
         """
-        return self._get_data_from_response(self._backends_response, [1, "threads", 0, "bus_id"], self._backends_table_names)
+        return self._get_data_from_response(self._backends_response, ["threads", 0, "bus_id"], self._backends_table_names[1])
 
     # TODO: Edit the keys to return the "threads" list then use the remaining keys to get the specific 
     # TODO: data to return, this will make it work easily with the _get_data_from_db logic required for 
@@ -1463,7 +1478,7 @@ class XMRigProperties:
         Returns:
             int: OpenCL backend threads compute units, or "N/A" if not available.
         """
-        return self._get_data_from_response(self._backends_response, [1, "threads", 0, "cu"], self._backends_table_names)
+        return self._get_data_from_response(self._backends_response, ["threads", 0, "cu"], self._backends_table_names[1])
 
     # TODO: Edit the keys to return the "threads" list then use the remaining keys to get the specific 
     # TODO: data to return, this will make it work easily with the _get_data_from_db logic required for 
@@ -1476,7 +1491,7 @@ class XMRigProperties:
         Returns:
             int: OpenCL backend threads global memory, or "N/A" if not available.
         """
-        return self._get_data_from_response(self._backends_response, [1, "threads", 0, "global_mem"], self._backends_table_names)
+        return self._get_data_from_response(self._backends_response, ["threads", 0, "global_mem"], self._backends_table_names[1])
 
     # TODO: Edit the keys to return the "threads" list then use the remaining keys to get the specific 
     # TODO: data to return, this will make it work easily with the _get_data_from_db logic required for 
@@ -1489,7 +1504,7 @@ class XMRigProperties:
         Returns:
             dict: OpenCL backend threads health information, or "N/A" if not available.
         """
-        return self._get_data_from_response(self._backends_response, [1, "threads", 0, "health"], self._backends_table_names)
+        return self._get_data_from_response(self._backends_response, ["threads", 0, "health"], self._backends_table_names[1])
 
     # TODO: Edit the keys to return the "threads" list then use the remaining keys to get the specific 
     # TODO: data to return, this will make it work easily with the _get_data_from_db logic required for 
@@ -1502,7 +1517,7 @@ class XMRigProperties:
         Returns:
             int: OpenCL backend threads health temperature, or "N/A" if not available.
         """
-        return self._get_data_from_response(self._backends_response, [1, "threads", 0, "health", "temperature"], self._backends_table_names)
+        return self._get_data_from_response(self._backends_response, ["threads", 0, "health", "temperature"], self._backends_table_names[1])
 
     # TODO: Edit the keys to return the "threads" list then use the remaining keys to get the specific 
     # TODO: data to return, this will make it work easily with the _get_data_from_db logic required for 
@@ -1515,7 +1530,7 @@ class XMRigProperties:
         Returns:
             int: OpenCL backend threads health power, or "N/A" if not available.
         """
-        return self._get_data_from_response(self._backends_response, [1, "threads", 0, "health", "power"], self._backends_table_names)
+        return self._get_data_from_response(self._backends_response, ["threads", 0, "health", "power"], self._backends_table_names[1])
 
     # TODO: Edit the keys to return the "threads" list then use the remaining keys to get the specific 
     # TODO: data to return, this will make it work easily with the _get_data_from_db logic required for 
@@ -1528,7 +1543,7 @@ class XMRigProperties:
         Returns:
             int: OpenCL backend threads health clock, or "N/A" if not available.
         """
-        return self._get_data_from_response(self._backends_response, [1, "threads", 0, "health", "clock"], self._backends_table_names)
+        return self._get_data_from_response(self._backends_response, ["threads", 0, "health", "clock"], self._backends_table_names[1])
 
     # TODO: Edit the keys to return the "threads" list then use the remaining keys to get the specific 
     # TODO: data to return, this will make it work easily with the _get_data_from_db logic required for 
@@ -1541,7 +1556,7 @@ class XMRigProperties:
         Returns:
             int: OpenCL backend threads health memory clock, or "N/A" if not available.
         """
-        return self._get_data_from_response(self._backends_response, [1, "threads", 0, "health", "mem_clock"], self._backends_table_names)
+        return self._get_data_from_response(self._backends_response, ["threads", 0, "health", "mem_clock"], self._backends_table_names[1])
 
     # TODO: Edit the keys to return the "threads" list then use the remaining keys to get the specific 
     # TODO: data to return, this will make it work easily with the _get_data_from_db logic required for 
@@ -1554,7 +1569,7 @@ class XMRigProperties:
         Returns:
             int: OpenCL backend threads health RPM, or "N/A" if not available.
         """
-        return self._get_data_from_response(self._backends_response, [1, "threads", 0, "health", "rpm"], self._backends_table_names)
+        return self._get_data_from_response(self._backends_response, ["threads", 0, "health", "rpm"], self._backends_table_names[1])
 
     @property
     def be_cuda_type(self) -> Union[str, Any]:
@@ -1564,7 +1579,7 @@ class XMRigProperties:
         Returns:
             str: CUDA backend type, or "N/A" if not available.
         """
-        return self._get_data_from_response(self._backends_response, [2, "type"], self._backends_table_names)
+        return self._get_data_from_response(self._backends_response, ["type"], self._backends_table_names[2])
 
     @property
     def be_cuda_enabled(self) -> Union[bool, Any]:
@@ -1574,7 +1589,7 @@ class XMRigProperties:
         Returns:
             bool: CUDA backend enabled status, or "N/A" if not available.
         """
-        return self._get_data_from_response(self._backends_response, [2, "enabled"], self._backends_table_names)
+        return self._get_data_from_response(self._backends_response, ["enabled"], self._backends_table_names[2])
 
     @property
     def be_cuda_algo(self) -> Union[str, Any]:
@@ -1584,7 +1599,7 @@ class XMRigProperties:
         Returns:
             str: CUDA backend algorithm, or "N/A" if not available.
         """
-        return self._get_data_from_response(self._backends_response, [2, "algo"], self._backends_table_names)
+        return self._get_data_from_response(self._backends_response, ["algo"], self._backends_table_names[2])
 
     @property
     def be_cuda_profile(self) -> Union[str, Any]:
@@ -1594,7 +1609,7 @@ class XMRigProperties:
         Returns:
             str: CUDA backend profile, or "N/A" if not available.
         """
-        return self._get_data_from_response(self._backends_response, [2, "profile"], self._backends_table_names)
+        return self._get_data_from_response(self._backends_response, ["profile"], self._backends_table_names[2])
 
     @property
     def be_cuda_versions(self) -> Union[Dict[str, Any], Any]:
@@ -1604,7 +1619,7 @@ class XMRigProperties:
         Returns:
             dict: CUDA backend versions information, or "N/A" if not available.
         """
-        return self._get_data_from_response(self._backends_response, [2, "versions"], self._backends_table_names)
+        return self._get_data_from_response(self._backends_response, ["versions"], self._backends_table_names[2])
 
     @property
     def be_cuda_runtime(self) -> Union[str, Any]:
@@ -1614,7 +1629,7 @@ class XMRigProperties:
         Returns:
             str: CUDA backend runtime version, or "N/A" if not available.
         """
-        return self._get_data_from_response(self._backends_response, [2, "versions", "cuda-runtime"], self._backends_table_names)
+        return self._get_data_from_response(self._backends_response, ["versions", "cuda-runtime"], self._backends_table_names[2])
 
     @property
     def be_cuda_driver(self) -> Union[str, Any]:
@@ -1624,7 +1639,7 @@ class XMRigProperties:
         Returns:
             str: CUDA backend driver version, or "N/A" if not available.
         """
-        return self._get_data_from_response(self._backends_response, [2, "versions", "cuda-driver"], self._backends_table_names)
+        return self._get_data_from_response(self._backends_response, ["versions", "cuda-driver"], self._backends_table_names[2])
 
     @property
     def be_cuda_plugin(self) -> Union[str, Any]:
@@ -1634,7 +1649,7 @@ class XMRigProperties:
         Returns:
             str: CUDA backend plugin version, or "N/A" if not available.
         """
-        return self._get_data_from_response(self._backends_response, [2, "versions", "plugin"], self._backends_table_names)
+        return self._get_data_from_response(self._backends_response, ["versions", "plugin"], self._backends_table_names[2])
 
     @property
     def be_cuda_hashrates(self) -> Union[List[float], Any]:
@@ -1644,7 +1659,7 @@ class XMRigProperties:
         Returns:
             list: CUDA backend hashrates, or "N/A" if not available.
         """
-        return self._get_data_from_response(self._backends_response, [2, "hashrate"], self._backends_table_names)
+        return self._get_data_from_response(self._backends_response, ["hashrate"], self._backends_table_names[2])
 
     # TODO: Edit the keys to return the "total" list then use the remaining keys to get the specific 
     # TODO: data to return, this will make it work easily with the _get_data_from_db logic required for 
@@ -1657,7 +1672,7 @@ class XMRigProperties:
         Returns:
             float: CUDA backend hashrate for the last 10 seconds, or "N/A" if not available.
         """
-        return self._get_data_from_response(self._backends_response, [2, "hashrate", 0], self._backends_table_names)
+        return self._get_data_from_response(self._backends_response, ["hashrate", 0], self._backends_table_names[2])
 
     # TODO: Edit the keys to return the "total" list then use the remaining keys to get the specific 
     # TODO: data to return, this will make it work easily with the _get_data_from_db logic required for 
@@ -1670,7 +1685,7 @@ class XMRigProperties:
         Returns:
             float: CUDA backend hashrate for the last 1 minute, or "N/A" if not available.
         """
-        return self._get_data_from_response(self._backends_response, [2, "hashrate", 1], self._backends_table_names)
+        return self._get_data_from_response(self._backends_response, ["hashrate", 1], self._backends_table_names[2])
 
     # TODO: Edit the keys to return the "total" list then use the remaining keys to get the specific 
     # TODO: data to return, this will make it work easily with the _get_data_from_db logic required for 
@@ -1683,7 +1698,7 @@ class XMRigProperties:
         Returns:
             float: CUDA backend hashrate for the last 15 minutes, or "N/A" if not available.
         """
-        return self._get_data_from_response(self._backends_response, [2, "hashrate", 2], self._backends_table_names)
+        return self._get_data_from_response(self._backends_response, ["hashrate", 2], self._backends_table_names[2])
 
     # TODO: Edit the keys to return the "threads" list then use the remaining keys to get the specific 
     # TODO: data to return, this will make it work easily with the _get_data_from_db logic required for 
@@ -1696,7 +1711,7 @@ class XMRigProperties:
         Returns:
             dict: CUDA backend threads information, or "N/A" if not available.
         """
-        return self._get_data_from_response(self._backends_response, [2, "threads", 0], self._backends_table_names)
+        return self._get_data_from_response(self._backends_response, ["threads", 0], self._backends_table_names[2])
 
     # TODO: Edit the keys to return the "threads" list then use the remaining keys to get the specific 
     # TODO: data to return, this will make it work easily with the _get_data_from_db logic required for 
@@ -1709,7 +1724,7 @@ class XMRigProperties:
         Returns:
             int: CUDA backend threads index, or "N/A" if not available.
         """
-        return self._get_data_from_response(self._backends_response, [2, "threads", 0, "index"], self._backends_table_names)
+        return self._get_data_from_response(self._backends_response, ["threads", 0, "index"], self._backends_table_names[2])
 
     # TODO: Edit the keys to return the "threads" list then use the remaining keys to get the specific 
     # TODO: data to return, this will make it work easily with the _get_data_from_db logic required for 
@@ -1722,7 +1737,7 @@ class XMRigProperties:
         Returns:
             int: CUDA backend threads amount, or "N/A" if not available.
         """
-        return self._get_data_from_response(self._backends_response, [2, "threads", 0, "threads"], self._backends_table_names)
+        return self._get_data_from_response(self._backends_response, ["threads", 0, "threads"], self._backends_table_names[2])
 
     # TODO: Edit the keys to return the "threads" list then use the remaining keys to get the specific 
     # TODO: data to return, this will make it work easily with the _get_data_from_db logic required for 
@@ -1735,7 +1750,7 @@ class XMRigProperties:
         Returns:
             int: CUDA backend threads blocks, or "N/A" if not available.
         """
-        return self._get_data_from_response(self._backends_response, [2, "threads", 0, "blocks"], self._backends_table_names)
+        return self._get_data_from_response(self._backends_response, ["threads", 0, "blocks"], self._backends_table_names[2])
 
     # TODO: Edit the keys to return the "threads" list then use the remaining keys to get the specific 
     # TODO: data to return, this will make it work easily with the _get_data_from_db logic required for 
@@ -1748,7 +1763,7 @@ class XMRigProperties:
         Returns:
             int: CUDA backend threads bfactor, or "N/A" if not available.
         """
-        return self._get_data_from_response(self._backends_response, [2, "threads", 0, "bfactor"], self._backends_table_names)
+        return self._get_data_from_response(self._backends_response, ["threads", 0, "bfactor"], self._backends_table_names[2])
 
     # TODO: Edit the keys to return the "threads" list then use the remaining keys to get the specific 
     # TODO: data to return, this will make it work easily with the _get_data_from_db logic required for 
@@ -1761,7 +1776,7 @@ class XMRigProperties:
         Returns:
             int: CUDA backend threads bsleep, or "N/A" if not available.
         """
-        return self._get_data_from_response(self._backends_response, [2, "threads", 0, "bsleep"], self._backends_table_names)
+        return self._get_data_from_response(self._backends_response, ["threads", 0, "bsleep"], self._backends_table_names[2])
 
     # TODO: Edit the keys to return the "threads" list then use the remaining keys to get the specific 
     # TODO: data to return, this will make it work easily with the _get_data_from_db logic required for 
@@ -1774,7 +1789,7 @@ class XMRigProperties:
         Returns:
             int: CUDA backend threads affinity, or "N/A" if not available.
         """
-        return self._get_data_from_response(self._backends_response, [2, "threads", 0, "affinity"], self._backends_table_names)
+        return self._get_data_from_response(self._backends_response, ["threads", 0, "affinity"], self._backends_table_names[2])
 
     # TODO: Edit the keys to return the "threads" list then use the remaining keys to get the specific 
     # TODO: data to return, this will make it work easily with the _get_data_from_db logic required for 
@@ -1787,7 +1802,7 @@ class XMRigProperties:
         Returns:
             bool: CUDA backend threads dataset host status, or "N/A" if not available.
         """
-        return self._get_data_from_response(self._backends_response, [2, "threads", 0, "dataset_host"], self._backends_table_names)
+        return self._get_data_from_response(self._backends_response, ["threads", 0, "dataset_host"], self._backends_table_names[2])
 
     # TODO: Edit the keys to return the "threads" list then use the remaining keys to get the specific 
     # TODO: data to return, this will make it work easily with the _get_data_from_db logic required for 
@@ -1800,7 +1815,7 @@ class XMRigProperties:
         Returns:
             list: CUDA backend threads hashrates, or "N/A" if not available.
         """
-        return self._get_data_from_response(self._backends_response, [2, "threads", 0, "hashrate"], self._backends_table_names)
+        return self._get_data_from_response(self._backends_response, ["threads", 0, "hashrate"], self._backends_table_names[2])
 
     # TODO: Edit the keys to return the "threads" list then use the remaining keys to get the specific 
     # TODO: data to return, this will make it work easily with the _get_data_from_db logic required for 
@@ -1816,7 +1831,7 @@ class XMRigProperties:
         Returns:
             float: CUDA backend threads hashrate for the last 10 seconds, or "N/A" if not available.
         """
-        return self._get_data_from_response(self._backends_response, [2, "threads", 0, "hashrate", 0], self._backends_table_names)
+        return self._get_data_from_response(self._backends_response, ["threads", 0, "hashrate", 0], self._backends_table_names[2])
 
     # TODO: Edit the keys to return the "threads" list then use the remaining keys to get the specific 
     # TODO: data to return, this will make it work easily with the _get_data_from_db logic required for 
@@ -1832,7 +1847,7 @@ class XMRigProperties:
         Returns:
             float: CUDA backend threads hashrate for the last 1 minute, or "N/A" if not available.
         """
-        return self._get_data_from_response(self._backends_response, [2, "threads", 0, "hashrate", 1], self._backends_table_names)
+        return self._get_data_from_response(self._backends_response, ["threads", 0, "hashrate", 1], self._backends_table_names[2])
 
     # TODO: Edit the keys to return the "threads" list then use the remaining keys to get the specific 
     # TODO: data to return, this will make it work easily with the _get_data_from_db logic required for 
@@ -1848,7 +1863,7 @@ class XMRigProperties:
         Returns:
             float: CUDA backend threads hashrate for the last 15 minutes, or "N/A" if not available.
         """
-        return self._get_data_from_response(self._backends_response, [2, "threads", 0, "hashrate", 2], self._backends_table_names)
+        return self._get_data_from_response(self._backends_response, ["threads", 0, "hashrate", 2], self._backends_table_names[2])
 
     # TODO: Edit the keys to return the "threads" list then use the remaining keys to get the specific 
     # TODO: data to return, this will make it work easily with the _get_data_from_db logic required for 
@@ -1861,7 +1876,7 @@ class XMRigProperties:
         Returns:
             str: CUDA backend threads name, or "N/A" if not available.
         """
-        return self._get_data_from_response(self._backends_response, [2, "threads", 0, "name"], self._backends_table_names)
+        return self._get_data_from_response(self._backends_response, ["threads", 0, "name"], self._backends_table_names[2])
 
     # TODO: Edit the keys to return the "threads" list then use the remaining keys to get the specific 
     # TODO: data to return, this will make it work easily with the _get_data_from_db logic required for 
@@ -1874,7 +1889,7 @@ class XMRigProperties:
         Returns:
             str: CUDA backend threads bus ID, or "N/A" if not available.
         """
-        return self._get_data_from_response(self._backends_response, [2, "threads", 0, "bus_id"], self._backends_table_names)
+        return self._get_data_from_response(self._backends_response, ["threads", 0, "bus_id"], self._backends_table_names[2])
 
     # TODO: Edit the keys to return the "threads" list then use the remaining keys to get the specific 
     # TODO: data to return, this will make it work easily with the _get_data_from_db logic required for 
@@ -1887,7 +1902,7 @@ class XMRigProperties:
         Returns:
             int: CUDA backend threads SMX count, or "N/A" if not available.
         """
-        return self._get_data_from_response(self._backends_response, [2, "threads", 0, "smx"], self._backends_table_names)
+        return self._get_data_from_response(self._backends_response, ["threads", 0, "smx"], self._backends_table_names[2])
 
     # TODO: Edit the keys to return the "threads" list then use the remaining keys to get the specific 
     # TODO: data to return, this will make it work easily with the _get_data_from_db logic required for 
@@ -1900,7 +1915,7 @@ class XMRigProperties:
         Returns:
             int: CUDA backend threads architecture, or "N/A" if not available.
         """
-        return self._get_data_from_response(self._backends_response, [2, "threads", 0, "arch"], self._backends_table_names)
+        return self._get_data_from_response(self._backends_response, ["threads", 0, "arch"], self._backends_table_names[2])
 
     # TODO: Edit the keys to return the "threads" list then use the remaining keys to get the specific 
     # TODO: data to return, this will make it work easily with the _get_data_from_db logic required for 
@@ -1913,7 +1928,7 @@ class XMRigProperties:
         Returns:
             int: CUDA backend threads global memory, or "N/A" if not available.
         """
-        return self._get_data_from_response(self._backends_response, [2, "threads", 0, "global_mem"], self._backends_table_names)
+        return self._get_data_from_response(self._backends_response, ["threads", 0, "global_mem"], self._backends_table_names[2])
 
     # TODO: Edit the keys to return the "threads" list then use the remaining keys to get the specific 
     # TODO: data to return, this will make it work easily with the _get_data_from_db logic required for 
@@ -1926,7 +1941,7 @@ class XMRigProperties:
         Returns:
             int: CUDA backend threads clock, or "N/A" if not available.
         """
-        return self._get_data_from_response(self._backends_response, [2, "threads", 0, "clock"], self._backends_table_names)
+        return self._get_data_from_response(self._backends_response, ["threads", 0, "clock"], self._backends_table_names[2])
 
     # TODO: Edit the keys to return the "threads" list then use the remaining keys to get the specific 
     # TODO: data to return, this will make it work easily with the _get_data_from_db logic required for 
@@ -1939,5 +1954,5 @@ class XMRigProperties:
         Returns:
             int: CUDA backend threads memory clock, or "N/A" if not available.
         """
-        return self._get_data_from_response(self._backends_response, [2, "threads", 0, "memory_clock"], self._backends_table_names)
+        return self._get_data_from_response(self._backends_response, ["threads", 0, "memory_clock"], self._backends_table_names[2])
 
