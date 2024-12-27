@@ -50,6 +50,7 @@ Public Functions:
 
     XMRigDatabase:
         - init_db
+        - check_table_exists
         - insert_data_to_db
         - fallback_to_db
         - delete_all_miner_data_from_db
@@ -221,10 +222,20 @@ Public Functions:
         - be_cuda_threads_clock
         - be_cuda_threads_memory_clock
 
-    Exceptions:
-        - XMRigAPIError
-        - XMRigAuthorizationError
-        - XMRigConnectionError
+Private Functions:
+    XMRigAPI:
+        - _update_properties_cache
+    
+    XMRigProperties:
+        - _get_data_from_response
+
+Exceptions:
+    - XMRigAPIError
+    - XMRigAuthorizationError
+    - XMRigConnectionError
+    - XMRigDatabaseError
+    - XMRigManagerError
+    - XMRigPropertiesError
 """
 
 from .api import XMRigAPI
@@ -240,4 +251,4 @@ __license__ = "MIT"
 __description__ = "This module provides objects to interact with the XMRig miner API, manage multiple miners, and store collected data in a database."
 __url__ = "https://hreikin.co.uk/xmrig-api"
 
-__all__ = ["XMRigAPI", "XMRigAPIError", "XMRigAuthorizationError", "XMRigConnectionError", "XMRigDatabase", "XMRigManager", "XMRigProperties", ]
+__all__ = ["XMRigAPI", "XMRigAPIError", "XMRigAuthorizationError", "XMRigConnectionError", "XMRigDatabase", "XMRigDatabaseError", "XMRigManager", "XMRigManagerError", "XMRigProperties", "XMRigPropertiesError"]
