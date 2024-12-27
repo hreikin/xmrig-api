@@ -16,12 +16,14 @@ from xmrig.helpers import log, XMRigAPIError, XMRigConnectionError, XMRigAuthori
 from xmrig.properties import XMRigProperties
 from xmrig.db import XMRigDatabase
 from sqlalchemy.engine import Engine
-from typing import Optional, Dict, Any
+from typing import Optional, Dict, Any, Union, List, Callable
 
-# TODO: Is helpers.py file already tested by the XMRigAPI and XMRigManager tests?
-# TODO: Add config.json properties to the XMRigProperties class.
+# TODO: Update mock and live tests to reflect the changes in the module
+# TODO: Add config.json properties to the XMRigProperties class
 # TODO: Move _update_properties_cache to properties.py
-# TODO: Update the documentation to include all classses, methods, attributes, exceptions, modules, public functions, private functions, properties, etc.
+# TODO: Check type hints and return types
+# TODO: Update docstrings
+# TODO: Update the documentation to include all classses, methods, attributes, exceptions, modules, public functions, private functions, properties, etc
 
 class XMRigAPI:
     """
@@ -47,7 +49,7 @@ class XMRigAPI:
         _db_engine (Engine): SQLAlchemy engine instance for database operations.
     """
 
-    def __init__(self, miner_name: str, ip: str, port: int, access_token: Optional[str] = None, tls_enabled: bool = False, db_url: str = None) -> None:
+    def __init__(self, miner_name: str, ip: str, port: int, access_token: Optional[str] = None, tls_enabled: bool = False, db_url: Optional[str] = None) -> None:
         """
         Initializes the XMRig instance with the provided IP, port, and access token.
 
@@ -60,7 +62,7 @@ class XMRigAPI:
             port (int): Port of the XMRig API.
             access_token (str, optional): Access token for authorization. Defaults to None.
             tls_enabled (bool, optional): TLS status of the miner/API. 
-            db_engine (Engine, optional): SQLAlchemy engine instance for database operations. Defaults to None.
+            db_url (Engine, optional): SQLAlchemy engine instance for database operations. Defaults to None.
         """
         self._miner_name = miner_name
         self._ip = ip

@@ -11,7 +11,7 @@ Features:
 - Provide various properties to access specific data points from the cached responses.
 """
 
-from typing import Any, Dict, List, Union
+from typing import Any, Dict, List, Union, Optional
 from datetime import timedelta
 from xmrig.helpers import log
 from xmrig.db import XMRigDatabase
@@ -26,7 +26,7 @@ class XMRigProperties:
         backends_response (Dict[str, Any]): Cached backends endpoint data.
         config_response (Dict[str, Any]): Cached config endpoint data.
     """
-    def __init__(self, summary_response: Dict[str, Any], backends_response: List[Dict[str, Any]], config_response: Dict[str, Any], miner_name: str, db_url: str = None):
+    def __init__(self, summary_response: Dict[str, Any], backends_response: List[Dict[str, Any]], config_response: Dict[str, Any], miner_name: str, db_url: Optional[str] = None):
         self._summary_response = summary_response
         self._backends_response = backends_response
         self._config_response = config_response

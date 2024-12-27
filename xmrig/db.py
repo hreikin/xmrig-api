@@ -26,6 +26,9 @@ class XMRigDatabase:
         """
         Initializes the database engine, if it already exists, it returns the existing engine.
 
+        Args:
+            db_url (str): Database URL for creating the engine.
+
         Returns:
             Engine: SQLAlchemy engine instance.
         """
@@ -38,9 +41,13 @@ class XMRigDatabase:
             raise XMRigAPIError(f"Could not parse SQLAlchemy URL from string '{db_url}'") from e
     
     @classmethod
-    def check_table_exists(cls, db_url, table_name) -> bool:
+    def check_table_exists(cls, db_url: str, table_name: str) -> bool:
         """
         Checks if the table exists in the database.
+
+        Args:
+            db_url (str): Database URL for creating the engine.
+            table_name (str): Name of the table to check.
 
         Returns:
             bool: True if the table exists, False otherwise.
@@ -92,6 +99,9 @@ class XMRigDatabase:
             table_name (Union[str, List[str]]): The name of the table or list of table names to use to retrieve the data.
             keys (List[Union[str, int]]): The keys to use to retrieve the data.
             engine (Engine): The SQLAlchemy engine instance.
+
+        Returns:
+            Any: The retrieved data, or "N/A" if not available.
         """
         column_name = "full_json"
         try:
@@ -112,6 +122,7 @@ class XMRigDatabase:
             log.error(f"An error occurred retrieving data from the database: {e}")
             raise XMRigAPIError() from e
 
+    # TODO: Check this works after recent changes, might need to be db_url with init_db instead of engine
     @staticmethod
     def delete_all_miner_data_from_db(miner_name: str, engine: Engine) -> None:
         """
