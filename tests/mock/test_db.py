@@ -16,11 +16,11 @@ class TestXMRigDatabase(unittest.TestCase):
         XMRigDatabase.insert_data_to_db({"key": "value"}, "test_table", engine)
         mock_to_sql.assert_called_once()
 
-    @patch('xmrig.db.XMRigDatabase.get_data_from_db')
-    def test_get_data_from_db(self, mock_get_data_from_db):
+    @patch('xmrig.db.XMRigDatabase.fallback_to_db')
+    def test_fallback_to_db(self, mock_fallback_to_db):
         engine = MagicMock()
-        mock_get_data_from_db.return_value = {"key": "value"}
-        data = XMRigDatabase.get_data_from_db("test_table", ["key"], engine)
+        mock_fallback_to_db.return_value = {"key": "value"}
+        data = XMRigDatabase.fallback_to_db("test_table", ["key"], engine)
         self.assertEqual(data, {"key": "value"})
 
     @patch('xmrig.db.XMRigDatabase.delete_all_miner_data_from_db')

@@ -36,9 +36,9 @@ class TestXMRigProperties(unittest.TestCase):
     def test_sum_total_memory(self):
         self.assertEqual(self.properties.sum_total_memory, 2048)
 
-    @patch('xmrig.properties.XMRigDatabase.get_data_from_db')
-    def test_get_data_from_db(self, mock_get_data_from_db):
-        mock_get_data_from_db.return_value = "db_value"
+    @patch('xmrig.properties.XMRigDatabase.fallback_to_db')
+    def test_fallback_to_db(self, mock_fallback_to_db):
+        mock_fallback_to_db.return_value = "db_value"
         self.properties._db_engine = MagicMock()
         self.assertEqual(self.properties._get_data_from_response({}, ["key"], "table"), "db_value")
 

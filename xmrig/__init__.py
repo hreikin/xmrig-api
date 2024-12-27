@@ -51,7 +51,7 @@ Public Functions:
     XMRigDatabase:
         - init_db
         - insert_data_to_db
-        - get_data_from_db
+        - fallback_to_db
         - delete_all_miner_data_from_db
 
     XMRigProperties:

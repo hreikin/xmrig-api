@@ -77,7 +77,7 @@ class XMRigProperties:
             if self._db_engine is not None:
                 log.debug(f"An error occurred fetching the data from the response using the provided keys, trying database: {e}")
                 try:
-                    return XMRigDatabase.get_data_from_db(fallback_table_name, keys, self._db_engine)
+                    return XMRigDatabase.fallback_to_db(fallback_table_name, keys, self._db_engine)
                 except Exception as db_e:
                     log.error(f"An error occurred fetching the data from the database: {db_e}")
                     return "N/A"

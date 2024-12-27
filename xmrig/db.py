@@ -73,8 +73,8 @@ class XMRigDatabase:
             log.error(f"An error occurred checking if the table exists: {e}")
             raise XMRigAPIError() from e
     
-    @staticmethod
-    def insert_data_to_db(json_data: Dict[str, Any], table_name: str, engine: Engine) -> None:
+    @classmethod
+    def insert_data_to_db(cls, json_data: Dict[str, Any], table_name: str, db_url: str) -> None:
         """
         Inserts JSON data into the specified database table.
 
@@ -89,6 +89,7 @@ class XMRigDatabase:
                 'timestamp': [datetime.now()],
                 'full_json': [json.dumps(json_data)]
             }
+            engine = cls.init_db(db_url)
             df = pd.DataFrame(data)
             # Insert data into the database
             df.to_sql(table_name, engine, if_exists='append', index=False)
@@ -97,8 +98,8 @@ class XMRigDatabase:
             log.error(f"An error occurred inserting data to the database: {e}")
             raise XMRigAPIError() from e
     
-    @staticmethod
-    def get_data_from_db(table_name: Union[str, List[str]], keys: List[Union[str, int]], engine: Engine) -> Any:
+    @classmethod
+    def fallback_to_db(cls, table_name: Union[str, List[str]], keys: List[Union[str, int]], db_url: str) -> Any:
         """
         Retrieves the data from the database using the provided table name.
 
@@ -111,6 +112,7 @@ class XMRigDatabase:
             Any: The retrieved data, or "N/A" if not available.
         """
         column_name = "full_json"
+        engine = cls.init_db(db_url)
         try:
             # Connect to the database and fetch the data in column_name from the table_name
             with engine.connect() as connection:
@@ -129,9 +131,9 @@ class XMRigDatabase:
             log.error(f"An error occurred retrieving data from the database: {e}")
             raise XMRigAPIError() from e
 
-    # TODO: Check this works after recent changes, might need to be db_url with init_db instead of engine
-    @staticmethod
-    def delete_all_miner_data_from_db(miner_name: str, engine: Engine) -> None:
+    # TODO: Check this works after recent changes
+    @classmethod
+    def delete_all_miner_data_from_db(cls, miner_name: str, db_url: str) -> None:
         """
         Deletes all tables related to a specific miner from the database.
 
@@ -144,6 +146,7 @@ class XMRigDatabase:
             backends_tables = [f"'{miner_name}-cpu-backend'", f"'{miner_name}-opencl-backend'", f"'{miner_name}-cuda-backend'"]
             config_table = f"'{miner_name}-config'"
             summary_table = f"'{miner_name}-summary'"
+            engine = cls.init_db(db_url)
             with engine.connect() as connection:
                 # Wrap the raw SQL strings in SQLAlchemy's `text` function so it isn't a raw string
                 connection.execute(text(f"DROP TABLE IF EXISTS {backends_tables[0]}"))
