@@ -99,12 +99,8 @@ class XMRigProperties:
         """
         all_backends = []
         for backend_table in self._backends_table_names:
-            try:
+            if XMRigDatabase.check_table_exists(self._db_url, backend_table):
                 all_backends.append(self._get_data_from_response(self._backends_response, [], backend_table))
-            # suppress exceptions for missing backends, allows handling of extra backends from xmrig-mo
-            # the exception still prints to the log, but the program continues, needs research to see if i can suppress the exception completely
-            except Exception:
-                continue
         all_backends = [i for i in all_backends if i != "N/A"]
         return all_backends
 
@@ -858,11 +854,8 @@ class XMRigProperties:
         """
         all_backend_types = []
         for backend_table in self._backends_table_names:
-            try:
+            if XMRigDatabase.check_table_exists(self._db_url, backend_table):
                 all_backend_types.append(self._get_data_from_response(self._backends_response, ["type"], backend_table))
-            # suppress exceptions for missing backends, allows handling of extra backends from xmrig-mo
-            except Exception:
-                continue
         # edit all_backend_types to remove any value that is "N/A"
         all_backend_types = [i for i in all_backend_types if i != "N/A"]
         return all_backend_types
