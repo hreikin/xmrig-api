@@ -17,7 +17,9 @@ from xmrig.properties import XMRigProperties
 from xmrig.db import XMRigDatabase
 from typing import Optional, Dict, Any
 
-# TODO: Add config.json properties to the XMRigProperties class
+# TODO: Add config properties docstrings to the XMRigProperties class
+# TODO: Remove unwanted config properties, try find a complete one online to compare with and add any missing keys
+# TODO: Test config properties work on a live miner
 # TODO: Update mock and live tests to reflect the changes in the module
 # TODO: Update docstrings
 # TODO: Update the documentation to include all classses, methods, attributes, exceptions, modules, public functions, private functions, properties, etc
@@ -70,9 +72,6 @@ class XMRigAPI:
         if tls_enabled:
             self._base_url = f"https://{ip}:{port}"
         self._db_url = db_url
-        self._db_engine = None
-        if self._db_url is not None:
-            self._db_engine = XMRigDatabase.init_db(self._db_url)
         self._json_rpc_url = f"{self._base_url}/json_rpc"
         self._summary_url = f"{self._base_url}/2/summary"
         self._backends_url = f"{self._base_url}/2/backends"
@@ -139,8 +138,8 @@ class XMRigAPI:
                 return False
             self._update_properties_cache()
             log.debug(f"Summary endpoint successfully fetched.")
-            if self._db_engine is not None:
-                XMRigDatabase.insert_data_to_db(self._summary_response, f"{self._miner_name}-summary", self._db_engine)
+            if self._db_url is not None:
+                XMRigDatabase.insert_data_to_db(self._summary_response, f"{self._miner_name}-summary", self._db_url)
             return True
         except requests.exceptions.RequestException as e:
             log.error(f"An error occurred while connecting to {self._summary_url}: {e}")
@@ -172,7 +171,7 @@ class XMRigAPI:
                 return False
             self._update_properties_cache()         #TODO: edit this methods definition to take a single response instead of updating all at every call
             log.debug(f"Backends endpoint successfully fetched.")
-            if self._db_engine is not None:
+            if self._db_url is not None:
                 # insert each item from the self._backends_response into the database as its own table
                 for backend in self._backends_response:
                     if self._backends_response.index(backend) == 0:
@@ -181,9 +180,9 @@ class XMRigAPI:
                         prefix = "opencl"
                     if self._backends_response.index(backend) == 2:
                         prefix = "cuda"
-                    XMRigDatabase.insert_data_to_db(backend, f"{self._miner_name}-{prefix}-backend", self._db_engine)
+                    XMRigDatabase.insert_data_to_db(backend, f"{self._miner_name}-{prefix}-backend", self._db_url)
 
-                # XMRigDatabase.insert_data_to_db(self._backends_response, f"{self._miner_name}-backends", self._db_engine)
+                # XMRigDatabase.insert_data_to_db(self._backends_response, f"{self._miner_name}-backends", self._db_url)
             return True
         except requests.exceptions.RequestException as e:
             log.error(f"An error occurred while connecting to {self._backends_url}: {e}")
@@ -215,8 +214,8 @@ class XMRigAPI:
                 return False
             self._update_properties_cache()         #TODO: edit this methods definition to take a single response instead of updating all at every call
             log.debug(f"Config endpoint successfully fetched.")
-            if self._db_engine is not None:
-                XMRigDatabase.insert_data_to_db(self._config_response, f"{self._miner_name}-config", self._db_engine)
+            if self._db_url is not None:
+                XMRigDatabase.insert_data_to_db(self._config_response, f"{self._miner_name}-config", self._db_url)
             return True
         except requests.exceptions.RequestException as e:
             log.error(f"An error occurred while connecting to {self._config_url}: {e}")

@@ -46,9 +46,6 @@ class XMRigProperties:
         self._backends_response = backends_response
         self._config_response = config_response
         self._db_url = db_url
-        self._db_engine = None
-        if self._db_url is not None:
-            self._db_engine = XMRigDatabase.init_db(self._db_url)
         self._summary_table_name = f"'{miner_name}-summary'"
         self._backends_table_names = [f"'{miner_name}-cpu-backend'", f"'{miner_name}-opencl-backend'", f"'{miner_name}-cuda-backend'"]
         self._config_table_name = f"'{miner_name}-config'"
@@ -74,10 +71,10 @@ class XMRigProperties:
                 data = data
             return data
         except (KeyError, TypeError, JSONDecodeError) as e:
-            if self._db_engine is not None:
+            if self._db_url is not None:
                 log.debug(f"An error occurred fetching the data from the response using the provided keys, trying database: {e}")
                 try:
-                    return XMRigDatabase.fallback_to_db(fallback_table_name, keys, self._db_engine)
+                    return XMRigDatabase.fallback_to_db(fallback_table_name, keys, self._db_url)
                 except Exception as db_e:
                     log.error(f"An error occurred fetching the data from the database: {db_e}")
                     return "N/A"
