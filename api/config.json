@@ -1,12 +1,12 @@
 {
     "api": {
         "id": null,
-        "worker-id": "ubuntu-cpu"
+        "worker-id": "win11-gpu"
     },
     "http": {
         "enabled": true,
         "host": "0.0.0.0",
-        "port": 37841,
+        "port": 37842,
         "access-token": "SECRET",
         "restricted": false
     },
@@ -16,9 +16,9 @@
     "title": true,
     "randomx": {
         "init": -1,
-        "init-avx2": -1,
+        "init-avx2": 0,
         "mode": "auto",
-        "1gb-pages": true,
+        "1gb-pages": false,
         "rdmsr": true,
         "wrmsr": true,
         "cache_qos": false,
@@ -26,118 +26,140 @@
         "scratchpad_prefetch_mode": 1
     },
     "cpu": {
-        "enabled": true,
+        "enabled": false,
         "huge-pages": true,
-        "huge-pages-jit": true,
+        "huge-pages-jit": false,
         "hw-aes": null,
         "priority": null,
-        "memory-pool": false,
-        "yield": false,
+        "memory-pool": true,
+        "yield": true,
+        "max-threads-hint": 100,
         "asm": true,
         "argon2-impl": null,
-        "argon2": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15],
+        "cn-lite/0": false,
+        "cn/0": false
+    },
+    "opencl": {
+        "enabled": true,
+        "cache": true,
+        "loader": null,
+        "platform": "AMD",
+        "adl": true,
         "cn": [
-            [1, 0],
-            [1, 2],
-            [1, 4],
-            [1, 6],
-            [1, 8],
-            [1, 10],
-            [1, 12],
-            [1, 14],
-            [1, 13],
-            [1, 15]
+            {
+                "index": 0,
+                "intensity": 960,
+                "worksize": 8,
+                "strided_index": [1, 2],
+                "threads": [-1, -1],
+                "unroll": 8
+            }
         ],
         "cn-heavy": [
-            [1, 0],
-            [1, 2],
-            [1, 4],
-            [1, 6],
-            [1, 8]
+            {
+                "index": 0,
+                "intensity": 960,
+                "worksize": 8,
+                "strided_index": [1, 2],
+                "threads": [-1, -1],
+                "unroll": 8
+            }
         ],
         "cn-lite": [
-            [1, 0],
-            [1, 1],
-            [1, 2],
-            [1, 3],
-            [1, 4],
-            [1, 5],
-            [1, 6],
-            [1, 7],
-            [1, 8],
-            [1, 9],
-            [1, 10],
-            [1, 11],
-            [1, 12],
-            [1, 13],
-            [1, 14],
-            [1, 15]
+            {
+                "index": 0,
+                "intensity": 1920,
+                "worksize": 8,
+                "strided_index": [1, 2],
+                "threads": [-1, -1],
+                "unroll": 8
+            }
         ],
         "cn-pico": [
-            [2, 0],
-            [2, 1],
-            [2, 2],
-            [2, 3],
-            [2, 4],
-            [2, 5],
-            [2, 6],
-            [2, 7],
-            [2, 8],
-            [2, 9],
-            [2, 10],
-            [2, 11],
-            [2, 12],
-            [2, 13],
-            [2, 14],
-            [2, 15]
+            {
+                "index": 0,
+                "intensity": 1920,
+                "worksize": 8,
+                "strided_index": [2, 2],
+                "threads": [-1, -1],
+                "unroll": 8
+            }
+        ],
+        "cn/2": [
+            {
+                "index": 0,
+                "intensity": 960,
+                "worksize": 8,
+                "strided_index": [2, 2],
+                "threads": [-1, -1],
+                "unroll": 8
+            }
+        ],
+        "cn/gpu": [
+            {
+                "index": 0,
+                "intensity": 960,
+                "worksize": 8,
+                "strided_index": [1, 2],
+                "threads": [-1, -1],
+                "unroll": 8
+            }
         ],
         "cn/upx2": [
-            [2, 0],
-            [2, 1],
-            [2, 2],
-            [2, 3],
-            [2, 4],
-            [2, 5],
-            [2, 6],
-            [2, 7],
-            [2, 8],
-            [2, 9],
-            [2, 10],
-            [2, 11],
-            [2, 12],
-            [2, 13],
-            [2, 14],
-            [2, 15]
+            {
+                "index": 0,
+                "intensity": 1920,
+                "worksize": 8,
+                "strided_index": [2, 2],
+                "threads": [-1, -1],
+                "unroll": 8
+            }
         ],
-        "ghostrider": [
-            [8, 0],
-            [8, 2],
-            [8, 4],
-            [8, 6],
-            [8, 8],
-            [8, 10],
-            [8, 12],
-            [8, 14]
+        "kawpow": [
+            {
+                "index": 0,
+                "intensity": 7864320,
+                "worksize": 256,
+                "threads": [-1],
+                "unroll": 1
+            }
         ],
-        "rx": [0, 2, 4, 6, 8, 10, 12, 14],
-        "rx/wow": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15],
+        "rx": [
+            {
+                "index": 0,
+                "intensity": 448,
+                "worksize": 8,
+                "threads": [-1, -1],
+                "bfactor": 6,
+                "gcn_asm": false,
+                "dataset_host": false
+            }
+        ],
         "cn-lite/0": false,
         "cn/0": false,
-        "rx/arq": "rx/wow"
+        "panthera": false
+    },
+    "cuda": {
+        "enabled": false,
+        "loader": null,
+        "nvml": true,
+        "cn-lite/0": false,
+        "cn/0": false,
+        "panthera": false
     },
     "log-file": null,
-    "donate-level": 1,
-    "donate-over-proxy": 1,
+    "donate-level": 0,
+    "donate-over-proxy": 0,
     "pools": [
         {
-            "algo": "rx/0",
-            "coin": "XMR",
+            "algo": "kawpow",
+            "coin": "rvn",
             "url": "gulf.moneroocean.stream:10032",
-            "user": "YOUR_WALLET_ADDRESS",
-            "pass": "ubuntu-cpu-mo~rx/0",
-            "rig-id": "ubuntu-cpu-mo",
+            "user": "43tdLTTMx99AWy8JrGb6wMcqfpCTTzpDB5sMiFX5QthJfKinLL7WEwzcdEfuPgyeHR3TJjiCwLNTqBHEPwGGNXCE8pV5uKw",
+            "pass": "win11-gpu~kawpow",
+            "rig-id": "win11-gpu",
             "nicehash": false,
-            "keepalive": false,
+            "keepalive": true,
             "enabled": true,
             "tls": false,
             "sni": false,
@@ -151,6 +173,7 @@
     "retries": 5,
     "retry-pause": 5,
     "print-time": 60,
+    "health-print-time": 60,
     "dmi": true,
     "syslog": false,
     "tls": {
@@ -169,6 +192,39 @@
     "user-agent": null,
     "verbose": 0,
     "watch": true,
+    "rebench-algo": false,
+    "bench-algo-time": 20,
+    "algo-min-time": 0,
+    "algo-perf": {
+        "cn/0": 1360.6503350543776,
+        "cn/1": 1374.5583038869258,
+        "cn/2": 1374.5583038869258,
+        "cn/r": 1374.5583038869258,
+        "cn/fast": 2749.1166077738517,
+        "cn/half": 2749.1166077738517,
+        "cn/xao": 1374.5583038869258,
+        "cn/rto": 1374.5583038869258,
+        "cn/rwz": 1832.7444051825678,
+        "cn/zls": 1832.7444051825678,
+        "cn/double": 687.2791519434629,
+        "cn/ccx": 2721.300670108755,
+        "cn-lite/0": 2729.0373852319035,
+        "cn-lite/1": 2729.0373852319035,
+        "cn-heavy/xhv": 1760.378732702112,
+        "cn-pico": 11990.868527550067,
+        "cn-pico/tlo": 11990.868527550067,
+        "cn/gpu": 2746.6722129783693,
+        "rx/0": 553.7489643744822,
+        "rx/arq": 2224.8223072717333,
+        "rx/xeq": 2224.8223072717333,
+        "rx/graft": 498.468606431853,
+        "rx/sfx": 553.7489643744822,
+        "panthera": -1.0,
+        "argon2/chukwav2": -1.0,
+        "kawpow": 0.008527417187072754,
+        "ghostrider": -1.0,
+        "flex": -1.0
+    },
     "pause-on-battery": false,
     "pause-on-active": false
 }
