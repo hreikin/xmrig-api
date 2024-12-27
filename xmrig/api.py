@@ -20,7 +20,8 @@ from typing import Optional, Dict, Any
 
 # TODO: Is helpers.py file already tested by the XMRigAPI and XMRigManager tests?
 # TODO: Add config.json properties to the XMRigProperties class.
-# TODO: Properties should fallback to using the database if the cached data is not available.
+# TODO: Move _update_properties_cache to properties.py
+# TODO: Update the documentation to include all classses, methods, attributes, exceptions, modules, public functions, private functions, properties, etc.
 
 class XMRigAPI:
     """
@@ -97,7 +98,6 @@ class XMRigAPI:
         self.get_all_responses()
         log.info(f"XMRigAPI initialized for {self._base_url}")
     
-    # TODO: Move to properties.py
     def _update_properties_cache(self) -> None:
         """
         Sets the properties for the XMRigAPI instance.

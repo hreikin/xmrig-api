@@ -18,8 +18,6 @@ from typing import Dict, Any, Union, List
 import pandas as pd
 import json
 
-# TODO: More refactoring required (probably elsewhere, maybe here as well) to get methods to work with the rest of the codebase
-
 class XMRigDatabase:
     _engines = {}
 
@@ -61,7 +59,6 @@ class XMRigDatabase:
             log.error(f"An error occurred checking if the table exists: {e}")
             raise XMRigAPIError() from e
     
-    # TODO: Refactor to only insert the full_json data
     @staticmethod
     def insert_data_to_db(json_data: Dict[str, Any], table_name: str, engine: Engine) -> None:
         """
@@ -86,7 +83,6 @@ class XMRigDatabase:
             log.error(f"An error occurred inserting data to the database: {e}")
             raise XMRigAPIError() from e
     
-    # TODO: Refactor to only get the full_json data and then use the json keys to access the correct data
     @staticmethod
     def get_data_from_db(table_name: Union[str, List[str]], keys: List[Union[str, int]], engine: Engine) -> Any:
         """
@@ -99,14 +95,14 @@ class XMRigDatabase:
         """
         column_name = "full_json"
         try:
-            # connect to the database and fetch the data in column_name from the table_name
+            # Connect to the database and fetch the data in column_name from the table_name
             with engine.connect() as connection:
                 result = connection.execute(text(f"SELECT {column_name} FROM {table_name} ORDER BY timestamp DESC LIMIT 1"))
-                # fetch the last item from the result
+                # Fetch the last item from the result
                 data = result.fetchone()
                 if data:
                     data = json.loads(data[0])
-                    # use the list of keys/indices to access the correct data
+                    # Use the list of keys/indices to access the correct data
                     if len(keys) > 0:
                         for key in keys:
                             data = data[key]

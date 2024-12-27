@@ -17,8 +17,6 @@ from xmrig.helpers import log
 from xmrig.db import XMRigDatabase
 from json import JSONDecodeError
 
-# TODO: Fix "threads" and "hashrate" property logic for database functionality after recent changes.
-
 class XMRigProperties:
     """
     A class to represent and cache properties and statistics from the XMRig miner's API responses.
@@ -88,7 +86,6 @@ class XMRigProperties:
         """
         return self._get_data_from_response(self._summary_response, [], self._summary_table_name)
 
-    # TODO: May require special handling for db
     @property
     def backends(self) -> Union[List[Dict[str, Any]], str]:
         """
@@ -148,7 +145,6 @@ class XMRigProperties:
         """
         return self._get_data_from_response(self._summary_response, ["uptime"], self._summary_table_name)
 
-    # TODO: May require special handling for db
     @property
     def sum_uptime_readable(self) -> str:
         """
@@ -780,9 +776,6 @@ class XMRigProperties:
         """
         return self._get_data_from_response(self._summary_response, ["hashrate"], self._summary_table_name)
 
-    # TODO: Edit the keys to return the "total" list then use the remaining keys to get the specific 
-    # TODO: data to return, this will make it work easily with the _get_data_from_db logic required for 
-    # TODO: CPU backend type
     @property
     def sum_hashrate_10s(self) -> Union[float, Any]:
         """
@@ -793,9 +786,6 @@ class XMRigProperties:
         """
         return self._get_data_from_response(self._summary_response, ["hashrate", "total", 0], self._summary_table_name)
 
-    # TODO: Edit the keys to return the "total" list then use the remaining keys to get the specific 
-    # TODO: data to return, this will make it work easily with the _get_data_from_db logic required for 
-    # TODO: CPU backend type
     @property
     def sum_hashrate_1m(self) -> Union[float, Any]:
         """
@@ -806,9 +796,6 @@ class XMRigProperties:
         """
         return self._get_data_from_response(self._summary_response, ["hashrate", "total", 1], self._summary_table_name)
 
-    # TODO: Edit the keys to return the "total" list then use the remaining keys to get the specific 
-    # TODO: data to return, this will make it work easily with the _get_data_from_db logic required for 
-    # TODO: CPU backend type
     @property
     def sum_hashrate_15m(self) -> Union[float, Any]:
         """
@@ -843,7 +830,6 @@ class XMRigProperties:
     # Data from backends endpoint #
     ###############################
 
-    # TODO: May require special handling for db
     @property
     def enabled_backends(self) -> Union[List[str], Any]:
         """
@@ -980,9 +966,6 @@ class XMRigProperties:
         """
         return self._get_data_from_response(self._backends_response, [0, "hashrate"], self._backends_table_names[0])
 
-    # TODO: Edit the keys to return the "total" list then use the remaining keys to get the specific 
-    # TODO: data to return, this will make it work easily with the _get_data_from_db logic required for 
-    # TODO: CPU backend type
     @property
     def be_cpu_hashrate_10s(self) -> Union[float, Any]:
         """
@@ -993,9 +976,6 @@ class XMRigProperties:
         """
         return self._get_data_from_response(self._backends_response, [0, "hashrate", 0], self._backends_table_names[0])
 
-    # TODO: Edit the keys to return the "total" list then use the remaining keys to get the specific 
-    # TODO: data to return, this will make it work easily with the _get_data_from_db logic required for 
-    # TODO: CPU backend type
     @property
     def be_cpu_hashrate_1m(self) -> Union[float, Any]:
         """
@@ -1006,9 +986,6 @@ class XMRigProperties:
         """
         return self._get_data_from_response(self._backends_response, [0, "hashrate", 1], self._backends_table_names[0])
 
-    # TODO: Edit the keys to return the "total" list then use the remaining keys to get the specific 
-    # TODO: data to return, this will make it work easily with the _get_data_from_db logic required for 
-    # TODO: CPU backend type
     @property
     def be_cpu_hashrate_15m(self) -> Union[float, Any]:
         """
@@ -1227,9 +1204,6 @@ class XMRigProperties:
         """
         return self._get_data_from_response(self._backends_response, [1, "hashrate"], self._backends_table_names[1])
 
-    # TODO: Edit the keys to return the "total" list then use the remaining keys to get the specific 
-    # TODO: data to return, this will make it work easily with the _get_data_from_db logic required for 
-    # TODO: CPU backend type
     @property
     def be_opencl_hashrate_10s(self) -> Union[float, Any]:
         """
@@ -1240,9 +1214,6 @@ class XMRigProperties:
         """
         return self._get_data_from_response(self._backends_response, [1, "hashrate", 0], self._backends_table_names[1])
 
-    # TODO: Edit the keys to return the "total" list then use the remaining keys to get the specific 
-    # TODO: data to return, this will make it work easily with the _get_data_from_db logic required for 
-    # TODO: CPU backend type
     @property
     def be_opencl_hashrate_1m(self) -> Union[float, Any]:
         """
@@ -1253,9 +1224,6 @@ class XMRigProperties:
         """
         return self._get_data_from_response(self._backends_response, [1, "hashrate", 1], self._backends_table_names[1])
 
-    # TODO: Edit the keys to return the "total" list then use the remaining keys to get the specific 
-    # TODO: data to return, this will make it work easily with the _get_data_from_db logic required for 
-    # TODO: CPU backend type
     @property
     def be_opencl_hashrate_15m(self) -> Union[float, Any]:
         """
@@ -1266,9 +1234,6 @@ class XMRigProperties:
         """
         return self._get_data_from_response(self._backends_response, [1, "hashrate", 2], self._backends_table_names[1])
 
-    # TODO: Edit the keys to return the "threads" list then use the remaining keys to get the specific 
-    # TODO: data to return, this will make it work easily with the _get_data_from_db logic required for 
-    # TODO: CPU backend type
     @property
     def be_opencl_threads(self) -> Union[Dict[str, Any], Any]:
         """
@@ -1279,9 +1244,6 @@ class XMRigProperties:
         """
         return self._get_data_from_response(self._backends_response, [1, "threads", 0], self._backends_table_names[1])
 
-    # TODO: Edit the keys to return the "threads" list then use the remaining keys to get the specific 
-    # TODO: data to return, this will make it work easily with the _get_data_from_db logic required for 
-    # TODO: CPU backend type
     @property
     def be_opencl_threads_index(self) -> Union[int, Any]:
         """
@@ -1292,9 +1254,6 @@ class XMRigProperties:
         """
         return self._get_data_from_response(self._backends_response, [1, "threads", 0, "index"], self._backends_table_names[1])
 
-    # TODO: Edit the keys to return the "threads" list then use the remaining keys to get the specific 
-    # TODO: data to return, this will make it work easily with the _get_data_from_db logic required for 
-    # TODO: CPU backend type
     @property
     def be_opencl_threads_intensity(self) -> Union[int, Any]:
         """
@@ -1305,9 +1264,6 @@ class XMRigProperties:
         """
         return self._get_data_from_response(self._backends_response, [1, "threads", 0, "intensity"], self._backends_table_names[1])
 
-    # TODO: Edit the keys to return the "threads" list then use the remaining keys to get the specific 
-    # TODO: data to return, this will make it work easily with the _get_data_from_db logic required for 
-    # TODO: CPU backend type
     @property
     def be_opencl_threads_worksize(self) -> Union[int, Any]:
         """
@@ -1318,9 +1274,6 @@ class XMRigProperties:
         """
         return self._get_data_from_response(self._backends_response, [1, "threads", 0, "worksize"], self._backends_table_names[1])
 
-    # TODO: Edit the keys to return the "threads" list then use the remaining keys to get the specific 
-    # TODO: data to return, this will make it work easily with the _get_data_from_db logic required for 
-    # TODO: CPU backend type
     @property
     def be_opencl_threads_amount(self) -> Union[List[int], Any]:
         """
@@ -1331,9 +1284,6 @@ class XMRigProperties:
         """
         return self._get_data_from_response(self._backends_response, [1, "threads", 0, "threads"], self._backends_table_names[1])
 
-    # TODO: Edit the keys to return the "threads" list then use the remaining keys to get the specific 
-    # TODO: data to return, this will make it work easily with the _get_data_from_db logic required for 
-    # TODO: CPU backend type
     @property
     def be_opencl_threads_unroll(self) -> Union[int, Any]:
         """
@@ -1344,9 +1294,6 @@ class XMRigProperties:
         """
         return self._get_data_from_response(self._backends_response, [1, "threads", 0, "unroll"], self._backends_table_names[1])
 
-    # TODO: Edit the keys to return the "threads" list then use the remaining keys to get the specific 
-    # TODO: data to return, this will make it work easily with the _get_data_from_db logic required for 
-    # TODO: CPU backend type
     @property
     def be_opencl_threads_affinity(self) -> Union[int, Any]:
         """
@@ -1358,9 +1305,6 @@ class XMRigProperties:
         
         return self._get_data_from_response(self._backends_response, [1, "threads", 0, "affinity"], self._backends_table_names[1])
 
-    # TODO: Edit the keys to return the "threads" list then use the remaining keys to get the specific 
-    # TODO: data to return, this will make it work easily with the _get_data_from_db logic required for 
-    # TODO: CPU backend type
     @property
     def be_opencl_threads_hashrates(self) -> Union[List[float], Any]:
         """
@@ -1371,12 +1315,6 @@ class XMRigProperties:
         """
         return self._get_data_from_response(self._backends_response, [1, "threads", 0, "hashrate"], self._backends_table_names[1])
 
-    # TODO: Edit the keys to return the "threads" list then use the remaining keys to get the specific 
-    # TODO: data to return, this will make it work easily with the _get_data_from_db logic required for 
-    # TODO: CPU backend t
-    #   # TODO: Edit the keys to return thashrateeads" list then use the remaining keys to get the specific 
-    # TODO: data to return, this will make it work easily with the _get_data_from_db logic required for 
-    # TODO: CPU backend typeype
     @property
     def be_opencl_threads_hashrate_10s(self) -> Union[float, Any]:
         """
@@ -1387,12 +1325,6 @@ class XMRigProperties:
         """
         return self._get_data_from_response(self._backends_response, [1, "threads", 0, "hashrate", 0], self._backends_table_names[1])
 
-    # TODO: Edit the keys to return the "threads" list then use the remaining keys to get the specific 
-    # TODO: data to return, this will make it work easily with the _get_data_from_db logic required for 
-    # TODO: CPU backend t
-    #   # TODO: Edit the keys to return thashrateeads" list then use the remaining keys to get the specific 
-    # TODO: data to return, this will make it work easily with the _get_data_from_db logic required for 
-    # TODO: CPU backend typeype
     @property
     def be_opencl_threads_hashrate_1m(self) -> Union[float, Any]:
         """
@@ -1403,12 +1335,6 @@ class XMRigProperties:
         """
         return self._get_data_from_response(self._backends_response, [1, "threads", 0, "hashrate", 1], self._backends_table_names[1])
 
-    # TODO: Edit the keys to return the "threads" list then use the remaining keys to get the specific 
-    # TODO: data to return, this will make it work easily with the _get_data_from_db logic required for 
-    # TODO: CPU backend t
-    #   # TODO: Edit the keys to return thashrateeads" list then use the remaining keys to get the specific 
-    # TODO: data to return, this will make it work easily with the _get_data_from_db logic required for 
-    # TODO: CPU backend typeype
     @property
     def be_opencl_threads_hashrate_15m(self) -> Union[float, Any]:
         """
@@ -1419,9 +1345,6 @@ class XMRigProperties:
         """
         return self._get_data_from_response(self._backends_response, [1, "threads", 0, "hashrate", 2], self._backends_table_names[1])
 
-    # TODO: Edit the keys to return the "threads" list then use the remaining keys to get the specific 
-    # TODO: data to return, this will make it work easily with the _get_data_from_db logic required for 
-    # TODO: CPU backend type
     @property
     def be_opencl_threads_board(self) -> Union[str, Any]:
         """
@@ -1432,9 +1355,6 @@ class XMRigProperties:
         """
         return self._get_data_from_response(self._backends_response, [1, "threads", 0, "board"], self._backends_table_names[1])
 
-    # TODO: Edit the keys to return the "threads" list then use the remaining keys to get the specific 
-    # TODO: data to return, this will make it work easily with the _get_data_from_db logic required for 
-    # TODO: CPU backend type
     @property
     def be_opencl_threads_name(self) -> Union[str, Any]:
         """
@@ -1445,9 +1365,6 @@ class XMRigProperties:
         """
         return self._get_data_from_response(self._backends_response, [1, "threads", 0, "name"], self._backends_table_names[1])
 
-    # TODO: Edit the keys to return the "threads" list then use the remaining keys to get the specific 
-    # TODO: data to return, this will make it work easily with the _get_data_from_db logic required for 
-    # TODO: CPU backend type
     @property
     def be_opencl_threads_bus_id(self) -> Union[str, Any]:
         """
@@ -1458,9 +1375,6 @@ class XMRigProperties:
         """
         return self._get_data_from_response(self._backends_response, [1, "threads", 0, "bus_id"], self._backends_table_names[1])
 
-    # TODO: Edit the keys to return the "threads" list then use the remaining keys to get the specific 
-    # TODO: data to return, this will make it work easily with the _get_data_from_db logic required for 
-    # TODO: CPU backend type
     @property
     def be_opencl_threads_cu(self) -> Union[int, Any]:
         """
@@ -1471,9 +1385,6 @@ class XMRigProperties:
         """
         return self._get_data_from_response(self._backends_response, [1, "threads", 0, "cu"], self._backends_table_names[1])
 
-    # TODO: Edit the keys to return the "threads" list then use the remaining keys to get the specific 
-    # TODO: data to return, this will make it work easily with the _get_data_from_db logic required for 
-    # TODO: CPU backend type
     @property
     def be_opencl_threads_global_mem(self) -> Union[int, Any]:
         """
@@ -1484,9 +1395,6 @@ class XMRigProperties:
         """
         return self._get_data_from_response(self._backends_response, [1, "threads", 0, "global_mem"], self._backends_table_names[1])
 
-    # TODO: Edit the keys to return the "threads" list then use the remaining keys to get the specific 
-    # TODO: data to return, this will make it work easily with the _get_data_from_db logic required for 
-    # TODO: CPU backend type
     @property
     def be_opencl_threads_health(self) -> Union[Dict[str, Any], Any]:
         """
@@ -1497,9 +1405,6 @@ class XMRigProperties:
         """
         return self._get_data_from_response(self._backends_response, [1, "threads", 0, "health"], self._backends_table_names[1])
 
-    # TODO: Edit the keys to return the "threads" list then use the remaining keys to get the specific 
-    # TODO: data to return, this will make it work easily with the _get_data_from_db logic required for 
-    # TODO: CPU backend type
     @property
     def be_opencl_threads_health_temp(self) -> Union[int, Any]:
         """
@@ -1510,9 +1415,6 @@ class XMRigProperties:
         """
         return self._get_data_from_response(self._backends_response, [1, "threads", 0, "health", "temperature"], self._backends_table_names[1])
 
-    # TODO: Edit the keys to return the "threads" list then use the remaining keys to get the specific 
-    # TODO: data to return, this will make it work easily with the _get_data_from_db logic required for 
-    # TODO: CPU backend type
     @property
     def be_opencl_threads_health_power(self) -> Union[int, Any]:
         """
@@ -1523,9 +1425,6 @@ class XMRigProperties:
         """
         return self._get_data_from_response(self._backends_response, [1, "threads", 0, "health", "power"], self._backends_table_names[1])
 
-    # TODO: Edit the keys to return the "threads" list then use the remaining keys to get the specific 
-    # TODO: data to return, this will make it work easily with the _get_data_from_db logic required for 
-    # TODO: CPU backend type
     @property
     def be_opencl_threads_health_clock(self) -> Union[int, Any]:
         """
@@ -1536,9 +1435,6 @@ class XMRigProperties:
         """
         return self._get_data_from_response(self._backends_response, [1, "threads", 0, "health", "clock"], self._backends_table_names[1])
 
-    # TODO: Edit the keys to return the "threads" list then use the remaining keys to get the specific 
-    # TODO: data to return, this will make it work easily with the _get_data_from_db logic required for 
-    # TODO: CPU backend type
     @property
     def be_opencl_threads_health_mem_clock(self) -> Union[int, Any]:
         """
@@ -1549,9 +1445,6 @@ class XMRigProperties:
         """
         return self._get_data_from_response(self._backends_response, [1, "threads", 0, "health", "mem_clock"], self._backends_table_names[1])
 
-    # TODO: Edit the keys to return the "threads" list then use the remaining keys to get the specific 
-    # TODO: data to return, this will make it work easily with the _get_data_from_db logic required for 
-    # TODO: CPU backend type
     @property
     def be_opencl_threads_health_rpm(self) -> Union[int, Any]:
         """
@@ -1652,9 +1545,6 @@ class XMRigProperties:
         """
         return self._get_data_from_response(self._backends_response, [2, "hashrate"], self._backends_table_names[2])
 
-    # TODO: Edit the keys to return the "total" list then use the remaining keys to get the specific 
-    # TODO: data to return, this will make it work easily with the _get_data_from_db logic required for 
-    # TODO: CPU backend type
     @property
     def be_cuda_hashrate_10s(self) -> Union[float, Any]:
         """
@@ -1665,9 +1555,6 @@ class XMRigProperties:
         """
         return self._get_data_from_response(self._backends_response, [2, "hashrate", 0], self._backends_table_names[2])
 
-    # TODO: Edit the keys to return the "total" list then use the remaining keys to get the specific 
-    # TODO: data to return, this will make it work easily with the _get_data_from_db logic required for 
-    # TODO: CPU backend type
     @property
     def be_cuda_hashrate_1m(self) -> Union[float, Any]:
         """
@@ -1678,9 +1565,6 @@ class XMRigProperties:
         """
         return self._get_data_from_response(self._backends_response, [2, "hashrate", 1], self._backends_table_names[2])
 
-    # TODO: Edit the keys to return the "total" list then use the remaining keys to get the specific 
-    # TODO: data to return, this will make it work easily with the _get_data_from_db logic required for 
-    # TODO: CPU backend type
     @property
     def be_cuda_hashrate_15m(self) -> Union[float, Any]:
         """
@@ -1691,9 +1575,6 @@ class XMRigProperties:
         """
         return self._get_data_from_response(self._backends_response, [2, "hashrate", 2], self._backends_table_names[2])
 
-    # TODO: Edit the keys to return the "threads" list then use the remaining keys to get the specific 
-    # TODO: data to return, this will make it work easily with the _get_data_from_db logic required for 
-    # TODO: CPU backend type
     @property
     def be_cuda_threads(self) -> Union[Dict[str, Any], Any]:
         """
@@ -1704,9 +1585,6 @@ class XMRigProperties:
         """
         return self._get_data_from_response(self._backends_response, [2, "threads", 0], self._backends_table_names[2])
 
-    # TODO: Edit the keys to return the "threads" list then use the remaining keys to get the specific 
-    # TODO: data to return, this will make it work easily with the _get_data_from_db logic required for 
-    # TODO: CPU backend type
     @property
     def be_cuda_threads_index(self) -> Union[int, Any]:
         """
@@ -1717,9 +1595,6 @@ class XMRigProperties:
         """
         return self._get_data_from_response(self._backends_response, [2, "threads", 0, "index"], self._backends_table_names[2])
 
-    # TODO: Edit the keys to return the "threads" list then use the remaining keys to get the specific 
-    # TODO: data to return, this will make it work easily with the _get_data_from_db logic required for 
-    # TODO: CPU backend type
     @property
     def be_cuda_threads_amount(self) -> Union[int, Any]:
         """
@@ -1730,9 +1605,6 @@ class XMRigProperties:
         """
         return self._get_data_from_response(self._backends_response, [2, "threads", 0, "threads"], self._backends_table_names[2])
 
-    # TODO: Edit the keys to return the "threads" list then use the remaining keys to get the specific 
-    # TODO: data to return, this will make it work easily with the _get_data_from_db logic required for 
-    # TODO: CPU backend type
     @property
     def be_cuda_threads_blocks(self) -> Union[int, Any]:
         """
@@ -1743,9 +1615,6 @@ class XMRigProperties:
         """
         return self._get_data_from_response(self._backends_response, [2, "threads", 0, "blocks"], self._backends_table_names[2])
 
-    # TODO: Edit the keys to return the "threads" list then use the remaining keys to get the specific 
-    # TODO: data to return, this will make it work easily with the _get_data_from_db logic required for 
-    # TODO: CPU backend type
     @property
     def be_cuda_threads_bfactor(self) -> Union[int, Any]:
         """
@@ -1756,9 +1625,6 @@ class XMRigProperties:
         """
         return self._get_data_from_response(self._backends_response, [2, "threads", 0, "bfactor"], self._backends_table_names[2])
 
-    # TODO: Edit the keys to return the "threads" list then use the remaining keys to get the specific 
-    # TODO: data to return, this will make it work easily with the _get_data_from_db logic required for 
-    # TODO: CPU backend type
     @property
     def be_cuda_threads_bsleep(self) -> Union[int, Any]:
         """
@@ -1769,9 +1635,6 @@ class XMRigProperties:
         """
         return self._get_data_from_response(self._backends_response, [2, "threads", 0, "bsleep"], self._backends_table_names[2])
 
-    # TODO: Edit the keys to return the "threads" list then use the remaining keys to get the specific 
-    # TODO: data to return, this will make it work easily with the _get_data_from_db logic required for 
-    # TODO: CPU backend type
     @property
     def be_cuda_threads_affinity(self) -> Union[int, Any]:
         """
@@ -1782,9 +1645,6 @@ class XMRigProperties:
         """
         return self._get_data_from_response(self._backends_response, [2, "threads", 0, "affinity"], self._backends_table_names[2])
 
-    # TODO: Edit the keys to return the "threads" list then use the remaining keys to get the specific 
-    # TODO: data to return, this will make it work easily with the _get_data_from_db logic required for 
-    # TODO: CPU backend type
     @property
     def be_cuda_threads_dataset_host(self) -> Union[bool, Any]:
         """
@@ -1795,9 +1655,6 @@ class XMRigProperties:
         """
         return self._get_data_from_response(self._backends_response, [2, "threads", 0, "dataset_host"], self._backends_table_names[2])
 
-    # TODO: Edit the keys to return the "threads" list then use the remaining keys to get the specific 
-    # TODO: data to return, this will make it work easily with the _get_data_from_db logic required for 
-    # TODO: CPU backend type
     @property
     def be_cuda_threads_hashrates(self) -> Union[List[float], Any]:
         """
@@ -1808,12 +1665,6 @@ class XMRigProperties:
         """
         return self._get_data_from_response(self._backends_response, [2, "threads", 0, "hashrate"], self._backends_table_names[2])
 
-    # TODO: Edit the keys to return the "threads" list then use the remaining keys to get the specific 
-    # TODO: data to return, this will make it work easily with the _get_data_from_db logic required for 
-    # TODO: CPU backend
-    #   # TODO: Edit the keys to return thashrateeads" list then use the remaining keys to get the specific 
-    # TODO: data to return, this will make it work easily with the _get_data_from_db logic required for 
-    # TODO: CPU backend type type
     @property
     def be_cuda_threads_hashrate_10s(self) -> Union[float, Any]:
         """
@@ -1824,12 +1675,6 @@ class XMRigProperties:
         """
         return self._get_data_from_response(self._backends_response, [2, "threads", 0, "hashrate", 0], self._backends_table_names[2])
 
-    # TODO: Edit the keys to return the "threads" list then use the remaining keys to get the specific 
-    # TODO: data to return, this will make it work easily with the _get_data_from_db logic required for 
-    # TODO: CPU backend
-    #   # TODO: Edit the keys to return thashrateeads" list then use the remaining keys to get the specific 
-    # TODO: data to return, this will make it work easily with the _get_data_from_db logic required for 
-    # TODO: CPU backend type type
     @property
     def be_cuda_threads_hashrate_1m(self) -> Union[float, Any]:
         """
@@ -1840,12 +1685,6 @@ class XMRigProperties:
         """
         return self._get_data_from_response(self._backends_response, [2, "threads", 0, "hashrate", 1], self._backends_table_names[2])
 
-    # TODO: Edit the keys to return the "threads" list then use the remaining keys to get the specific 
-    # TODO: data to return, this will make it work easily with the _get_data_from_db logic required for 
-    # TODO: CPU backend
-    #   # TODO: Edit the keys to return thashrateeads" list then use the remaining keys to get the specific 
-    # TODO: data to return, this will make it work easily with the _get_data_from_db logic required for 
-    # TODO: CPU backend type type
     @property
     def be_cuda_threads_hashrate_15m(self) -> Union[float, Any]:
         """
@@ -1856,9 +1695,6 @@ class XMRigProperties:
         """
         return self._get_data_from_response(self._backends_response, [2, "threads", 0, "hashrate", 2], self._backends_table_names[2])
 
-    # TODO: Edit the keys to return the "threads" list then use the remaining keys to get the specific 
-    # TODO: data to return, this will make it work easily with the _get_data_from_db logic required for 
-    # TODO: CPU backend type
     @property
     def be_cuda_threads_name(self) -> Union[str, Any]:
         """
@@ -1869,9 +1705,6 @@ class XMRigProperties:
         """
         return self._get_data_from_response(self._backends_response, [2, "threads", 0, "name"], self._backends_table_names[2])
 
-    # TODO: Edit the keys to return the "threads" list then use the remaining keys to get the specific 
-    # TODO: data to return, this will make it work easily with the _get_data_from_db logic required for 
-    # TODO: CPU backend type
     @property
     def be_cuda_threads_bus_id(self) -> Union[str, Any]:
         """
@@ -1882,9 +1715,6 @@ class XMRigProperties:
         """
         return self._get_data_from_response(self._backends_response, [2, "threads", 0, "bus_id"], self._backends_table_names[2])
 
-    # TODO: Edit the keys to return the "threads" list then use the remaining keys to get the specific 
-    # TODO: data to return, this will make it work easily with the _get_data_from_db logic required for 
-    # TODO: CPU backend type
     @property
     def be_cuda_threads_smx(self) -> Union[int, Any]:
         """
@@ -1895,9 +1725,6 @@ class XMRigProperties:
         """
         return self._get_data_from_response(self._backends_response, [2, "threads", 0, "smx"], self._backends_table_names[2])
 
-    # TODO: Edit the keys to return the "threads" list then use the remaining keys to get the specific 
-    # TODO: data to return, this will make it work easily with the _get_data_from_db logic required for 
-    # TODO: CPU backend type
     @property
     def be_cuda_threads_arch(self) -> Union[int, Any]:
         """
@@ -1908,9 +1735,6 @@ class XMRigProperties:
         """
         return self._get_data_from_response(self._backends_response, [2, "threads", 0, "arch"], self._backends_table_names[2])
 
-    # TODO: Edit the keys to return the "threads" list then use the remaining keys to get the specific 
-    # TODO: data to return, this will make it work easily with the _get_data_from_db logic required for 
-    # TODO: CPU backend type
     @property
     def be_cuda_threads_global_mem(self) -> Union[int, Any]:
         """
@@ -1921,9 +1745,6 @@ class XMRigProperties:
         """
         return self._get_data_from_response(self._backends_response, [2, "threads", 0, "global_mem"], self._backends_table_names[2])
 
-    # TODO: Edit the keys to return the "threads" list then use the remaining keys to get the specific 
-    # TODO: data to return, this will make it work easily with the _get_data_from_db logic required for 
-    # TODO: CPU backend type
     @property
     def be_cuda_threads_clock(self) -> Union[int, Any]:
         """
@@ -1934,9 +1755,6 @@ class XMRigProperties:
         """
         return self._get_data_from_response(self._backends_response, [2, "threads", 0, "clock"], self._backends_table_names[2])
 
-    # TODO: Edit the keys to return the "threads" list then use the remaining keys to get the specific 
-    # TODO: data to return, this will make it work easily with the _get_data_from_db logic required for 
-    # TODO: CPU backend type
     @property
     def be_cuda_threads_memory_clock(self) -> Union[int, Any]:
         """
