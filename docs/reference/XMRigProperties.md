@@ -1,4 +1,4 @@
-# XMRigAPI
+# XMRigProperties
 
-::: xmrig.api.XMRigProperties
+::: xmrig.properties.XMRigProperties
     handler: python
