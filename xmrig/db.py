@@ -12,7 +12,7 @@ It includes functionalities for:
 
 from sqlalchemy import create_engine, text, inspect
 from sqlalchemy.engine import Engine
-from xmrig.helpers import log, XMRigAPIError
+from xmrig.helpers import log, XMRigDatabaseError
 from datetime import datetime
 from typing import Dict, Any, Union, List
 import pandas as pd
@@ -45,7 +45,7 @@ class XMRigDatabase:
             return cls._engines[db_url]
         except Exception as e:
             log.error(f"An error occurred initializing the database: {e}")
-            raise XMRigAPIError(f"Could not parse SQLAlchemy URL from string '{db_url}'") from e
+            raise XMRigDatabaseError(f"Could not parse SQLAlchemy URL from string '{db_url}'") from e
     
     @classmethod
     def check_table_exists(cls, db_url: str, table_name: str) -> bool:
@@ -71,7 +71,7 @@ class XMRigDatabase:
             return False
         except Exception as e:
             log.error(f"An error occurred checking if the table exists: {e}")
-            raise XMRigAPIError() from e
+            raise XMRigDatabaseError() from e
     
     @classmethod
     def insert_data_to_db(cls, json_data: Dict[str, Any], table_name: str, db_url: str) -> None:
@@ -96,7 +96,7 @@ class XMRigDatabase:
             log.debug("Data inserted successfully")
         except Exception as e:
             log.error(f"An error occurred inserting data to the database: {e}")
-            raise XMRigAPIError() from e
+            raise XMRigDatabaseError() from e
     
     @classmethod
     def fallback_to_db(cls, table_name: Union[str, List[str]], keys: List[Union[str, int]], db_url: str) -> Any:
@@ -129,7 +129,7 @@ class XMRigDatabase:
                 return "N/A"
         except Exception as e:
             log.error(f"An error occurred retrieving data from the database: {e}")
-            raise XMRigAPIError() from e
+            raise XMRigDatabaseError() from e
 
     # TODO: Check this works after recent changes
     @classmethod
@@ -157,4 +157,4 @@ class XMRigDatabase:
             log.debug(f"All tables for '{miner_name}' have been deleted from the database")
         except Exception as e:
             log.error(f"An error occurred deleting miner '{miner_name}' from the database: {e}")
-            raise XMRigAPIError() from e
+            raise XMRigDatabaseError() from e

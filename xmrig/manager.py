@@ -14,7 +14,7 @@ It includes functionalities for:
 """
 import requests
 from xmrig.api import XMRigAPI
-from xmrig.helpers import log, XMRigAPIError
+from xmrig.helpers import log, XMRigManagerError
 from xmrig.db import XMRigDatabase
 from typing import Callable, Optional, List
 
@@ -64,7 +64,7 @@ class XMRigManager:
             log.info(f"Miner '{miner_name}' added to manager.")
         except Exception as e:
             log.error(f"An error occurred adding miner '{miner_name}': {e}")
-            raise XMRigAPIError() from e
+            raise XMRigManagerError() from e
 
     def remove_miner(self, miner_name: str) -> None:
         """
@@ -83,7 +83,7 @@ class XMRigManager:
             log.info(f"Miner '{miner_name}' removed from manager.")
         except Exception as e:
             log.error(f"An error occurred removing miner '{miner_name}': {e}")
-            raise XMRigAPIError() from e
+            raise XMRigManagerError() from e
 
     def get_miner(self, miner_name: str) -> XMRigAPI:
         """
@@ -102,7 +102,7 @@ class XMRigManager:
             return self._miners[miner_name]
         except Exception as e:
             log.error(f"An error occurred retrieving miner '{miner_name}': {e}")
-            raise XMRigAPIError() from e
+            raise XMRigManagerError() from e
 
     def perform_action_on_all(self, action: str) -> None:
         """
@@ -122,10 +122,10 @@ class XMRigManager:
                         log.warning(f"Action '{action}' failed on '{miner_name}'.")
                 else:
                     log.error(f"Action '{action}' is not a valid method for miner API.")
-                    raise XMRigAPIError(f"Action '{action}' is not a valid method for miner API.")
+                    raise XMRigManagerError(f"Action '{action}' is not a valid method for miner API.")
         except Exception as e:
             log.error(f"An error occurred performing action '{action}' on all miners: {e}")
-            raise XMRigAPIError() from e
+            raise XMRigManagerError() from e
 
     def get_all_miners_endpoints(self) -> bool:
         """
@@ -147,7 +147,7 @@ class XMRigManager:
             return False
         except Exception as e:
             log.error(f"An error occurred updating all miners' endpoints: {e}")
-            raise XMRigAPIError() from e
+            raise XMRigManagerError() from e
 
     def list_miners(self) -> List[str]:
         """
@@ -160,4 +160,4 @@ class XMRigManager:
             return list(self._miners.keys())
         except Exception as e:
             log.error(f"An error occurred listing miners: {e}")
-            raise XMRigAPIError() from e
+            raise XMRigManagerError() from e

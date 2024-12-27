@@ -20,7 +20,7 @@ class XMRigAPIError(Exception):
         message (str): Error message explaining the API issue.
     """
 
-    def __init__(self, message: str = "An error occurred with the XMRig API.") -> None:
+    def __init__(self, message: str = "An error occurred with the XMRig API:") -> None:
         """
         Initialize the API error.
 
@@ -74,7 +74,6 @@ class XMRigDatabaseError(Exception):
         message (str): Error message explaining the database issue.
     """
 
-    # TODO: Fill in the default message with a more specific database error message
     def __init__(self, message: str = "An error occurred with the XMRig database. Please check the database configuration.") -> None:
         """
         Initialize the database error.
@@ -93,8 +92,7 @@ class XMRigManagerError(Exception):
         message (str): Error message explaining the manager issue.
     """
 
-    # TODO: Fill in the default message with a more specific manager error message
-    def __init__(self, message: str = "An error occurred with the XMRig manager. Please check the manager configuration.") -> None:
+    def __init__(self, message: str = "An error occurred with the XMRig manager.") -> None:
         """
         Initialize the manager error.
 
@@ -112,8 +110,7 @@ class XMRigPropertiesError(Exception):
         message (str): Error message explaining the properties issue.
     """
     
-    # TODO: Fill in the default message with a more specific properties error message
-    def __init__(self, message: str = "An error occurred retrieving properties from the XMRig API. Please check the API response.") -> None:
+    def __init__(self, message: str = "An error occurred retrieving properties from the XMRig API cache. Please check the API response.") -> None:
         """
         Initialize the properties error.
 

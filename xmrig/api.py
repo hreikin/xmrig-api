@@ -18,8 +18,6 @@ from xmrig.db import XMRigDatabase
 from typing import Optional, Dict, Any
 
 # TODO: Add config.json properties to the XMRigProperties class
-# TODO: Check database functions for db_url/db_engine consistency, look into making everything a classmethod 
-# TODO: Check exceptions and default messages for consistency, ensure all exceptions are raised correctly
 # TODO: Update mock and live tests to reflect the changes in the module
 # TODO: Update docstrings
 # TODO: Update the documentation to include all classses, methods, attributes, exceptions, modules, public functions, private functions, properties, etc
