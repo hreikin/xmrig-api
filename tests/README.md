@@ -2,6 +2,7 @@
 > - Alter live tests to run against 3 miners loaded from a config file
 > - Create tests for helpers.py
 > - Fix test_init_db
+> - Create tests in TestXMRigDB for properties
 
 # Tests
 
