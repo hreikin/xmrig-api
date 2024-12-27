@@ -10,7 +10,7 @@ It includes functionalities for:
 - Deleting all miner-related data from the database.
 """
 
-from sqlalchemy import create_engine, text
+from sqlalchemy import create_engine, text, inspect
 from sqlalchemy.engine import Engine
 from xmrig.helpers import log, XMRigAPIError
 from datetime import datetime
@@ -38,6 +38,28 @@ class XMRigDatabase:
         except Exception as e:
             log.error(f"An error occurred initializing the database: {e}")
             raise XMRigAPIError(f"Could not parse SQLAlchemy URL from string '{db_url}'") from e
+    
+    @classmethod
+    def check_table_exists(cls, db_url, table_name) -> bool:
+        """
+        Checks if the table exists in the database.
+
+        Returns:
+            bool: True if the table exists, False otherwise.
+        """
+        try:
+            # Create an engine
+            engine = cls.init_db(db_url)
+            # Create an inspector
+            inspector = inspect(engine)
+            # Check if the table exists
+            for i in inspector.get_table_names():
+                if table_name[1:-1] in i:       # Remove the quotes from the table name
+                    return True
+            return False
+        except Exception as e:
+            log.error(f"An error occurred checking if the table exists: {e}")
+            raise XMRigAPIError() from e
     
     # TODO: Refactor to only insert the full_json data
     @staticmethod
