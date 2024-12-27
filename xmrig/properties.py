@@ -1780,3 +1780,758 @@ class XMRigProperties:
         """
         return self._get_data_from_response(self._backends_response, [2, "threads", 0, "memory_clock"], self._backends_table_names[2])
 
+    @property
+    def conf_api_property(self):
+        pass
+
+    @property
+    def conf_api_id_property(self):
+        pass
+
+    @property
+    def conf_api_worker_id_property(self):
+        pass
+
+    @property
+    def conf_http_property(self):
+        pass
+
+    @property
+    def conf_http_enabled_property(self):
+        pass
+
+    @property
+    def conf_http_host_property(self):
+        pass
+
+    @property
+    def conf_http_port_property(self):
+        pass
+
+    @property
+    def conf_http_access_token_property(self):
+        pass
+
+    @property
+    def conf_http_restricted_property(self):
+        pass
+
+    @property
+    def conf_autosave_property(self):
+        pass
+
+    @property
+    def conf_background_property(self):
+        pass
+
+    @property
+    def conf_colors_property(self):
+        pass
+
+    @property
+    def conf_title_property(self):
+        pass
+
+    @property
+    def conf_randomx_property(self):
+        pass
+
+    @property
+    def conf_randomx_init_property(self):
+        pass
+
+    @property
+    def conf_randomx_init_avx2_property(self):
+        pass
+
+    @property
+    def conf_randomx_mode_property(self):
+        pass
+
+    @property
+    def conf_randomx_1gb_pages_property(self):
+        pass
+
+    @property
+    def conf_randomx_rdmsr_property(self):
+        pass
+
+    @property
+    def conf_randomx_wrmsr_property(self):
+        pass
+
+    @property
+    def conf_randomx_cache_qos_property(self):
+        pass
+
+    @property
+    def conf_randomx_numa_property(self):
+        pass
+
+    @property
+    def conf_randomx_scratchpad_prefetch_mode_property(self):
+        pass
+
+    @property
+    def conf_cpu_property(self):
+        pass
+
+    @property
+    def conf_cpu_enabled_property(self):
+        pass
+
+    @property
+    def conf_cpu_huge_pages_property(self):
+        pass
+
+    @property
+    def conf_cpu_huge_pages_jit_property(self):
+        pass
+
+    @property
+    def conf_cpu_hw_aes_property(self):
+        pass
+
+    @property
+    def conf_cpu_priority_property(self):
+        pass
+
+    @property
+    def conf_cpu_memory_pool_property(self):
+        pass
+
+    @property
+    def conf_cpu_yield_property(self):
+        pass
+
+    @property
+    def conf_cpu_max_threads_hint_property(self):
+        pass
+
+    @property
+    def conf_cpu_asm_property(self):
+        pass
+
+    @property
+    def conf_cpu_argon2_impl_property(self):
+        pass
+
+    @property
+    def conf_cpu_cn_lite_0_property(self):
+        pass
+
+    @property
+    def conf_cpu_cn_0_property(self):
+        pass
+
+    @property
+    def conf_opencl_property(self):
+        pass
+
+    @property
+    def conf_opencl_enabled_property(self):
+        pass
+
+    @property
+    def conf_opencl_cache_property(self):
+        pass
+
+    @property
+    def conf_opencl_loader_property(self):
+        pass
+
+    @property
+    def conf_opencl_platform_property(self):
+        pass
+
+    @property
+    def conf_opencl_adl_property(self):
+        pass
+
+    @property
+    def conf_opencl_cn_property(self):
+        pass
+
+    @property
+    def conf_opencl_cn_index_property(self):
+        pass
+
+    @property
+    def conf_opencl_cn_intensity_property(self):
+        pass
+
+    @property
+    def conf_opencl_cn_worksize_property(self):
+        pass
+
+    @property
+    def conf_opencl_cn_strided_index_property(self):
+        pass
+
+    @property
+    def conf_opencl_cn_threads_property(self):
+        pass
+
+    @property
+    def conf_opencl_cn_unroll_property(self):
+        pass
+
+    @property
+    def conf_opencl_cn_heavy_property(self):
+        pass
+
+    @property
+    def conf_opencl_cn_heavy_index_property(self):
+        pass
+
+    @property
+    def conf_opencl_cn_heavy_intensity_property(self):
+        pass
+
+    @property
+    def conf_opencl_cn_heavy_worksize_property(self):
+        pass
+
+    @property
+    def conf_opencl_cn_heavy_strided_index_property(self):
+        pass
+
+    @property
+    def conf_opencl_cn_heavy_threads_property(self):
+        pass
+
+    @property
+    def conf_opencl_cn_heavy_unroll_property(self):
+        pass
+
+    @property
+    def conf_opencl_cn_lite_property(self):
+        pass
+
+    @property
+    def conf_opencl_cn_lite_index_property(self):
+        pass
+
+    @property
+    def conf_opencl_cn_lite_intensity_property(self):
+        pass
+
+    @property
+    def conf_opencl_cn_lite_worksize_property(self):
+        pass
+
+    @property
+    def conf_opencl_cn_lite_strided_index_property(self):
+        pass
+
+    @property
+    def conf_opencl_cn_lite_threads_property(self):
+        pass
+
+    @property
+    def conf_opencl_cn_lite_unroll_property(self):
+        pass
+
+    @property
+    def conf_opencl_cn_pico_property(self):
+        pass
+
+    @property
+    def conf_opencl_cn_pico_index_property(self):
+        pass
+
+    @property
+    def conf_opencl_cn_pico_intensity_property(self):
+        pass
+
+    @property
+    def conf_opencl_cn_pico_worksize_property(self):
+        pass
+
+    @property
+    def conf_opencl_cn_pico_strided_index_property(self):
+        pass
+
+    @property
+    def conf_opencl_cn_pico_threads_property(self):
+        pass
+
+    @property
+    def conf_opencl_cn_pico_unroll_property(self):
+        pass
+
+    @property
+    def conf_opencl_cn_2_property(self):
+        pass
+
+    @property
+    def conf_opencl_cn_2_index_property(self):
+        pass
+
+    @property
+    def conf_opencl_cn_2_intensity_property(self):
+        pass
+
+    @property
+    def conf_opencl_cn_2_worksize_property(self):
+        pass
+
+    @property
+    def conf_opencl_cn_2_strided_index_property(self):
+        pass
+
+    @property
+    def conf_opencl_cn_2_threads_property(self):
+        pass
+
+    @property
+    def conf_opencl_cn_2_unroll_property(self):
+        pass
+
+    @property
+    def conf_opencl_cn_gpu_property(self):
+        pass
+
+    @property
+    def conf_opencl_cn_gpu_index_property(self):
+        pass
+
+    @property
+    def conf_opencl_cn_gpu_intensity_property(self):
+        pass
+
+    @property
+    def conf_opencl_cn_gpu_worksize_property(self):
+        pass
+
+    @property
+    def conf_opencl_cn_gpu_strided_index_property(self):
+        pass
+
+    @property
+    def conf_opencl_cn_gpu_threads_property(self):
+        pass
+
+    @property
+    def conf_opencl_cn_gpu_unroll_property(self):
+        pass
+
+    @property
+    def conf_opencl_cn_upx2_property(self):
+        pass
+
+    @property
+    def conf_opencl_cn_upx2_index_property(self):
+        pass
+
+    @property
+    def conf_opencl_cn_upx2_intensity_property(self):
+        pass
+
+    @property
+    def conf_opencl_cn_upx2_worksize_property(self):
+        pass
+
+    @property
+    def conf_opencl_cn_upx2_strided_index_property(self):
+        pass
+
+    @property
+    def conf_opencl_cn_upx2_threads_property(self):
+        pass
+
+    @property
+    def conf_opencl_cn_upx2_unroll_property(self):
+        pass
+
+    @property
+    def conf_opencl_kawpow_property(self):
+        pass
+
+    @property
+    def conf_opencl_kawpow_index_property(self):
+        pass
+
+    @property
+    def conf_opencl_kawpow_intensity_property(self):
+        pass
+
+    @property
+    def conf_opencl_kawpow_worksize_property(self):
+        pass
+
+    @property
+    def conf_opencl_kawpow_threads_property(self):
+        pass
+
+    @property
+    def conf_opencl_kawpow_unroll_property(self):
+        pass
+
+    @property
+    def conf_opencl_rx_property(self):
+        pass
+
+    @property
+    def conf_opencl_rx_index_property(self):
+        pass
+
+    @property
+    def conf_opencl_rx_intensity_property(self):
+        pass
+
+    @property
+    def conf_opencl_rx_worksize_property(self):
+        pass
+
+    @property
+    def conf_opencl_rx_threads_property(self):
+        pass
+
+    @property
+    def conf_opencl_rx_bfactor_property(self):
+        pass
+
+    @property
+    def conf_opencl_rx_gcn_asm_property(self):
+        pass
+
+    @property
+    def conf_opencl_rx_dataset_host_property(self):
+        pass
+
+    @property
+    def conf_opencl_cn_lite_0_property(self):
+        pass
+
+    @property
+    def conf_opencl_cn_0_property(self):
+        pass
+
+    @property
+    def conf_opencl_panthera_property(self):
+        pass
+
+    @property
+    def conf_cuda_property(self):
+        pass
+
+    @property
+    def conf_cuda_enabled_property(self):
+        pass
+
+    @property
+    def conf_cuda_loader_property(self):
+        pass
+
+    @property
+    def conf_cuda_nvml_property(self):
+        pass
+
+    @property
+    def conf_cuda_cn_lite_0_property(self):
+        pass
+
+    @property
+    def conf_cuda_cn_0_property(self):
+        pass
+
+    @property
+    def conf_cuda_panthera_property(self):
+        pass
+
+    @property
+    def conf_log_file_property(self):
+        pass
+
+    @property
+    def conf_donate_level_property(self):
+        pass
+
+    @property
+    def conf_donate_over_proxy_property(self):
+        pass
+
+    @property
+    def conf_pools_property(self):
+        pass
+
+    @property
+    def conf_pools_algo_property(self):
+        pass
+
+    @property
+    def conf_pools_coin_property(self):
+        pass
+
+    @property
+    def conf_pools_url_property(self):
+        pass
+
+    @property
+    def conf_pools_user_property(self):
+        pass
+
+    @property
+    def conf_pools_pass_property(self):
+        pass
+
+    @property
+    def conf_pools_rig_id_property(self):
+        pass
+
+    @property
+    def conf_pools_nicehash_property(self):
+        pass
+
+    @property
+    def conf_pools_keepalive_property(self):
+        pass
+
+    @property
+    def conf_pools_enabled_property(self):
+        pass
+
+    @property
+    def conf_pools_tls_property(self):
+        pass
+
+    @property
+    def conf_pools_sni_property(self):
+        pass
+
+    @property
+    def conf_pools_tls_fingerprint_property(self):
+        pass
+
+    @property
+    def conf_pools_daemon_property(self):
+        pass
+
+    @property
+    def conf_pools_socks5_property(self):
+        pass
+
+    @property
+    def conf_pools_self_select_property(self):
+        pass
+
+    @property
+    def conf_pools_submit_to_origin_property(self):
+        pass
+
+    @property
+    def conf_retries_property(self):
+        pass
+
+    @property
+    def conf_retry_pause_property(self):
+        pass
+
+    @property
+    def conf_print_time_property(self):
+        pass
+
+    @property
+    def conf_health_print_time_property(self):
+        pass
+
+    @property
+    def conf_dmi_property(self):
+        pass
+
+    @property
+    def conf_syslog_property(self):
+        pass
+
+    @property
+    def conf_tls_property(self):
+        pass
+
+    @property
+    def conf_tls_enabled_property(self):
+        pass
+
+    @property
+    def conf_tls_protocols_property(self):
+        pass
+
+    @property
+    def conf_tls_cert_property(self):
+        pass
+
+    @property
+    def conf_tls_cert_key_property(self):
+        pass
+
+    @property
+    def conf_tls_ciphers_property(self):
+        pass
+
+    @property
+    def conf_tls_ciphersuites_property(self):
+        pass
+
+    @property
+    def conf_tls_dhparam_property(self):
+        pass
+
+    @property
+    def conf_dns_property(self):
+        pass
+
+    @property
+    def conf_dns_ipv6_property(self):
+        pass
+
+    @property
+    def conf_dns_ttl_property(self):
+        pass
+
+    @property
+    def conf_user_agent_property(self):
+        pass
+
+    @property
+    def conf_verbose_property(self):
+        pass
+
+    @property
+    def conf_watch_property(self):
+        pass
+
+    @property
+    def conf_rebench_algo_property(self):
+        pass
+
+    @property
+    def conf_bench_algo_time_property(self):
+        pass
+
+    @property
+    def conf_algo_min_time_property(self):
+        pass
+
+    @property
+    def conf_algo_perf_property(self):
+        pass
+
+    @property
+    def conf_algo_perf_cn_0_property(self):
+        pass
+
+    @property
+    def conf_algo_perf_cn_1_property(self):
+        pass
+
+    @property
+    def conf_algo_perf_cn_2_property(self):
+        pass
+
+    @property
+    def conf_algo_perf_cn_r_property(self):
+        pass
+
+    @property
+    def conf_algo_perf_cn_fast_property(self):
+        pass
+
+    @property
+    def conf_algo_perf_cn_half_property(self):
+        pass
+
+    @property
+    def conf_algo_perf_cn_xao_property(self):
+        pass
+
+    @property
+    def conf_algo_perf_cn_rto_property(self):
+        pass
+
+    @property
+    def conf_algo_perf_cn_rwz_property(self):
+        pass
+
+    @property
+    def conf_algo_perf_cn_zls_property(self):
+        pass
+
+    @property
+    def conf_algo_perf_cn_double_property(self):
+        pass
+
+    @property
+    def conf_algo_perf_cn_ccx_property(self):
+        pass
+
+    @property
+    def conf_algo_perf_cn_lite_0_property(self):
+        pass
+
+    @property
+    def conf_algo_perf_cn_lite_1_property(self):
+        pass
+
+    @property
+    def conf_algo_perf_cn_heavy_xhv_property(self):
+        pass
+
+    @property
+    def conf_algo_perf_cn_pico_property(self):
+        pass
+
+    @property
+    def conf_algo_perf_cn_pico_tlo_property(self):
+        pass
+
+    @property
+    def conf_algo_perf_cn_gpu_property(self):
+        pass
+
+    @property
+    def conf_algo_perf_rx_0_property(self):
+        pass
+
+    @property
+    def conf_algo_perf_rx_arq_property(self):
+        pass
+
+    @property
+    def conf_algo_perf_rx_xeq_property(self):
+        pass
+
+    @property
+    def conf_algo_perf_rx_graft_property(self):
+        pass
+
+    @property
+    def conf_algo_perf_rx_sfx_property(self):
+        pass
+
+    @property
+    def conf_algo_perf_panthera_property(self):
+        pass
+
+    @property
+    def conf_algo_perf_argon2_chukwav2_property(self):
+        pass
+
+    @property
+    def conf_algo_perf_kawpow_property(self):
+        pass
+
+    @property
+    def conf_algo_perf_ghostrider_property(self):
+        pass
+
+    @property
+    def conf_algo_perf_flex_property(self):
+        pass
+
+    @property
+    def conf_pause_on_battery_property(self):
+        pass
+
+    @property
+    def conf_pause_on_active_property(self):
+        pass
