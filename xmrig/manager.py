@@ -26,7 +26,6 @@ class XMRigManager:
         _miners (Dict[str, XMRigAPI]): A dictionary to store miner API instances.
         _api_factory (Callable[..., XMRigAPI]): Factory for creating XMRigAPI instances.
         _db_url (str): Database URL for storing miner data.
-        _db_engine (Optional[Engine]): SQLAlchemy engine instance for database operations.
     """
 
     def __init__(self, api_factory: Callable[..., XMRigAPI] = XMRigAPI, db_url: str = 'sqlite:///xmrig-api.db'):

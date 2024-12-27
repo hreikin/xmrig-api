@@ -26,7 +26,6 @@ class XMRigProperties:
         _backends_response (List[Dict[str, Any]]): Cached backends endpoint data.
         _config_response (Dict[str, Any]): Cached config endpoint data.
         _db_url (Optional[str]): Database URL for storing miner data.
-        _db_engine (Optional[Engine]): SQLAlchemy engine instance for database operations.
         _summary_table_name (str): Table name for summary data.
         _backends_table_names (List[str]): Table names for backends data.
         _config_table_name (str): Table name for config data.

@@ -45,7 +45,6 @@ class XMRigAPI:
         _new_config (Optional[Dict[str, Any]]): Config to update with.
         _headers (Dict[str, str]): Headers for all API/RPC requests.
         _json_rpc_payload (Dict[str, Union[str, int]]): Default payload to send with RPC request.
-        _db_engine (Optional[Engine]): SQLAlchemy engine instance for database operations.
         data (XMRigProperties): Instance of XMRigProperties for accessing cached data.
     """
 
