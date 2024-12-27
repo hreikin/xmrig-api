@@ -15,13 +15,13 @@ import requests
 from xmrig.helpers import log, XMRigAPIError, XMRigConnectionError, XMRigAuthorizationError
 from xmrig.properties import XMRigProperties
 from xmrig.db import XMRigDatabase
-from sqlalchemy.engine import Engine
-from typing import Optional, Dict, Any, Union, List, Callable
+from typing import Optional, Dict, Any
 
 # TODO: Update mock and live tests to reflect the changes in the module
 # TODO: Add config.json properties to the XMRigProperties class
 # TODO: Move _update_properties_cache to properties.py
-# TODO: Check type hints and return types
+# TODO: Check database functions for db_url/db_engine consistency, look into making everything a classmethod 
+# TODO: Check exceptions and default messages for consistency, ensure all exceptions are raised correctly
 # TODO: Update docstrings
 # TODO: Update the documentation to include all classses, methods, attributes, exceptions, modules, public functions, private functions, properties, etc
 
@@ -33,23 +33,24 @@ class XMRigAPI:
         _miner_name (str): Unique name for the miner.
         _ip (str): IP address of the XMRig API.
         _port (str): Port of the XMRig API.
-        _access_token (str): Access token for authorization.
+        _access_token (Optional[str]): Access token for authorization.
         _base_url (str): Base URL for the XMRig API.
-        _json_rpc_url (str): URL for the json RPC.
+        _json_rpc_url (str): URL for the JSON RPC.
         _summary_url (str): URL for the summary endpoint.
         _backends_url (str): URL for the backends endpoint.
         _config_url (str): URL for the config endpoint.
-        _summary_response (dict): Response from the summary endpoint.
-        _backends_response (dict): Response from the backends endpoint.
-        _config_response (dict): Response from the config `GET` endpoint.
-        _post_config_response (dict): Response from the config `PUT` endpoint.
-        _new_config (dict): Config to update with.
-        _headers (dict): Headers for all API/RPC requests.
-        _json_rpc_payload (dict): Default payload to send with RPC request.
-        _db_engine (Engine): SQLAlchemy engine instance for database operations.
+        _summary_response (Optional[Dict[str, Any]]): Response from the summary endpoint.
+        _backends_response (Optional[List[Dict[str, Any]]]): Response from the backends endpoint.
+        _config_response (Optional[Dict[str, Any]]): Response from the config `GET` endpoint.
+        _post_config_response (Optional[Dict[str, Any]]): Response from the config `PUT` endpoint.
+        _new_config (Optional[Dict[str, Any]]): Config to update with.
+        _headers (Dict[str, str]): Headers for all API/RPC requests.
+        _json_rpc_payload (Dict[str, Union[str, int]]): Default payload to send with RPC request.
+        _db_engine (Optional[Engine]): SQLAlchemy engine instance for database operations.
+        data (XMRigProperties): Instance of XMRigProperties for accessing cached data.
     """
 
-    def __init__(self, miner_name: str, ip: str, port: int, access_token: Optional[str] = None, tls_enabled: bool = False, db_url: Optional[str] = None) -> None:
+    def __init__(self, miner_name: str, ip: str, port: str, access_token: Optional[str] = None, tls_enabled: bool = False, db_url: Optional[str] = None) -> None:
         """
         Initializes the XMRig instance with the provided IP, port, and access token.
 
@@ -59,17 +60,17 @@ class XMRigAPI:
         Args:
             miner_name (str): A unique name for the miner.
             ip (str): IP address or domain of the XMRig API.
-            port (int): Port of the XMRig API.
-            access_token (str, optional): Access token for authorization. Defaults to None.
-            tls_enabled (bool, optional): TLS status of the miner/API. 
-            db_url (Engine, optional): SQLAlchemy engine instance for database operations. Defaults to None.
+            port (str): Port of the XMRig API.
+            access_token (Optional[str]): Access token for authorization. Defaults to None.
+            tls_enabled (bool): TLS status of the miner/API. Defaults to False.
+            db_url (Optional[str]): Database URL for storing miner data. Defaults to None.
         """
         self._miner_name = miner_name
         self._ip = ip
         self._port = port
         self._access_token = access_token
         self._base_url = f"http://{ip}:{port}"
-        if tls_enabled == True:
+        if tls_enabled:
             self._base_url = f"https://{ip}:{port}"
         self._db_url = db_url
         self._db_engine = None

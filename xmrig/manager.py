@@ -21,6 +21,12 @@ from typing import Callable, Optional, List
 class XMRigManager:
     """
     A class to manage multiple XMRig miners via their APIs.
+
+    Attributes:
+        _miners (Dict[str, XMRigAPI]): A dictionary to store miner API instances.
+        _api_factory (Callable[..., XMRigAPI]): Factory for creating XMRigAPI instances.
+        _db_url (str): Database URL for storing miner data.
+        _db_engine (Optional[Engine]): SQLAlchemy engine instance for database operations.
     """
 
     def __init__(self, api_factory: Callable[..., XMRigAPI] = XMRigAPI, db_url: str = 'sqlite:///xmrig-api.db'):
@@ -124,6 +130,9 @@ class XMRigManager:
     def get_all_miners_endpoints(self) -> bool:
         """
         Updates all miners' cached data.
+
+        Returns:
+            bool: True if successful, or False if an error occurred.
         """
         try:
             for miner_name, miner_api in self._miners.items():
@@ -145,7 +154,7 @@ class XMRigManager:
         Lists all managed miners.
 
         Returns:
-            list: A list of miner names.
+            List[str]: A list of miner names.
         """
         try:
             return list(self._miners.keys())

@@ -19,6 +19,13 @@ import pandas as pd
 import json
 
 class XMRigDatabase:
+    """
+    A class for handling database operations related to the XMRig miner.
+
+    Attributes:
+        _engines (Dict[str, Engine]): A dictionary to store database engines.
+    """
+
     _engines = {}
 
     @classmethod
