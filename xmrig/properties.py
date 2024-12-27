@@ -1781,757 +1781,757 @@ class XMRigProperties:
         return self._get_data_from_response(self._backends_response, [2, "threads", 0, "memory_clock"], self._backends_table_names[2])
 
     @property
-    def conf_api_property(self):
-        pass
+    def conf_api_property(self) -> Dict[str, Union[str, None]]:
+        return self._get_data_from_response(self._config_response, ["api"], self._config_table_name)
 
     @property
-    def conf_api_id_property(self):
-        pass
+    def conf_api_id_property(self) -> Optional[str]:
+        return self._get_data_from_response(self._config_response, ["api", "id"], self._config_table_name)
 
     @property
-    def conf_api_worker_id_property(self):
-        pass
+    def conf_api_worker_id_property(self) -> str:
+        return self._get_data_from_response(self._config_response, ["api", "worker-id"], self._config_table_name)
 
     @property
-    def conf_http_property(self):
-        pass
+    def conf_http_property(self) -> Dict[str, Union[str, int, bool]]:
+        return self._get_data_from_response(self._config_response, ["http"], self._config_table_name)
 
     @property
-    def conf_http_enabled_property(self):
-        pass
+    def conf_http_enabled_property(self) -> bool:
+        return self._get_data_from_response(self._config_response, ["http", "enabled"], self._config_table_name)
 
     @property
-    def conf_http_host_property(self):
-        pass
+    def conf_http_host_property(self) -> str:
+        return self._get_data_from_response(self._config_response, ["http", "host"], self._config_table_name)
 
     @property
-    def conf_http_port_property(self):
-        pass
+    def conf_http_port_property(self) -> int:
+        return self._get_data_from_response(self._config_response, ["http", "port"], self._config_table_name)
 
     @property
-    def conf_http_access_token_property(self):
-        pass
+    def conf_http_access_token_property(self) -> str:
+        return self._get_data_from_response(self._config_response, ["http", "access-token"], self._config_table_name)
 
     @property
-    def conf_http_restricted_property(self):
-        pass
+    def conf_http_restricted_property(self) -> bool:
+        return self._get_data_from_response(self._config_response, ["http", "restricted"], self._config_table_name)
 
     @property
-    def conf_autosave_property(self):
-        pass
+    def conf_autosave_property(self) -> bool:
+        return self._get_data_from_response(self._config_response, ["autosave"], self._config_table_name)
 
     @property
-    def conf_background_property(self):
-        pass
+    def conf_background_property(self) -> bool:
+        return self._get_data_from_response(self._config_response, ["background"], self._config_table_name)
 
     @property
-    def conf_colors_property(self):
-        pass
+    def conf_colors_property(self) -> bool:
+        return self._get_data_from_response(self._config_response, ["colors"], self._config_table_name)
 
     @property
-    def conf_title_property(self):
-        pass
+    def conf_title_property(self) -> bool:
+        return self._get_data_from_response(self._config_response, ["title"], self._config_table_name)
 
     @property
-    def conf_randomx_property(self):
-        pass
+    def conf_randomx_property(self) -> Dict[str, Union[str, int, bool]]:
+        return self._get_data_from_response(self._config_response, ["randomx"], self._config_table_name)
 
     @property
-    def conf_randomx_init_property(self):
-        pass
+    def conf_randomx_init_property(self) -> int:
+        return self._get_data_from_response(self._config_response, ["randomx", "init"], self._config_table_name)
 
     @property
-    def conf_randomx_init_avx2_property(self):
-        pass
+    def conf_randomx_init_avx2_property(self) -> int:
+        return self._get_data_from_response(self._config_response, ["randomx", "init-avx2"], self._config_table_name)
 
     @property
-    def conf_randomx_mode_property(self):
-        pass
+    def conf_randomx_mode_property(self) -> str:
+        return self._get_data_from_response(self._config_response, ["randomx", "mode"], self._config_table_name)
 
     @property
-    def conf_randomx_1gb_pages_property(self):
-        pass
+    def conf_randomx_1gb_pages_property(self) -> bool:
+        return self._get_data_from_response(self._config_response, ["randomx", "1gb-pages"], self._config_table_name)
 
     @property
-    def conf_randomx_rdmsr_property(self):
-        pass
+    def conf_randomx_rdmsr_property(self) -> bool:
+        return self._get_data_from_response(self._config_response, ["randomx", "rdmsr"], self._config_table_name)
 
     @property
-    def conf_randomx_wrmsr_property(self):
-        pass
+    def conf_randomx_wrmsr_property(self) -> bool:
+        return self._get_data_from_response(self._config_response, ["randomx", "wrmsr"], self._config_table_name)
 
     @property
-    def conf_randomx_cache_qos_property(self):
-        pass
+    def conf_randomx_cache_qos_property(self) -> bool:
+        return self._get_data_from_response(self._config_response, ["randomx", "cache_qos"], self._config_table_name)
 
     @property
-    def conf_randomx_numa_property(self):
-        pass
+    def conf_randomx_numa_property(self) -> bool:
+        return self._get_data_from_response(self._config_response, ["randomx", "numa"], self._config_table_name)
 
     @property
-    def conf_randomx_scratchpad_prefetch_mode_property(self):
-        pass
+    def conf_randomx_scratchpad_prefetch_mode_property(self) -> int:
+        return self._get_data_from_response(self._config_response, ["randomx", "scratchpad_prefetch_mode"], self._config_table_name)
 
     @property
-    def conf_cpu_property(self):
-        pass
+    def conf_cpu_property(self) -> Dict[str, Union[str, int, bool, None]]:
+        return self._get_data_from_response(self._config_response, ["cpu"], self._config_table_name)
 
     @property
-    def conf_cpu_enabled_property(self):
-        pass
+    def conf_cpu_enabled_property(self) -> bool:
+        return self._get_data_from_response(self._config_response, ["cpu", "enabled"], self._config_table_name)
 
     @property
-    def conf_cpu_huge_pages_property(self):
-        pass
+    def conf_cpu_huge_pages_property(self) -> bool:
+        return self._get_data_from_response(self._config_response, ["cpu", "huge-pages"], self._config_table_name)
 
     @property
-    def conf_cpu_huge_pages_jit_property(self):
-        pass
+    def conf_cpu_huge_pages_jit_property(self) -> bool:
+        return self._get_data_from_response(self._config_response, ["cpu", "huge-pages-jit"], self._config_table_name)
 
     @property
-    def conf_cpu_hw_aes_property(self):
-        pass
+    def conf_cpu_hw_aes_property(self) -> Optional[bool]:
+        return self._get_data_from_response(self._config_response, ["cpu", "hw-aes"], self._config_table_name)
 
     @property
-    def conf_cpu_priority_property(self):
-        pass
+    def conf_cpu_priority_property(self) -> Optional[int]:
+        return self._get_data_from_response(self._config_response, ["cpu", "priority"], self._config_table_name)
 
     @property
-    def conf_cpu_memory_pool_property(self):
-        pass
+    def conf_cpu_memory_pool_property(self) -> bool:
+        return self._get_data_from_response(self._config_response, ["cpu", "memory-pool"], self._config_table_name)
 
     @property
-    def conf_cpu_yield_property(self):
-        pass
+    def conf_cpu_yield_property(self) -> bool:
+        return self._get_data_from_response(self._config_response, ["cpu", "yield"], self._config_table_name)
 
     @property
-    def conf_cpu_max_threads_hint_property(self):
-        pass
+    def conf_cpu_max_threads_hint_property(self) -> int:
+        return self._get_data_from_response(self._config_response, ["cpu", "max-threads-hint"], self._config_table_name)
 
     @property
-    def conf_cpu_asm_property(self):
-        pass
+    def conf_cpu_asm_property(self) -> bool:
+        return self._get_data_from_response(self._config_response, ["cpu", "asm"], self._config_table_name)
 
     @property
-    def conf_cpu_argon2_impl_property(self):
-        pass
+    def conf_cpu_argon2_impl_property(self) -> Optional[str]:
+        return self._get_data_from_response(self._config_response, ["cpu", "argon2-impl"], self._config_table_name)
 
     @property
-    def conf_cpu_cn_lite_0_property(self):
-        pass
+    def conf_cpu_cn_lite_0_property(self) -> bool:
+        return self._get_data_from_response(self._config_response, ["cpu", "cn-lite/0"], self._config_table_name)
 
     @property
-    def conf_cpu_cn_0_property(self):
-        pass
+    def conf_cpu_cn_0_property(self) -> bool:
+        return self._get_data_from_response(self._config_response, ["cpu", "cn/0"], self._config_table_name)
 
     @property
-    def conf_opencl_property(self):
-        pass
+    def conf_opencl_property(self) -> Dict[str, Union[str, int, bool, List[Dict[str, Union[int, List[int], bool]]]]]:
+        return self._get_data_from_response(self._config_response, ["opencl"], self._config_table_name)
 
     @property
-    def conf_opencl_enabled_property(self):
-        pass
+    def conf_opencl_enabled_property(self) -> bool:
+        return self._get_data_from_response(self._config_response, ["opencl", "enabled"], self._config_table_name)
 
     @property
-    def conf_opencl_cache_property(self):
-        pass
+    def conf_opencl_cache_property(self) -> bool:
+        return self._get_data_from_response(self._config_response, ["opencl", "cache"], self._config_table_name)
 
     @property
-    def conf_opencl_loader_property(self):
-        pass
+    def conf_opencl_loader_property(self) -> Optional[str]:
+        return self._get_data_from_response(self._config_response, ["opencl", "loader"], self._config_table_name)
 
     @property
-    def conf_opencl_platform_property(self):
-        pass
+    def conf_opencl_platform_property(self) -> str:
+        return self._get_data_from_response(self._config_response, ["opencl", "platform"], self._config_table_name)
 
     @property
-    def conf_opencl_adl_property(self):
-        pass
+    def conf_opencl_adl_property(self) -> bool:
+        return self._get_data_from_response(self._config_response, ["opencl", "adl"], self._config_table_name)
 
     @property
-    def conf_opencl_cn_property(self):
-        pass
+    def conf_opencl_cn_property(self) -> List[Dict[str, Union[int, List[int]]]]:
+        return self._get_data_from_response(self._config_response, ["opencl", "cn"], self._config_table_name)
 
     @property
-    def conf_opencl_cn_index_property(self):
-        pass
+    def conf_opencl_cn_index_property(self) -> int:
+        return self._get_data_from_response(self._config_response, ["opencl", "cn", 0, "index"], self._config_table_name)
 
     @property
-    def conf_opencl_cn_intensity_property(self):
-        pass
+    def conf_opencl_cn_intensity_property(self) -> int:
+        return self._get_data_from_response(self._config_response, ["opencl", "cn", 0, "intensity"], self._config_table_name)
 
     @property
-    def conf_opencl_cn_worksize_property(self):
-        pass
+    def conf_opencl_cn_worksize_property(self) -> int:
+        return self._get_data_from_response(self._config_response, ["opencl", "cn", 0, "worksize"], self._config_table_name)
 
     @property
-    def conf_opencl_cn_strided_index_property(self):
-        pass
+    def conf_opencl_cn_strided_index_property(self) -> List[int]:
+        return self._get_data_from_response(self._config_response, ["opencl", "cn", 0, "strided_index"], self._config_table_name)
 
     @property
-    def conf_opencl_cn_threads_property(self):
-        pass
+    def conf_opencl_cn_threads_property(self) -> List[int]:
+        return self._get_data_from_response(self._config_response, ["opencl", "cn", 0, "threads"], self._config_table_name)
 
     @property
-    def conf_opencl_cn_unroll_property(self):
-        pass
+    def conf_opencl_cn_unroll_property(self) -> int:
+        return self._get_data_from_response(self._config_response, ["opencl", "cn", 0, "unroll"], self._config_table_name)
 
     @property
-    def conf_opencl_cn_heavy_property(self):
-        pass
+    def conf_opencl_cn_heavy_property(self) -> List[Dict[str, Union[int, List[int]]]]:
+        return self._get_data_from_response(self._config_response, ["opencl", "cn-heavy"], self._config_table_name)
 
     @property
-    def conf_opencl_cn_heavy_index_property(self):
-        pass
+    def conf_opencl_cn_heavy_index_property(self) -> int:
+        return self._get_data_from_response(self._config_response, ["opencl", "cn-heavy", 0, "index"], self._config_table_name)
 
     @property
-    def conf_opencl_cn_heavy_intensity_property(self):
-        pass
+    def conf_opencl_cn_heavy_intensity_property(self) -> int:
+        return self._get_data_from_response(self._config_response, ["opencl", "cn-heavy", 0, "intensity"], self._config_table_name)
 
     @property
-    def conf_opencl_cn_heavy_worksize_property(self):
-        pass
+    def conf_opencl_cn_heavy_worksize_property(self) -> int:
+        return self._get_data_from_response(self._config_response, ["opencl", "cn-heavy", 0, "worksize"], self._config_table_name)
 
     @property
-    def conf_opencl_cn_heavy_strided_index_property(self):
-        pass
+    def conf_opencl_cn_heavy_strided_index_property(self) -> List[int]:
+        return self._get_data_from_response(self._config_response, ["opencl", "cn-heavy", 0, "strided_index"], self._config_table_name)
 
     @property
-    def conf_opencl_cn_heavy_threads_property(self):
-        pass
+    def conf_opencl_cn_heavy_threads_property(self) -> List[int]:
+        return self._get_data_from_response(self._config_response, ["opencl", "cn-heavy", 0, "threads"], self._config_table_name)
 
     @property
-    def conf_opencl_cn_heavy_unroll_property(self):
-        pass
+    def conf_opencl_cn_heavy_unroll_property(self) -> int:
+        return self._get_data_from_response(self._config_response, ["opencl", "cn-heavy", 0, "unroll"], self._config_table_name)
 
     @property
-    def conf_opencl_cn_lite_property(self):
-        pass
+    def conf_opencl_cn_lite_property(self) -> List[Dict[str, Union[int, List[int]]]]:
+        return self._get_data_from_response(self._config_response, ["opencl", "cn-lite"], self._config_table_name)
 
     @property
-    def conf_opencl_cn_lite_index_property(self):
-        pass
+    def conf_opencl_cn_lite_index_property(self) -> int:
+        return self._get_data_from_response(self._config_response, ["opencl", "cn-lite", 0, "index"], self._config_table_name)
 
     @property
-    def conf_opencl_cn_lite_intensity_property(self):
-        pass
+    def conf_opencl_cn_lite_intensity_property(self) -> int:
+        return self._get_data_from_response(self._config_response, ["opencl", "cn-lite", 0, "intensity"], self._config_table_name)
 
     @property
-    def conf_opencl_cn_lite_worksize_property(self):
-        pass
+    def conf_opencl_cn_lite_worksize_property(self) -> int:
+        return self._get_data_from_response(self._config_response, ["opencl", "cn-lite", 0, "worksize"], self._config_table_name)
 
     @property
-    def conf_opencl_cn_lite_strided_index_property(self):
-        pass
+    def conf_opencl_cn_lite_strided_index_property(self) -> List[int]:
+        return self._get_data_from_response(self._config_response, ["opencl", "cn-lite", 0, "strided_index"], self._config_table_name)
 
     @property
-    def conf_opencl_cn_lite_threads_property(self):
-        pass
+    def conf_opencl_cn_lite_threads_property(self) -> List[int]:
+        return self._get_data_from_response(self._config_response, ["opencl", "cn-lite", 0, "threads"], self._config_table_name)
 
     @property
-    def conf_opencl_cn_lite_unroll_property(self):
-        pass
+    def conf_opencl_cn_lite_unroll_property(self) -> int:
+        return self._get_data_from_response(self._config_response, ["opencl", "cn-lite", 0, "unroll"], self._config_table_name)
 
     @property
-    def conf_opencl_cn_pico_property(self):
-        pass
+    def conf_opencl_cn_pico_property(self) -> List[Dict[str, Union[int, List[int]]]]:
+        return self._get_data_from_response(self._config_response, ["opencl", "cn-pico"], self._config_table_name)
 
     @property
-    def conf_opencl_cn_pico_index_property(self):
-        pass
+    def conf_opencl_cn_pico_index_property(self) -> int:
+        return self._get_data_from_response(self._config_response, ["opencl", "cn-pico", 0, "index"], self._config_table_name)
 
     @property
-    def conf_opencl_cn_pico_intensity_property(self):
-        pass
+    def conf_opencl_cn_pico_intensity_property(self) -> int:
+        return self._get_data_from_response(self._config_response, ["opencl", "cn-pico", 0, "intensity"], self._config_table_name)
 
     @property
-    def conf_opencl_cn_pico_worksize_property(self):
-        pass
+    def conf_opencl_cn_pico_worksize_property(self) -> int:
+        return self._get_data_from_response(self._config_response, ["opencl", "cn-pico", 0, "worksize"], self._config_table_name)
 
     @property
-    def conf_opencl_cn_pico_strided_index_property(self):
-        pass
+    def conf_opencl_cn_pico_strided_index_property(self) -> List[int]:
+        return self._get_data_from_response(self._config_response, ["opencl", "cn-pico", 0, "strided_index"], self._config_table_name)
 
     @property
-    def conf_opencl_cn_pico_threads_property(self):
-        pass
+    def conf_opencl_cn_pico_threads_property(self) -> List[int]:
+        return self._get_data_from_response(self._config_response, ["opencl", "cn-pico", 0, "threads"], self._config_table_name)
 
     @property
-    def conf_opencl_cn_pico_unroll_property(self):
-        pass
+    def conf_opencl_cn_pico_unroll_property(self) -> int:
+        return self._get_data_from_response(self._config_response, ["opencl", "cn-pico", 0, "unroll"], self._config_table_name)
 
     @property
-    def conf_opencl_cn_2_property(self):
-        pass
+    def conf_opencl_cn_2_property(self) -> List[Dict[str, Union[int, List[int]]]]:
+        return self._get_data_from_response(self._config_response, ["opencl", "cn/2"], self._config_table_name)
 
     @property
-    def conf_opencl_cn_2_index_property(self):
-        pass
+    def conf_opencl_cn_2_index_property(self) -> int:
+        return self._get_data_from_response(self._config_response, ["opencl", "cn/2", 0, "index"], self._config_table_name)
 
     @property
-    def conf_opencl_cn_2_intensity_property(self):
-        pass
+    def conf_opencl_cn_2_intensity_property(self) -> int:
+        return self._get_data_from_response(self._config_response, ["opencl", "cn/2", 0, "intensity"], self._config_table_name)
 
     @property
-    def conf_opencl_cn_2_worksize_property(self):
-        pass
+    def conf_opencl_cn_2_worksize_property(self) -> int:
+        return self._get_data_from_response(self._config_response, ["opencl", "cn/2", 0, "worksize"], self._config_table_name)
 
     @property
-    def conf_opencl_cn_2_strided_index_property(self):
-        pass
+    def conf_opencl_cn_2_strided_index_property(self) -> List[int]:
+        return self._get_data_from_response(self._config_response, ["opencl", "cn/2", 0, "strided_index"], self._config_table_name)
 
     @property
-    def conf_opencl_cn_2_threads_property(self):
-        pass
+    def conf_opencl_cn_2_threads_property(self) -> List[int]:
+        return self._get_data_from_response(self._config_response, ["opencl", "cn/2", 0, "threads"], self._config_table_name)
 
     @property
-    def conf_opencl_cn_2_unroll_property(self):
-        pass
+    def conf_opencl_cn_2_unroll_property(self) -> int:
+        return self._get_data_from_response(self._config_response, ["opencl", "cn/2", 0, "unroll"], self._config_table_name)
 
     @property
-    def conf_opencl_cn_gpu_property(self):
-        pass
+    def conf_opencl_cn_gpu_property(self) -> List[Dict[str, Union[int, List[int]]]]:
+        return self._get_data_from_response(self._config_response, ["opencl", "cn/gpu"], self._config_table_name)
 
     @property
-    def conf_opencl_cn_gpu_index_property(self):
-        pass
+    def conf_opencl_cn_gpu_index_property(self) -> int:
+        return self._get_data_from_response(self._config_response, ["opencl", "cn/gpu", 0, "index"], self._config_table_name)
 
     @property
-    def conf_opencl_cn_gpu_intensity_property(self):
-        pass
+    def conf_opencl_cn_gpu_intensity_property(self) -> int:
+        return self._get_data_from_response(self._config_response, ["opencl", "cn/gpu", 0, "intensity"], self._config_table_name)
 
     @property
-    def conf_opencl_cn_gpu_worksize_property(self):
-        pass
+    def conf_opencl_cn_gpu_worksize_property(self) -> int:
+        return self._get_data_from_response(self._config_response, ["opencl", "cn/gpu", 0, "worksize"], self._config_table_name)
 
     @property
-    def conf_opencl_cn_gpu_strided_index_property(self):
-        pass
+    def conf_opencl_cn_gpu_strided_index_property(self) -> List[int]:
+        return self._get_data_from_response(self._config_response, ["opencl", "cn/gpu", 0, "strided_index"], self._config_table_name)
 
     @property
-    def conf_opencl_cn_gpu_threads_property(self):
-        pass
+    def conf_opencl_cn_gpu_threads_property(self) -> List[int]:
+        return self._get_data_from_response(self._config_response, ["opencl", "cn/gpu", 0, "threads"], self._config_table_name)
 
     @property
-    def conf_opencl_cn_gpu_unroll_property(self):
-        pass
+    def conf_opencl_cn_gpu_unroll_property(self) -> int:
+        return self._get_data_from_response(self._config_response, ["opencl", "cn/gpu", 0, "unroll"], self._config_table_name)
 
     @property
-    def conf_opencl_cn_upx2_property(self):
-        pass
+    def conf_opencl_cn_upx2_property(self) -> List[Dict[str, Union[int, List[int]]]]:
+        return self._get_data_from_response(self._config_response, ["opencl", "cn/upx2"], self._config_table_name)
 
     @property
-    def conf_opencl_cn_upx2_index_property(self):
-        pass
+    def conf_opencl_cn_upx2_index_property(self) -> int:
+        return self._get_data_from_response(self._config_response, ["opencl", "cn/upx2", 0, "index"], self._config_table_name)
 
     @property
-    def conf_opencl_cn_upx2_intensity_property(self):
-        pass
+    def conf_opencl_cn_upx2_intensity_property(self) -> int:
+        return self._get_data_from_response(self._config_response, ["opencl", "cn/upx2", 0, "intensity"], self._config_table_name)
 
     @property
-    def conf_opencl_cn_upx2_worksize_property(self):
-        pass
+    def conf_opencl_cn_upx2_worksize_property(self) -> int:
+        return self._get_data_from_response(self._config_response, ["opencl", "cn/upx2", 0, "worksize"], self._config_table_name)
 
     @property
-    def conf_opencl_cn_upx2_strided_index_property(self):
-        pass
+    def conf_opencl_cn_upx2_strided_index_property(self) -> List[int]:
+        return self._get_data_from_response(self._config_response, ["opencl", "cn/upx2", 0, "strided_index"], self._config_table_name)
 
     @property
-    def conf_opencl_cn_upx2_threads_property(self):
-        pass
+    def conf_opencl_cn_upx2_threads_property(self) -> List[int]:
+        return self._get_data_from_response(self._config_response, ["opencl", "cn/upx2", 0, "threads"], self._config_table_name)
 
     @property
-    def conf_opencl_cn_upx2_unroll_property(self):
-        pass
+    def conf_opencl_cn_upx2_unroll_property(self) -> int:
+        return self._get_data_from_response(self._config_response, ["opencl", "cn/upx2", 0, "unroll"], self._config_table_name)
 
     @property
-    def conf_opencl_kawpow_property(self):
-        pass
+    def conf_opencl_kawpow_property(self) -> List[Dict[str, Union[int, List[int]]]]:
+        return self._get_data_from_response(self._config_response, ["opencl", "kawpow"], self._config_table_name)
 
     @property
-    def conf_opencl_kawpow_index_property(self):
-        pass
+    def conf_opencl_kawpow_index_property(self) -> int:
+        return self._get_data_from_response(self._config_response, ["opencl", "kawpow", 0, "index"], self._config_table_name)
 
     @property
-    def conf_opencl_kawpow_intensity_property(self):
-        pass
+    def conf_opencl_kawpow_intensity_property(self) -> int:
+        return self._get_data_from_response(self._config_response, ["opencl", "kawpow", 0, "intensity"], self._config_table_name)
 
     @property
-    def conf_opencl_kawpow_worksize_property(self):
-        pass
+    def conf_opencl_kawpow_worksize_property(self) -> int:
+        return self._get_data_from_response(self._config_response, ["opencl", "kawpow", 0, "worksize"], self._config_table_name)
 
     @property
-    def conf_opencl_kawpow_threads_property(self):
-        pass
+    def conf_opencl_kawpow_threads_property(self) -> List[int]:
+        return self._get_data_from_response(self._config_response, ["opencl", "kawpow", 0, "threads"], self._config_table_name)
 
     @property
-    def conf_opencl_kawpow_unroll_property(self):
-        pass
+    def conf_opencl_kawpow_unroll_property(self) -> int:
+        return self._get_data_from_response(self._config_response, ["opencl", "kawpow", 0, "unroll"], self._config_table_name)
 
     @property
-    def conf_opencl_rx_property(self):
-        pass
+    def conf_opencl_rx_property(self) -> List[Dict[str, Union[int, List[int], bool]]]:
+        return self._get_data_from_response(self._config_response, ["opencl", "rx"], self._config_table_name)
 
     @property
-    def conf_opencl_rx_index_property(self):
-        pass
+    def conf_opencl_rx_index_property(self) -> int:
+        return self._get_data_from_response(self._config_response, ["opencl", "rx", 0, "index"], self._config_table_name)
 
     @property
-    def conf_opencl_rx_intensity_property(self):
-        pass
+    def conf_opencl_rx_intensity_property(self) -> int:
+        return self._get_data_from_response(self._config_response, ["opencl", "rx", 0, "intensity"], self._config_table_name)
 
     @property
-    def conf_opencl_rx_worksize_property(self):
-        pass
+    def conf_opencl_rx_worksize_property(self) -> int:
+        return self._get_data_from_response(self._config_response, ["opencl", "rx", 0, "worksize"], self._config_table_name)
 
     @property
-    def conf_opencl_rx_threads_property(self):
-        pass
+    def conf_opencl_rx_threads_property(self) -> List[int]:
+        return self._get_data_from_response(self._config_response, ["opencl", "rx", 0, "threads"], self._config_table_name)
 
     @property
-    def conf_opencl_rx_bfactor_property(self):
-        pass
+    def conf_opencl_rx_bfactor_property(self) -> int:
+        return self._get_data_from_response(self._config_response, ["opencl", "rx", 0, "bfactor"], self._config_table_name)
 
     @property
-    def conf_opencl_rx_gcn_asm_property(self):
-        pass
+    def conf_opencl_rx_gcn_asm_property(self) -> bool:
+        return self._get_data_from_response(self._config_response, ["opencl", "rx", 0, "gcn_asm"], self._config_table_name)
 
     @property
-    def conf_opencl_rx_dataset_host_property(self):
-        pass
+    def conf_opencl_rx_dataset_host_property(self) -> bool:
+        return self._get_data_from_response(self._config_response, ["opencl", "rx", 0, "dataset_host"], self._config_table_name)
 
     @property
-    def conf_opencl_cn_lite_0_property(self):
-        pass
+    def conf_opencl_cn_lite_0_property(self) -> bool:
+        return self._get_data_from_response(self._config_response, ["opencl", "cn-lite/0"], self._config_table_name)
 
     @property
-    def conf_opencl_cn_0_property(self):
-        pass
+    def conf_opencl_cn_0_property(self) -> bool:
+        return self._get_data_from_response(self._config_response, ["opencl", "cn/0"], self._config_table_name)
 
     @property
-    def conf_opencl_panthera_property(self):
-        pass
+    def conf_opencl_panthera_property(self) -> bool:
+        return self._get_data_from_response(self._config_response, ["opencl", "panthera"], self._config_table_name)
 
     @property
-    def conf_cuda_property(self):
-        pass
+    def conf_cuda_property(self) -> Dict[str, Union[str, bool, None]]:
+        return self._get_data_from_response(self._config_response, ["cuda"], self._config_table_name)
 
     @property
-    def conf_cuda_enabled_property(self):
-        pass
+    def conf_cuda_enabled_property(self) -> bool:
+        return self._get_data_from_response(self._config_response, ["cuda", "enabled"], self._config_table_name)
 
     @property
-    def conf_cuda_loader_property(self):
-        pass
+    def conf_cuda_loader_property(self) -> Optional[str]:
+        return self._get_data_from_response(self._config_response, ["cuda", "loader"], self._config_table_name)
 
     @property
-    def conf_cuda_nvml_property(self):
-        pass
+    def conf_cuda_nvml_property(self) -> bool:
+        return self._get_data_from_response(self._config_response, ["cuda", "nvml"], self._config_table_name)
 
     @property
-    def conf_cuda_cn_lite_0_property(self):
-        pass
+    def conf_cuda_cn_lite_0_property(self) -> bool:
+        return self._get_data_from_response(self._config_response, ["cuda", "cn-lite/0"], self._config_table_name)
 
     @property
-    def conf_cuda_cn_0_property(self):
-        pass
+    def conf_cuda_cn_0_property(self) -> bool:
+        return self._get_data_from_response(self._config_response, ["cuda", "cn/0"], self._config_table_name)
 
     @property
-    def conf_cuda_panthera_property(self):
-        pass
+    def conf_cuda_panthera_property(self) -> bool:
+        return self._get_data_from_response(self._config_response, ["cuda", "panthera"], self._config_table_name)
 
     @property
-    def conf_log_file_property(self):
-        pass
+    def conf_log_file_property(self) -> Optional[str]:
+        return self._get_data_from_response(self._config_response, ["log-file"], self._config_table_name)
 
     @property
-    def conf_donate_level_property(self):
-        pass
+    def conf_donate_level_property(self) -> int:
+        return self._get_data_from_response(self._config_response, ["donate-level"], self._config_table_name)
 
     @property
-    def conf_donate_over_proxy_property(self):
-        pass
+    def conf_donate_over_proxy_property(self) -> int:
+        return self._get_data_from_response(self._config_response, ["donate-over-proxy"], self._config_table_name)
 
     @property
-    def conf_pools_property(self):
-        pass
+    def conf_pools_property(self) -> List[Dict[str, Union[str, int, bool, None]]]:
+        return self._get_data_from_response(self._config_response, ["pools"], self._config_table_name)
 
     @property
-    def conf_pools_algo_property(self):
-        pass
+    def conf_pools_algo_property(self) -> str:
+        return self._get_data_from_response(self._config_response, ["pools", 0, "algo"], self._config_table_name)
 
     @property
-    def conf_pools_coin_property(self):
-        pass
+    def conf_pools_coin_property(self) -> str:
+        return self._get_data_from_response(self._config_response, ["pools", 0, "coin"], self._config_table_name)
 
     @property
-    def conf_pools_url_property(self):
-        pass
+    def conf_pools_url_property(self) -> str:
+        return self._get_data_from_response(self._config_response, ["pools", 0, "url"], self._config_table_name)
 
     @property
-    def conf_pools_user_property(self):
-        pass
+    def conf_pools_user_property(self) -> str:
+        return self._get_data_from_response(self._config_response, ["pools", 0, "user"], self._config_table_name)
 
     @property
-    def conf_pools_pass_property(self):
-        pass
+    def conf_pools_pass_property(self) -> str:
+        return self._get_data_from_response(self._config_response, ["pools", 0, "pass"], self._config_table_name)
 
     @property
-    def conf_pools_rig_id_property(self):
-        pass
+    def conf_pools_rig_id_property(self) -> str:
+        return self._get_data_from_response(self._config_response, ["pools", 0, "rig-id"], self._config_table_name)
 
     @property
-    def conf_pools_nicehash_property(self):
-        pass
+    def conf_pools_nicehash_property(self) -> bool:
+        return self._get_data_from_response(self._config_response, ["pools", 0, "nicehash"], self._config_table_name)
 
     @property
-    def conf_pools_keepalive_property(self):
-        pass
+    def conf_pools_keepalive_property(self) -> bool:
+        return self._get_data_from_response(self._config_response, ["pools", 0, "keepalive"], self._config_table_name)
 
     @property
-    def conf_pools_enabled_property(self):
-        pass
+    def conf_pools_enabled_property(self) -> bool:
+        return self._get_data_from_response(self._config_response, ["pools", 0, "enabled"], self._config_table_name)
 
     @property
-    def conf_pools_tls_property(self):
-        pass
+    def conf_pools_tls_property(self) -> bool:
+        return self._get_data_from_response(self._config_response, ["pools", 0, "tls"], self._config_table_name)
 
     @property
-    def conf_pools_sni_property(self):
-        pass
+    def conf_pools_sni_property(self) -> bool:
+        return self._get_data_from_response(self._config_response, ["pools", 0, "sni"], self._config_table_name)
 
     @property
-    def conf_pools_tls_fingerprint_property(self):
-        pass
+    def conf_pools_tls_fingerprint_property(self) -> Optional[str]:
+        return self._get_data_from_response(self._config_response, ["pools", 0, "tls-fingerprint"], self._config_table_name)
 
     @property
-    def conf_pools_daemon_property(self):
-        pass
+    def conf_pools_daemon_property(self) -> bool:
+        return self._get_data_from_response(self._config_response, ["pools", 0, "daemon"], self._config_table_name)
 
     @property
-    def conf_pools_socks5_property(self):
-        pass
+    def conf_pools_socks5_property(self) -> Optional[str]:
+        return self._get_data_from_response(self._config_response, ["pools", 0, "socks5"], self._config_table_name)
 
     @property
-    def conf_pools_self_select_property(self):
-        pass
+    def conf_pools_self_select_property(self) -> Optional[str]:
+        return self._get_data_from_response(self._config_response, ["pools", 0, "self-select"], self._config_table_name)
 
     @property
-    def conf_pools_submit_to_origin_property(self):
-        pass
+    def conf_pools_submit_to_origin_property(self) -> bool:
+        return self._get_data_from_response(self._config_response, ["pools", 0, "submit-to-origin"], self._config_table_name)
 
     @property
-    def conf_retries_property(self):
-        pass
+    def conf_retries_property(self) -> int:
+        return self._get_data_from_response(self._config_response, ["retries"], self._config_table_name)
 
     @property
-    def conf_retry_pause_property(self):
-        pass
+    def conf_retry_pause_property(self) -> int:
+        return self._get_data_from_response(self._config_response, ["retry-pause"], self._config_table_name)
 
     @property
-    def conf_print_time_property(self):
-        pass
+    def conf_print_time_property(self) -> int:
+        return self._get_data_from_response(self._config_response, ["print-time"], self._config_table_name)
 
     @property
-    def conf_health_print_time_property(self):
-        pass
+    def conf_health_print_time_property(self) -> int:
+        return self._get_data_from_response(self._config_response, ["health-print-time"], self._config_table_name)
 
     @property
-    def conf_dmi_property(self):
-        pass
+    def conf_dmi_property(self) -> bool:
+        return self._get_data_from_response(self._config_response, ["dmi"], self._config_table_name)
 
     @property
-    def conf_syslog_property(self):
-        pass
+    def conf_syslog_property(self) -> bool:
+        return self._get_data_from_response(self._config_response, ["syslog"], self._config_table_name)
 
     @property
-    def conf_tls_property(self):
-        pass
+    def conf_tls_property(self) -> Dict[str, Optional[Union[str, bool]]]:
+        return self._get_data_from_response(self._config_response, ["tls"], self._config_table_name)
 
     @property
-    def conf_tls_enabled_property(self):
-        pass
+    def conf_tls_enabled_property(self) -> bool:
+        return self._get_data_from_response(self._config_response, ["tls", "enabled"], self._config_table_name)
 
     @property
-    def conf_tls_protocols_property(self):
-        pass
+    def conf_tls_protocols_property(self) -> Optional[str]:
+        return self._get_data_from_response(self._config_response, ["tls", "protocols"], self._config_table_name)
 
     @property
-    def conf_tls_cert_property(self):
-        pass
+    def conf_tls_cert_property(self) -> Optional[str]:
+        return self._get_data_from_response(self._config_response, ["tls", "cert"], self._config_table_name)
 
     @property
-    def conf_tls_cert_key_property(self):
-        pass
+    def conf_tls_cert_key_property(self) -> Optional[str]:
+        return self._get_data_from_response(self._config_response, ["tls", "cert_key"], self._config_table_name)
 
     @property
-    def conf_tls_ciphers_property(self):
-        pass
+    def conf_tls_ciphers_property(self) -> Optional[str]:
+        return self._get_data_from_response(self._config_response, ["tls", "ciphers"], self._config_table_name)
 
     @property
-    def conf_tls_ciphersuites_property(self):
-        pass
+    def conf_tls_ciphersuites_property(self) -> Optional[str]:
+        return self._get_data_from_response(self._config_response, ["tls", "ciphersuites"], self._config_table_name)
 
     @property
-    def conf_tls_dhparam_property(self):
-        pass
+    def conf_tls_dhparam_property(self) -> Optional[str]:
+        return self._get_data_from_response(self._config_response, ["tls", "dhparam"], self._config_table_name)
 
     @property
-    def conf_dns_property(self):
-        pass
+    def conf_dns_property(self) -> Dict[str, Union[bool, int]]:
+        return self._get_data_from_response(self._config_response, ["dns"], self._config_table_name)
 
     @property
-    def conf_dns_ipv6_property(self):
-        pass
+    def conf_dns_ipv6_property(self) -> bool:
+        return self._get_data_from_response(self._config_response, ["dns", "ipv6"], self._config_table_name)
 
     @property
-    def conf_dns_ttl_property(self):
-        pass
+    def conf_dns_ttl_property(self) -> int:
+        return self._get_data_from_response(self._config_response, ["dns", "ttl"], self._config_table_name)
 
     @property
-    def conf_user_agent_property(self):
-        pass
+    def conf_user_agent_property(self) -> Optional[str]:
+        return self._get_data_from_response(self._config_response, ["user-agent"], self._config_table_name)
 
     @property
-    def conf_verbose_property(self):
-        pass
+    def conf_verbose_property(self) -> int:
+        return self._get_data_from_response(self._config_response, ["verbose"], self._config_table_name)
 
     @property
-    def conf_watch_property(self):
-        pass
+    def conf_watch_property(self) -> bool:
+        return self._get_data_from_response(self._config_response, ["watch"], self._config_table_name)
 
     @property
-    def conf_rebench_algo_property(self):
-        pass
+    def conf_rebench_algo_property(self) -> bool:
+        return self._get_data_from_response(self._config_response, ["rebench-algo"], self._config_table_name)
 
     @property
-    def conf_bench_algo_time_property(self):
-        pass
+    def conf_bench_algo_time_property(self) -> int:
+        return self._get_data_from_response(self._config_response, ["bench-algo-time"], self._config_table_name)
 
     @property
-    def conf_algo_min_time_property(self):
-        pass
+    def conf_algo_min_time_property(self) -> int:
+        return self._get_data_from_response(self._config_response, ["algo-min-time"], self._config_table_name)
 
     @property
-    def conf_algo_perf_property(self):
-        pass
+    def conf_algo_perf_property(self) -> Dict[str, float]:
+        return self._get_data_from_response(self._config_response, ["algo-perf"], self._config_table_name)
 
     @property
-    def conf_algo_perf_cn_0_property(self):
-        pass
+    def conf_algo_perf_cn_0_property(self) -> float:
+        return self._get_data_from_response(self._config_response, ["algo-perf", "cn/0"], self._config_table_name)
 
     @property
-    def conf_algo_perf_cn_1_property(self):
-        pass
+    def conf_algo_perf_cn_1_property(self) -> float:
+        return self._get_data_from_response(self._config_response, ["algo-perf", "cn/1"], self._config_table_name)
 
     @property
-    def conf_algo_perf_cn_2_property(self):
-        pass
+    def conf_algo_perf_cn_2_property(self) -> float:
+        return self._get_data_from_response(self._config_response, ["algo-perf", "cn/2"], self._config_table_name)
 
     @property
-    def conf_algo_perf_cn_r_property(self):
-        pass
+    def conf_algo_perf_cn_r_property(self) -> float:
+        return self._get_data_from_response(self._config_response, ["algo-perf", "cn/r"], self._config_table_name)
 
     @property
-    def conf_algo_perf_cn_fast_property(self):
-        pass
+    def conf_algo_perf_cn_fast_property(self) -> float:
+        return self._get_data_from_response(self._config_response, ["algo-perf", "cn/fast"], self._config_table_name)
 
     @property
-    def conf_algo_perf_cn_half_property(self):
-        pass
+    def conf_algo_perf_cn_half_property(self) -> float:
+        return self._get_data_from_response(self._config_response, ["algo-perf", "cn/half"], self._config_table_name)
 
     @property
-    def conf_algo_perf_cn_xao_property(self):
-        pass
+    def conf_algo_perf_cn_xao_property(self) -> float:
+        return self._get_data_from_response(self._config_response, ["algo-perf", "cn/xao"], self._config_table_name)
 
     @property
-    def conf_algo_perf_cn_rto_property(self):
-        pass
+    def conf_algo_perf_cn_rto_property(self) -> float:
+        return self._get_data_from_response(self._config_response, ["algo-perf", "cn/rto"], self._config_table_name)
 
     @property
-    def conf_algo_perf_cn_rwz_property(self):
-        pass
+    def conf_algo_perf_cn_rwz_property(self) -> float:
+        return self._get_data_from_response(self._config_response, ["algo-perf", "cn/rwz"], self._config_table_name)
 
     @property
-    def conf_algo_perf_cn_zls_property(self):
-        pass
+    def conf_algo_perf_cn_zls_property(self) -> float:
+        return self._get_data_from_response(self._config_response, ["algo-perf", "cn/zls"], self._config_table_name)
 
     @property
-    def conf_algo_perf_cn_double_property(self):
-        pass
+    def conf_algo_perf_cn_double_property(self) -> float:
+        return self._get_data_from_response(self._config_response, ["algo-perf", "cn/double"], self._config_table_name)
 
     @property
-    def conf_algo_perf_cn_ccx_property(self):
-        pass
+    def conf_algo_perf_cn_ccx_property(self) -> float:
+        return self._get_data_from_response(self._config_response, ["algo-perf", "cn/ccx"], self._config_table_name)
 
     @property
-    def conf_algo_perf_cn_lite_0_property(self):
-        pass
+    def conf_algo_perf_cn_lite_0_property(self) -> float:
+        return self._get_data_from_response(self._config_response, ["algo-perf", "cn-lite/0"], self._config_table_name)
 
     @property
-    def conf_algo_perf_cn_lite_1_property(self):
-        pass
+    def conf_algo_perf_cn_lite_1_property(self) -> float:
+        return self._get_data_from_response(self._config_response, ["algo-perf", "cn-lite/1"], self._config_table_name)
 
     @property
-    def conf_algo_perf_cn_heavy_xhv_property(self):
-        pass
+    def conf_algo_perf_cn_heavy_xhv_property(self) -> float:
+        return self._get_data_from_response(self._config_response, ["algo-perf", "cn-heavy/xhv"], self._config_table_name)
 
     @property
-    def conf_algo_perf_cn_pico_property(self):
-        pass
+    def conf_algo_perf_cn_pico_property(self) -> float:
+        return self._get_data_from_response(self._config_response, ["algo-perf", "cn-pico"], self._config_table_name)
 
     @property
-    def conf_algo_perf_cn_pico_tlo_property(self):
-        pass
+    def conf_algo_perf_cn_pico_tlo_property(self) -> float:
+        return self._get_data_from_response(self._config_response, ["algo-perf", "cn-pico/tlo"], self._config_table_name)
 
     @property
-    def conf_algo_perf_cn_gpu_property(self):
-        pass
+    def conf_algo_perf_cn_gpu_property(self) -> float:
+        return self._get_data_from_response(self._config_response, ["algo-perf", "cn/gpu"], self._config_table_name)
 
     @property
-    def conf_algo_perf_rx_0_property(self):
-        pass
+    def conf_algo_perf_rx_0_property(self) -> float:
+        return self._get_data_from_response(self._config_response, ["algo-perf", "rx/0"], self._config_table_name)
 
     @property
-    def conf_algo_perf_rx_arq_property(self):
-        pass
+    def conf_algo_perf_rx_arq_property(self) -> float:
+        return self._get_data_from_response(self._config_response, ["algo-perf", "rx/arq"], self._config_table_name)
 
     @property
-    def conf_algo_perf_rx_xeq_property(self):
-        pass
+    def conf_algo_perf_rx_xeq_property(self) -> float:
+        return self._get_data_from_response(self._config_response, ["algo-perf", "rx/xeq"], self._config_table_name)
 
     @property
-    def conf_algo_perf_rx_graft_property(self):
-        pass
+    def conf_algo_perf_rx_graft_property(self) -> float:
+        return self._get_data_from_response(self._config_response, ["algo-perf", "rx/graft"], self._config_table_name)
 
     @property
-    def conf_algo_perf_rx_sfx_property(self):
-        pass
+    def conf_algo_perf_rx_sfx_property(self) -> float:
+        return self._get_data_from_response(self._config_response, ["algo-perf", "rx/sfx"], self._config_table_name)
 
     @property
-    def conf_algo_perf_panthera_property(self):
-        pass
+    def conf_algo_perf_panthera_property(self) -> float:
+        return self._get_data_from_response(self._config_response, ["algo-perf", "panthera"], self._config_table_name)
 
     @property
-    def conf_algo_perf_argon2_chukwav2_property(self):
-        pass
+    def conf_algo_perf_argon2_chukwav2_property(self) -> float:
+        return self._get_data_from_response(self._config_response, ["algo-perf", "argon2/chukwav2"], self._config_table_name)
 
     @property
-    def conf_algo_perf_kawpow_property(self):
-        pass
+    def conf_algo_perf_kawpow_property(self) -> float:
+        return self._get_data_from_response(self._config_response, ["algo-perf", "kawpow"], self._config_table_name)
 
     @property
-    def conf_algo_perf_ghostrider_property(self):
-        pass
+    def conf_algo_perf_ghostrider_property(self) -> float:
+        return self._get_data_from_response(self._config_response, ["algo-perf", "ghostrider"], self._config_table_name)
 
     @property
-    def conf_algo_perf_flex_property(self):
-        pass
+    def conf_algo_perf_flex_property(self) -> float:
+        return self._get_data_from_response(self._config_response, ["algo-perf", "flex"], self._config_table_name)
 
     @property
-    def conf_pause_on_battery_property(self):
-        pass
+    def conf_pause_on_battery_property(self) -> bool:
+        return self._get_data_from_response(self._config_response, ["pause-on-battery"], self._config_table_name)
 
     @property
-    def conf_pause_on_active_property(self):
-        pass
+    def conf_pause_on_active_property(self) -> bool:
+        return self._get_data_from_response(self._config_response, ["pause-on-active"], self._config_table_name)
