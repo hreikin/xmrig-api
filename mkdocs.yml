@@ -39,6 +39,7 @@ nav:
       - "XMRigAPIError": "reference/exceptions/XMRigAPIError.md"
       - "XMRigAuthorizationError": "reference/exceptions/XMRigAuthorizationError.md"
       - "XMRigConnectionError": "reference/exceptions/XMRigConnectionError.md"
+      - "XMRigDatabaseError": "reference/exceptions/XMRigDatabaseError.md"
       - "XMRigManagerError": "reference/exceptions/XMRigManagerError.md"
       - "XMRigPropertiesError": "reference/exceptions/XMRigPropertiesError.md"
   - "Contributing": "CONTRIBUTING.md"
