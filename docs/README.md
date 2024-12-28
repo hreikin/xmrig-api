@@ -1,5 +1,7 @@
 # XMRig-API
 
+> **Development Status**: This project is not yet complete and is not guarenteed to be in a working state until the `0.1.0` beta release, which should be released in the near future.
+
 `XMRig-API` is a Python module that enables seamless interaction with the XMRig API, offering a range of features designed to enhance usability, flexibility, and reliability. Detailed documentation is available [here](https://hreikin.co.uk/xmrig-api/), and can also be built locally if needed.
 
 ## Getting Started
