@@ -1,14 +1,14 @@
 {
     "api": {
         "id": null,
-        "worker-id": "win11-gpu"
+        "worker-id": null
     },
     "http": {
-        "enabled": true,
-        "host": "0.0.0.0",
-        "port": 37842,
-        "access-token": "SECRET",
-        "restricted": false
+        "enabled": false,
+        "host": "127.0.0.1",
+        "port": 0,
+        "access-token": null,
+        "restricted": true
     },
     "autosave": true,
     "background": false,
@@ -26,7 +26,7 @@
         "scratchpad_prefetch_mode": 1
     },
     "cpu": {
-        "enabled": false,
+        "enabled": true,
         "huge-pages": true,
         "huge-pages-jit": false,
         "hw-aes": null,
@@ -36,133 +36,43 @@
         "max-threads-hint": 100,
         "asm": true,
         "argon2-impl": null,
-        "cn-lite/0": false,
-        "cn/0": false
+        "cn/0": false,
+        "cn-lite/0": false
     },
     "opencl": {
-        "enabled": true,
+        "enabled": false,
         "cache": true,
         "loader": null,
         "platform": "AMD",
         "adl": true,
-        "cn": [
-            {
-                "index": 0,
-                "intensity": 960,
-                "worksize": 8,
-                "strided_index": [1, 2],
-                "threads": [-1, -1],
-                "unroll": 8
-            }
-        ],
-        "cn-heavy": [
-            {
-                "index": 0,
-                "intensity": 960,
-                "worksize": 8,
-                "strided_index": [1, 2],
-                "threads": [-1, -1],
-                "unroll": 8
-            }
-        ],
-        "cn-lite": [
-            {
-                "index": 0,
-                "intensity": 1920,
-                "worksize": 8,
-                "strided_index": [1, 2],
-                "threads": [-1, -1],
-                "unroll": 8
-            }
-        ],
-        "cn-pico": [
-            {
-                "index": 0,
-                "intensity": 1920,
-                "worksize": 8,
-                "strided_index": [2, 2],
-                "threads": [-1, -1],
-                "unroll": 8
-            }
-        ],
-        "cn/2": [
-            {
-                "index": 0,
-                "intensity": 960,
-                "worksize": 8,
-                "strided_index": [2, 2],
-                "threads": [-1, -1],
-                "unroll": 8
-            }
-        ],
-        "cn/gpu": [
-            {
-                "index": 0,
-                "intensity": 960,
-                "worksize": 8,
-                "strided_index": [1, 2],
-                "threads": [-1, -1],
-                "unroll": 8
-            }
-        ],
-        "cn/upx2": [
-            {
-                "index": 0,
-                "intensity": 1920,
-                "worksize": 8,
-                "strided_index": [2, 2],
-                "threads": [-1, -1],
-                "unroll": 8
-            }
-        ],
-        "kawpow": [
-            {
-                "index": 0,
-                "intensity": 7864320,
-                "worksize": 256,
-                "threads": [-1],
-                "unroll": 1
-            }
-        ],
-        "rx": [
-            {
-                "index": 0,
-                "intensity": 448,
-                "worksize": 8,
-                "threads": [-1, -1],
-                "bfactor": 6,
-                "gcn_asm": false,
-                "dataset_host": false
-            }
-        ],
-        "cn-lite/0": false,
         "cn/0": false,
+        "cn-lite/0": false,
         "panthera": false
     },
     "cuda": {
         "enabled": false,
         "loader": null,
         "nvml": true,
-        "cn-lite/0": false,
         "cn/0": false,
-        "panthera": false
+        "cn-lite/0": false,
+        "panthera": false,
+        "astrobwt": false
     },
+    "donate-level": 1,
+    "donate-over-proxy": 1,
     "log-file": null,
-    "donate-level": 0,
-    "donate-over-proxy": 0,
     "pools": [
         {
-            "algo": "kawpow",
-            "coin": "rvn",
-            "url": "gulf.moneroocean.stream:10032",
-            "user": "43tdLTTMx99AWy8JrGb6wMcqfpCTTzpDB5sMiFX5QthJfKinLL7WEwzcdEfuPgyeHR3TJjiCwLNTqBHEPwGGNXCE8pV5uKw",
-            "pass": "win11-gpu~kawpow",
-            "rig-id": "win11-gpu",
+            "algo": null,
+            "coin": null,
+            "url": "gulf.moneroocean.stream:10128",
+            "user": "YOUR_WALLET_ADDRESS",
+            "pass": "x",
+            "rig-id": null,
             "nicehash": false,
             "keepalive": true,
             "enabled": true,
             "tls": false,
-            "sni": false,
             "tls-fingerprint": null,
             "daemon": false,
             "socks5": null,
@@ -170,11 +80,11 @@
             "submit-to-origin": false
         }
     ],
-    "retries": 5,
-    "retry-pause": 5,
     "print-time": 60,
     "health-print-time": 60,
     "dmi": true,
+    "retries": 5,
+    "retry-pause": 5,
     "syslog": false,
     "tls": {
         "enabled": false,
@@ -194,37 +104,6 @@
     "watch": true,
     "rebench-algo": false,
     "bench-algo-time": 20,
-    "algo-min-time": 0,
-    "algo-perf": {
-        "cn/0": 1360.6503350543776,
-        "cn/1": 1374.5583038869258,
-        "cn/2": 1374.5583038869258,
-        "cn/r": 1374.5583038869258,
-        "cn/fast": 2749.1166077738517,
-        "cn/half": 2749.1166077738517,
-        "cn/xao": 1374.5583038869258,
-        "cn/rto": 1374.5583038869258,
-        "cn/rwz": 1832.7444051825678,
-        "cn/zls": 1832.7444051825678,
-        "cn/double": 687.2791519434629,
-        "cn/ccx": 2721.300670108755,
-        "cn-lite/0": 2729.0373852319035,
-        "cn-lite/1": 2729.0373852319035,
-        "cn-heavy/xhv": 1760.378732702112,
-        "cn-pico": 11990.868527550067,
-        "cn-pico/tlo": 11990.868527550067,
-        "cn/gpu": 2746.6722129783693,
-        "rx/0": 553.7489643744822,
-        "rx/arq": 2224.8223072717333,
-        "rx/xeq": 2224.8223072717333,
-        "rx/graft": 498.468606431853,
-        "rx/sfx": 553.7489643744822,
-        "panthera": -1.0,
-        "argon2/chukwav2": -1.0,
-        "kawpow": 0.008527417187072754,
-        "ghostrider": -1.0,
-        "flex": -1.0
-    },
     "pause-on-battery": false,
     "pause-on-active": false
 }
