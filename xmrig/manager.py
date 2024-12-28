@@ -130,7 +130,21 @@ class XMRigManager:
         try:
             miner_api = self.get_miner(miner_name)
             for key, value in new_details.items():
-                setattr(miner_api, f"_{key}", value)
+                if key == "miner_name":
+                    if value in self._miners:
+                        raise ValueError(f"Miner with name '{value}' already exists.")
+                    miner_api._miner_name = value
+                    # remove old entry and replace with new entry
+                    del self._miners[miner_name]
+                    self._miners[value] = miner_api
+                elif key == "ip":
+                    miner_api._ip = value
+                elif key == "port":
+                    miner_api._port = value
+                elif key == "access_token":
+                    miner_api.set_auth_header(value)
+                elif key == "tls_enabled":
+                    miner_api._tls_enabled = value
             # check if keys "ip", "port" or "tls_enabled" are in the new_details dictionary to construct the new base URL
             if "ip" in new_details or "port" in new_details or "tls_enabled" in new_details:
                 miner_api._base_url = f"http://{miner_api._ip}:{miner_api._port}"
