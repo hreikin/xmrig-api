@@ -142,7 +142,7 @@ class XMRigAPI:
             log.error(f"An error occurred while connecting to {self._summary_url}: {e}")
             return False
         except XMRigAuthorizationError as e:
-            raise XMRigAuthorizationError(f"An authorization error occurred updating the summary: {e}") from e
+            raise XMRigAuthorizationError(f"An authorization error occurred updating the summary, please provide a valid access token: {e}") from e
         except Exception as e:
             log.error(f"An error occurred updating the summary: {e}")
             return False
@@ -165,7 +165,7 @@ class XMRigAPI:
             except requests.exceptions.JSONDecodeError as e:
                 log.error(f"An error occurred decoding the backends response: {e}")
                 return False
-            self._update_properties_cache()         #TODO: edit this methods definition to take a single response instead of updating all at every call
+            self._update_properties_cache()
             log.debug(f"Backends endpoint successfully fetched.")
             if self._db_url is not None:
                 # insert each item from the self._backends_response into the database as its own table
@@ -177,14 +177,12 @@ class XMRigAPI:
                     if self._backends_response.index(backend) == 2:
                         prefix = "cuda"
                     XMRigDatabase.insert_data_to_db(backend, f"{self._miner_name}-{prefix}-backend", self._db_url)
-
-                # XMRigDatabase.insert_data_to_db(self._backends_response, f"{self._miner_name}-backends", self._db_url)
             return True
         except requests.exceptions.RequestException as e:
             log.error(f"An error occurred while connecting to {self._backends_url}: {e}")
             return False
         except XMRigAuthorizationError as e:
-            raise XMRigAuthorizationError(f"An authorization error occurred updating the backends: {e}") from e
+            raise XMRigAuthorizationError(f"An authorization error occurred updating the backends, please provide a valid access token: {e}") from e
         except Exception as e:
             log.error(f"An error occurred updating the backends: {e}")
             return False
@@ -207,7 +205,7 @@ class XMRigAPI:
             except requests.exceptions.JSONDecodeError as e:
                 log.error(f"An error occurred decoding the config response: {e}")
                 return False
-            self._update_properties_cache()         #TODO: edit this methods definition to take a single response instead of updating all at every call
+            self._update_properties_cache()
             log.debug(f"Config endpoint successfully fetched.")
             if self._db_url is not None:
                 XMRigDatabase.insert_data_to_db(self._config_response, f"{self._miner_name}-config", self._db_url)
@@ -216,7 +214,7 @@ class XMRigAPI:
             log.error(f"An error occurred while connecting to {self._config_url}: {e}")
             return False
         except XMRigAuthorizationError as e:
-            raise XMRigAuthorizationError(f"An authorization error occurred updating the config: {e}") from e
+            raise XMRigAuthorizationError(f"An authorization error occurred updating the config, please provide a valid access token: {e}") from e
         except Exception as e:
             log.error(f"An error occurred updating the config: {e}")
             return False
@@ -237,13 +235,13 @@ class XMRigAPI:
                 raise XMRigAuthorizationError()
             # Raise an HTTPError for bad responses (4xx and 5xx)
             self._post_config_response.raise_for_status()
-            self._update_properties_cache()         #TODO: edit this methods definition to take a single response instead of updating all at every call
+            self._update_properties_cache()
             log.debug(f"Config endpoint successfully updated.")
             return True
         except requests.exceptions.RequestException as e:
             raise XMRigConnectionError(f"An error occurred while connecting to {self._config_url}: {e}") from e
         except XMRigAuthorizationError as e:
-            raise XMRigAuthorizationError(f"An authorization error occurred posting the config: {e}") from e
+            raise XMRigAuthorizationError(f"An authorization error occurred posting the config, please provide a valid access token: {e}") from e
         except Exception as e:
             raise XMRigAPIError(f"An error occurred posting the config: {e}") from e
 
