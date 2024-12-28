@@ -17,7 +17,6 @@ from xmrig.properties import XMRigProperties
 from xmrig.db import XMRigDatabase
 from typing import Optional, Dict, Any
 
-# TODO: Create methods to edit miner details like IP, port, access token, etc.
 # TODO: Research all possible config options for properties.
 # TODO: Test config properties work on a live miner.
 # TODO: Add reStructuredText formatting to docstrings.

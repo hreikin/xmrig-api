@@ -133,8 +133,8 @@ class XMRigManager:
             miner_api = self.get_miner(miner_name)
             for key, value in new_details.items():
                 setattr(miner_api, f"_{key}", value)
-            # check if keys "ip" or "port" are in the new_details dictionary to construct the new base URL
-            if "ip" in new_details or "port" in new_details:
+            # check if keys "ip", "port" or "tls_enabled" are in the new_details dictionary to construct the new base URL
+            if "ip" in new_details or "port" in new_details or "tls_enabled" in new_details:
                 miner_api._base_url = f"http://{miner_api._ip}:{miner_api._port}"
                 if miner_api._tls_enabled:
                     self._base_url = f"https://{miner_api._ip}:{miner_api._port}"
