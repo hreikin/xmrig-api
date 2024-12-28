@@ -49,6 +49,7 @@ XMRigManager:
 - add_miner
 - remove_miner
 - get_miner
+- edit_miner
 - perform_action_on_all
 - get_all_miners_endpoints
 - list_miners
