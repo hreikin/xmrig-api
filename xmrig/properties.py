@@ -1778,756 +1778,1890 @@ class XMRigProperties:
 
     @property
     def conf_api_property(self) -> Dict[str, Union[str, None]]:
+        """
+        Retrieves the API property from the config data.
+
+        Returns:
+            Dict[str, Union[str, None]]: API property, or "N/A" if not available.
+        """
         return self._get_data_from_response(self._config_response, ["api"], self._config_table_name)
 
     @property
     def conf_api_id_property(self) -> Optional[str]:
+        """
+        Retrieves the API ID property from the config data.
+
+        Returns:
+            Optional[str]: API ID property, or "N/A" if not available.
+        """
         return self._get_data_from_response(self._config_response, ["api", "id"], self._config_table_name)
 
     @property
     def conf_api_worker_id_property(self) -> str:
+        """
+        Retrieves the API worker ID property from the config data.
+
+        Returns:
+            str: API worker ID property, or "N/A" if not available.
+        """
         return self._get_data_from_response(self._config_response, ["api", "worker-id"], self._config_table_name)
 
     @property
     def conf_http_property(self) -> Dict[str, Union[str, int, bool]]:
+        """
+        Retrieves the HTTP property from the config data.
+
+        Returns:
+            Dict[str, Union[str, int, bool]]: HTTP property, or "N/A" if not available.
+        """
         return self._get_data_from_response(self._config_response, ["http"], self._config_table_name)
 
     @property
     def conf_http_enabled_property(self) -> bool:
+        """
+        Retrieves the HTTP enabled property from the config data.
+
+        Returns:
+            bool: HTTP enabled property, or "N/A" if not available.
+        """
         return self._get_data_from_response(self._config_response, ["http", "enabled"], self._config_table_name)
 
     @property
     def conf_http_host_property(self) -> str:
+        """
+        Retrieves the HTTP host property from the config data.
+
+        Returns:
+            str: HTTP host property, or "N/A" if not available.
+        """
         return self._get_data_from_response(self._config_response, ["http", "host"], self._config_table_name)
 
     @property
     def conf_http_port_property(self) -> int:
+        """
+        Retrieves the HTTP port property from the config data.
+
+        Returns:
+            int: HTTP port property, or "N/A" if not available.
+        """
         return self._get_data_from_response(self._config_response, ["http", "port"], self._config_table_name)
 
     @property
     def conf_http_access_token_property(self) -> str:
+        """
+        Retrieves the HTTP access token property from the config data.
+
+        Returns:
+            str: HTTP access token property, or "N/A" if not available.
+        """
         return self._get_data_from_response(self._config_response, ["http", "access-token"], self._config_table_name)
 
     @property
     def conf_http_restricted_property(self) -> bool:
+        """
+        Retrieves the HTTP restricted property from the config data.
+
+        Returns:
+            bool: HTTP restricted property, or "N/A" if not available.
+        """
         return self._get_data_from_response(self._config_response, ["http", "restricted"], self._config_table_name)
 
     @property
     def conf_autosave_property(self) -> bool:
+        """
+        Retrieves the autosave property from the config data.
+
+        Returns:
+            bool: Autosave property, or "N/A" if not available.
+        """
         return self._get_data_from_response(self._config_response, ["autosave"], self._config_table_name)
 
     @property
     def conf_background_property(self) -> bool:
+        """
+        Retrieves the background property from the config data.
+
+        Returns:
+            bool: Background property, or "N/A" if not available.
+        """
         return self._get_data_from_response(self._config_response, ["background"], self._config_table_name)
 
     @property
     def conf_colors_property(self) -> bool:
+        """
+        Retrieves the colors property from the config data.
+
+        Returns:
+            bool: Colors property, or "N/A" if not available.
+        """
         return self._get_data_from_response(self._config_response, ["colors"], self._config_table_name)
 
     @property
     def conf_title_property(self) -> bool:
+        """
+        Retrieves the title property from the config data.
+
+        Returns:
+            bool: Title property, or "N/A" if not available.
+        """
         return self._get_data_from_response(self._config_response, ["title"], self._config_table_name)
 
     @property
     def conf_randomx_property(self) -> Dict[str, Union[str, int, bool]]:
+        """
+        Retrieves the RandomX property from the config data.
+
+        Returns:
+            Dict[str, Union[str, int, bool]]: RandomX property, or "N/A" if not available.
+        """
         return self._get_data_from_response(self._config_response, ["randomx"], self._config_table_name)
 
     @property
     def conf_randomx_init_property(self) -> int:
+        """
+        Retrieves the RandomX init property from the config data.
+
+        Returns:
+            int: RandomX init property, or "N/A" if not available.
+        """
         return self._get_data_from_response(self._config_response, ["randomx", "init"], self._config_table_name)
 
     @property
     def conf_randomx_init_avx2_property(self) -> int:
+        """
+        Retrieves the RandomX init AVX2 property from the config data.
+
+        Returns:
+            int: RandomX init AVX2 property, or "N/A" if not available.
+        """
         return self._get_data_from_response(self._config_response, ["randomx", "init-avx2"], self._config_table_name)
 
     @property
     def conf_randomx_mode_property(self) -> str:
+        """
+        Retrieves the RandomX mode property from the config data.
+
+        Returns:
+            str: RandomX mode property, or "N/A" if not available.
+        """
         return self._get_data_from_response(self._config_response, ["randomx", "mode"], self._config_table_name)
 
     @property
     def conf_randomx_1gb_pages_property(self) -> bool:
+        """
+        Retrieves the RandomX 1GB pages property from the config data.
+
+        Returns:
+            bool: RandomX 1GB pages property, or "N/A" if not available.
+        """
         return self._get_data_from_response(self._config_response, ["randomx", "1gb-pages"], self._config_table_name)
 
     @property
     def conf_randomx_rdmsr_property(self) -> bool:
+        """
+        Retrieves the RandomX RDMSR property from the config data.
+
+        Returns:
+            bool: RandomX RDMSR property, or "N/A" if not available.
+        """
         return self._get_data_from_response(self._config_response, ["randomx", "rdmsr"], self._config_table_name)
 
     @property
     def conf_randomx_wrmsr_property(self) -> bool:
+        """
+        Retrieves the RandomX WRMSR property from the config data.
+
+        Returns:
+            bool: RandomX WRMSR property, or "N/A" if not available.
+        """
         return self._get_data_from_response(self._config_response, ["randomx", "wrmsr"], self._config_table_name)
 
     @property
     def conf_randomx_cache_qos_property(self) -> bool:
+        """
+        Retrieves the RandomX cache QoS property from the config data.
+
+        Returns:
+            bool: RandomX cache QoS property, or "N/A" if not available.
+        """
         return self._get_data_from_response(self._config_response, ["randomx", "cache_qos"], self._config_table_name)
 
     @property
     def conf_randomx_numa_property(self) -> bool:
+        """
+        Retrieves the RandomX NUMA property from the config data.
+
+        Returns:
+            bool: RandomX NUMA property, or "N/A" if not available.
+        """
         return self._get_data_from_response(self._config_response, ["randomx", "numa"], self._config_table_name)
 
     @property
     def conf_randomx_scratchpad_prefetch_mode_property(self) -> int:
+        """
+        Retrieves the RandomX scratchpad prefetch mode property from the config data.
+
+        Returns:
+            int: RandomX scratchpad prefetch mode property, or "N/A" if not available.
+        """
         return self._get_data_from_response(self._config_response, ["randomx", "scratchpad_prefetch_mode"], self._config_table_name)
 
     @property
     def conf_cpu_property(self) -> Dict[str, Union[str, int, bool, None]]:
+        """
+        Retrieves the CPU property from the config data.
+
+        Returns:
+            Dict[str, Union[str, int, bool, None]]: CPU property, or "N/A" if not available.
+        """
         return self._get_data_from_response(self._config_response, ["cpu"], self._config_table_name)
 
     @property
     def conf_cpu_enabled_property(self) -> bool:
+        """
+        Retrieves the CPU enabled property from the config data.
+
+        Returns:
+            bool: CPU enabled property, or "N/A" if not available.
+        """
         return self._get_data_from_response(self._config_response, ["cpu", "enabled"], self._config_table_name)
 
     @property
     def conf_cpu_huge_pages_property(self) -> bool:
+        """
+        Retrieves the CPU huge pages property from the config data.
+
+        Returns:
+            bool: CPU huge pages property, or "N/A" if not available.
+        """
         return self._get_data_from_response(self._config_response, ["cpu", "huge-pages"], self._config_table_name)
 
     @property
     def conf_cpu_huge_pages_jit_property(self) -> bool:
+        """
+        Retrieves the CPU huge pages JIT property from the config data.
+
+        Returns:
+            bool: CPU huge pages JIT property, or "N/A" if not available.
+        """
         return self._get_data_from_response(self._config_response, ["cpu", "huge-pages-jit"], self._config_table_name)
 
     @property
     def conf_cpu_hw_aes_property(self) -> Optional[bool]:
+        """
+        Retrieves the CPU hardware AES property from the config data.
+
+        Returns:
+            Optional[bool]: CPU hardware AES property, or "N/A" if not available.
+        """
         return self._get_data_from_response(self._config_response, ["cpu", "hw-aes"], self._config_table_name)
 
     @property
     def conf_cpu_priority_property(self) -> Optional[int]:
+        """
+        Retrieves the CPU priority property from the config data.
+
+        Returns:
+            Optional[int]: CPU priority property, or "N/A" if not available.
+        """
         return self._get_data_from_response(self._config_response, ["cpu", "priority"], self._config_table_name)
 
     @property
     def conf_cpu_memory_pool_property(self) -> bool:
+        """
+        Retrieves the CPU memory pool property from the config data.
+
+        Returns:
+            bool: CPU memory pool property, or "N/A" if not available.
+        """
         return self._get_data_from_response(self._config_response, ["cpu", "memory-pool"], self._config_table_name)
 
     @property
     def conf_cpu_yield_property(self) -> bool:
+        """
+        Retrieves the CPU yield property from the config data.
+
+        Returns:
+            bool: CPU yield property, or "N/A" if not available.
+        """
         return self._get_data_from_response(self._config_response, ["cpu", "yield"], self._config_table_name)
 
     @property
     def conf_cpu_max_threads_hint_property(self) -> int:
+        """
+        Retrieves the CPU max threads hint property from the config data.
+
+        Returns:
+            int: CPU max threads hint property, or "N/A" if not available.
+        """
         return self._get_data_from_response(self._config_response, ["cpu", "max-threads-hint"], self._config_table_name)
 
     @property
     def conf_cpu_asm_property(self) -> bool:
+        """
+        Retrieves the CPU ASM property from the config data.
+
+        Returns:
+            bool: CPU ASM property, or "N/A" if not available.
+        """
         return self._get_data_from_response(self._config_response, ["cpu", "asm"], self._config_table_name)
 
     @property
     def conf_cpu_argon2_impl_property(self) -> Optional[str]:
+        """
+        Retrieves the CPU Argon2 implementation property from the config data.
+
+        Returns:
+            Optional[str]: CPU Argon2 implementation property, or "N/A" if not available.
+        """
         return self._get_data_from_response(self._config_response, ["cpu", "argon2-impl"], self._config_table_name)
 
     @property
     def conf_cpu_cn_lite_0_property(self) -> bool:
+        """
+        Retrieves the CPU CN Lite 0 property from the config data.
+
+        Returns:
+            bool: CPU CN Lite 0 property, or "N/A" if not available.
+        """
         return self._get_data_from_response(self._config_response, ["cpu", "cn-lite/0"], self._config_table_name)
 
     @property
     def conf_cpu_cn_0_property(self) -> bool:
+        """
+        Retrieves the CPU CN 0 property from the config data.
+
+        Returns:
+            bool: CPU CN 0 property, or "N/A" if not available.
+        """
         return self._get_data_from_response(self._config_response, ["cpu", "cn/0"], self._config_table_name)
 
     @property
     def conf_opencl_property(self) -> Dict[str, Union[str, int, bool, List[Dict[str, Union[int, List[int], bool]]]]]:
+        """
+        Retrieves the OpenCL property from the config data.
+
+        Returns:
+            Dict[str, Union[str, int, bool, List[Dict[str, Union[int, List[int], bool]]]]]: OpenCL property, or "N/A" if not available.
+        """
         return self._get_data_from_response(self._config_response, ["opencl"], self._config_table_name)
 
     @property
     def conf_opencl_enabled_property(self) -> bool:
+        """
+        Retrieves the OpenCL enabled property from the config data.
+
+        Returns:
+            bool: OpenCL enabled property, or "N/A" if not available.
+        """
         return self._get_data_from_response(self._config_response, ["opencl", "enabled"], self._config_table_name)
 
     @property
     def conf_opencl_cache_property(self) -> bool:
+        """
+        Retrieves the OpenCL cache property from the config data.
+
+        Returns:
+            bool: OpenCL cache property, or "N/A" if not available.
+        """
         return self._get_data_from_response(self._config_response, ["opencl", "cache"], self._config_table_name)
 
     @property
     def conf_opencl_loader_property(self) -> Optional[str]:
+        """
+        Retrieves the OpenCL loader property from the config data.
+
+        Returns:
+            Optional[str]: OpenCL loader property, or "N/A" if not available.
+        """
         return self._get_data_from_response(self._config_response, ["opencl", "loader"], self._config_table_name)
 
     @property
     def conf_opencl_platform_property(self) -> str:
+        """
+        Retrieves the OpenCL platform property from the config data.
+
+        Returns:
+            str: OpenCL platform property, or "N/A" if not available.
+        """
         return self._get_data_from_response(self._config_response, ["opencl", "platform"], self._config_table_name)
 
     @property
     def conf_opencl_adl_property(self) -> bool:
+        """
+        Retrieves the OpenCL ADL property from the config data.
+
+        Returns:
+            bool: OpenCL ADL property, or "N/A" if not available.
+        """
         return self._get_data_from_response(self._config_response, ["opencl", "adl"], self._config_table_name)
 
     @property
     def conf_opencl_cn_property(self) -> List[Dict[str, Union[int, List[int]]]]:
+        """
+        Retrieves the OpenCL CN property from the config data.
+
+        Returns:
+            List[Dict[str, Union[int, List[int]]]]: OpenCL CN property, or "N/A" if not available.
+        """
         return self._get_data_from_response(self._config_response, ["opencl", "cn"], self._config_table_name)
 
     @property
     def conf_opencl_cn_index_property(self) -> int:
+        """
+        Retrieves the OpenCL CN index property from the config data.
+
+        Returns:
+            int: OpenCL CN index property, or "N/A" if not available.
+        """
         return self._get_data_from_response(self._config_response, ["opencl", "cn", 0, "index"], self._config_table_name)
 
     @property
     def conf_opencl_cn_intensity_property(self) -> int:
+        """
+        Retrieves the OpenCL CN intensity property from the config data.
+
+        Returns:
+            int: OpenCL CN intensity property, or "N/A" if not available.
+        """
         return self._get_data_from_response(self._config_response, ["opencl", "cn", 0, "intensity"], self._config_table_name)
 
     @property
     def conf_opencl_cn_worksize_property(self) -> int:
+        """
+        Retrieves the OpenCL CN worksize property from the config data.
+
+        Returns:
+            int: OpenCL CN worksize property, or "N/A" if not available.
+        """
         return self._get_data_from_response(self._config_response, ["opencl", "cn", 0, "worksize"], self._config_table_name)
 
     @property
     def conf_opencl_cn_strided_index_property(self) -> List[int]:
+        """
+        Retrieves the OpenCL CN strided index property from the config data.
+
+        Returns:
+            List[int]: OpenCL CN strided index property, or "N/A" if not available.
+        """
         return self._get_data_from_response(self._config_response, ["opencl", "cn", 0, "strided_index"], self._config_table_name)
 
     @property
     def conf_opencl_cn_threads_property(self) -> List[int]:
+        """
+        Retrieves the OpenCL CN threads property from the config data.
+
+        Returns:
+            List[int]: OpenCL CN threads property, or "N/A" if not available.
+        """
         return self._get_data_from_response(self._config_response, ["opencl", "cn", 0, "threads"], self._config_table_name)
 
     @property
     def conf_opencl_cn_unroll_property(self) -> int:
+        """
+        Retrieves the OpenCL CN unroll property from the config data.
+
+        Returns:
+            int: OpenCL CN unroll property, or "N/A" if not available.
+        """
         return self._get_data_from_response(self._config_response, ["opencl", "cn", 0, "unroll"], self._config_table_name)
 
     @property
     def conf_opencl_cn_heavy_property(self) -> List[Dict[str, Union[int, List[int]]]]:
+        """
+        Retrieves the OpenCL CN Heavy property from the config data.
+
+        Returns:
+            List[Dict[str, Union[int, List[int]]]]: OpenCL CN Heavy property, or "N/A" if not available.
+        """
         return self._get_data_from_response(self._config_response, ["opencl", "cn-heavy"], self._config_table_name)
 
     @property
     def conf_opencl_cn_heavy_index_property(self) -> int:
+        """
+        Retrieves the OpenCL CN Heavy index property from the config data.
+
+        Returns:
+            int: OpenCL CN Heavy index property, or "N/A" if not available.
+        """
         return self._get_data_from_response(self._config_response, ["opencl", "cn-heavy", 0, "index"], self._config_table_name)
 
     @property
     def conf_opencl_cn_heavy_intensity_property(self) -> int:
+        """
+        Retrieves the OpenCL CN Heavy intensity property from the config data.
+
+        Returns:
+            int: OpenCL CN Heavy intensity property, or "N/A" if not available.
+        """
         return self._get_data_from_response(self._config_response, ["opencl", "cn-heavy", 0, "intensity"], self._config_table_name)
 
     @property
     def conf_opencl_cn_heavy_worksize_property(self) -> int:
+        """
+        Retrieves the OpenCL CN Heavy worksize property from the config data.
+
+        Returns:
+            int: OpenCL CN Heavy worksize property, or "N/A" if not available.
+        """
         return self._get_data_from_response(self._config_response, ["opencl", "cn-heavy", 0, "worksize"], self._config_table_name)
 
     @property
     def conf_opencl_cn_heavy_strided_index_property(self) -> List[int]:
+        """
+        Retrieves the OpenCL CN Heavy strided index property from the config data.
+
+        Returns:
+            List[int]: OpenCL CN Heavy strided index property, or "N/A" if not available.
+        """
         return self._get_data_from_response(self._config_response, ["opencl", "cn-heavy", 0, "strided_index"], self._config_table_name)
 
     @property
     def conf_opencl_cn_heavy_threads_property(self) -> List[int]:
+        """
+        Retrieves the OpenCL CN Heavy threads property from the config data.
+
+        Returns:
+            List[int]: OpenCL CN Heavy threads property, or "N/A" if not available.
+        """
         return self._get_data_from_response(self._config_response, ["opencl", "cn-heavy", 0, "threads"], self._config_table_name)
 
     @property
     def conf_opencl_cn_heavy_unroll_property(self) -> int:
+        """
+        Retrieves the OpenCL CN Heavy unroll property from the config data.
+
+        Returns:
+            int: OpenCL CN Heavy unroll property, or "N/A" if not available.
+        """
         return self._get_data_from_response(self._config_response, ["opencl", "cn-heavy", 0, "unroll"], self._config_table_name)
 
     @property
     def conf_opencl_cn_lite_property(self) -> List[Dict[str, Union[int, List[int]]]]:
+        """
+        Retrieves the OpenCL CN Lite property from the config data.
+
+        Returns:
+            List[Dict[str, Union[int, List[int]]]]: OpenCL CN Lite property, or "N/A" if not available.
+        """
         return self._get_data_from_response(self._config_response, ["opencl", "cn-lite"], self._config_table_name)
 
     @property
     def conf_opencl_cn_lite_index_property(self) -> int:
+        """
+        Retrieves the OpenCL CN Lite index property from the config data.
+
+        Returns:
+            int: OpenCL CN Lite index property, or "N/A" if not available.
+        """
         return self._get_data_from_response(self._config_response, ["opencl", "cn-lite", 0, "index"], self._config_table_name)
 
     @property
     def conf_opencl_cn_lite_intensity_property(self) -> int:
+        """
+        Retrieves the OpenCL CN Lite intensity property from the config data.
+
+        Returns:
+            int: OpenCL CN Lite intensity property, or "N/A" if not available.
+        """
         return self._get_data_from_response(self._config_response, ["opencl", "cn-lite", 0, "intensity"], self._config_table_name)
 
     @property
     def conf_opencl_cn_lite_worksize_property(self) -> int:
+        """
+        Retrieves the OpenCL CN Lite worksize property from the config data.
+
+        Returns:
+            int: OpenCL CN Lite worksize property, or "N/A" if not available.
+        """
         return self._get_data_from_response(self._config_response, ["opencl", "cn-lite", 0, "worksize"], self._config_table_name)
 
     @property
     def conf_opencl_cn_lite_strided_index_property(self) -> List[int]:
+        """
+        Retrieves the OpenCL CN Lite strided index property from the config data.
+
+        Returns:
+            List[int]: OpenCL CN Lite strided index property, or "N/A" if not available.
+        """
         return self._get_data_from_response(self._config_response, ["opencl", "cn-lite", 0, "strided_index"], self._config_table_name)
 
     @property
     def conf_opencl_cn_lite_threads_property(self) -> List[int]:
+        """
+        Retrieves the OpenCL CN Lite threads property from the config data.
+
+        Returns:
+            List[int]: OpenCL CN Lite threads property, or "N/A" if not available.
+        """
         return self._get_data_from_response(self._config_response, ["opencl", "cn-lite", 0, "threads"], self._config_table_name)
 
     @property
     def conf_opencl_cn_lite_unroll_property(self) -> int:
+        """
+        Retrieves the OpenCL CN Lite unroll property from the config data.
+
+        Returns:
+            int: OpenCL CN Lite unroll property, or "N/A" if not available.
+        """
         return self._get_data_from_response(self._config_response, ["opencl", "cn-lite", 0, "unroll"], self._config_table_name)
 
     @property
     def conf_opencl_cn_pico_property(self) -> List[Dict[str, Union[int, List[int]]]]:
+        """
+        Retrieves the OpenCL CN Pico property from the config data.
+
+        Returns:
+            List[Dict[str, Union[int, List[int]]]]: OpenCL CN Pico property, or "N/A" if not available.
+        """
         return self._get_data_from_response(self._config_response, ["opencl", "cn-pico"], self._config_table_name)
 
     @property
     def conf_opencl_cn_pico_index_property(self) -> int:
+        """
+        Retrieves the OpenCL CN Pico index property from the config data.
+
+        Returns:
+            int: OpenCL CN Pico index property, or "N/A" if not available.
+        """
         return self._get_data_from_response(self._config_response, ["opencl", "cn-pico", 0, "index"], self._config_table_name)
 
     @property
     def conf_opencl_cn_pico_intensity_property(self) -> int:
+        """
+        Retrieves the OpenCL CN Pico intensity property from the config data.
+
+        Returns:
+            int: OpenCL CN Pico intensity property, or "N/A" if not available.
+        """
         return self._get_data_from_response(self._config_response, ["opencl", "cn-pico", 0, "intensity"], self._config_table_name)
 
     @property
     def conf_opencl_cn_pico_worksize_property(self) -> int:
+        """
+        Retrieves the OpenCL CN Pico worksize property from the config data.
+
+        Returns:
+            int: OpenCL CN Pico worksize property, or "N/A" if not available.
+        """
         return self._get_data_from_response(self._config_response, ["opencl", "cn-pico", 0, "worksize"], self._config_table_name)
 
     @property
     def conf_opencl_cn_pico_strided_index_property(self) -> List[int]:
+        """
+        Retrieves the OpenCL CN Pico strided index property from the config data.
+
+        Returns:
+            List[int]: OpenCL CN Pico strided index property, or "N/A" if not available.
+        """
         return self._get_data_from_response(self._config_response, ["opencl", "cn-pico", 0, "strided_index"], self._config_table_name)
 
     @property
     def conf_opencl_cn_pico_threads_property(self) -> List[int]:
+        """
+        Retrieves the OpenCL CN Pico threads property from the config data.
+
+        Returns:
+            List[int]: OpenCL CN Pico threads property, or "N/A" if not available.
+        """
         return self._get_data_from_response(self._config_response, ["opencl", "cn-pico", 0, "threads"], self._config_table_name)
 
     @property
     def conf_opencl_cn_pico_unroll_property(self) -> int:
+        """
+        Retrieves the OpenCL CN Pico unroll property from the config data.
+
+        Returns:
+            int: OpenCL CN Pico unroll property, or "N/A" if not available.
+        """
         return self._get_data_from_response(self._config_response, ["opencl", "cn-pico", 0, "unroll"], self._config_table_name)
 
     @property
     def conf_opencl_cn_2_property(self) -> List[Dict[str, Union[int, List[int]]]]:
+        """
+        Retrieves the OpenCL CN 2 property from the config data.
+
+        Returns:
+            List[Dict[str, Union[int, List[int]]]]: OpenCL CN 2 property, or "N/A" if not available.
+        """
         return self._get_data_from_response(self._config_response, ["opencl", "cn/2"], self._config_table_name)
 
     @property
     def conf_opencl_cn_2_index_property(self) -> int:
+        """
+        Retrieves the OpenCL CN 2 index property from the config data.
+
+        Returns:
+            int: OpenCL CN 2 index property, or "N/A" if not available.
+        """
         return self._get_data_from_response(self._config_response, ["opencl", "cn/2", 0, "index"], self._config_table_name)
 
     @property
     def conf_opencl_cn_2_intensity_property(self) -> int:
+        """
+        Retrieves the OpenCL CN 2 intensity property from the config data.
+
+        Returns:
+            int: OpenCL CN 2 intensity property, or "N/A" if not available.
+        """
         return self._get_data_from_response(self._config_response, ["opencl", "cn/2", 0, "intensity"], self._config_table_name)
 
     @property
     def conf_opencl_cn_2_worksize_property(self) -> int:
+        """
+        Retrieves the OpenCL CN 2 worksize property from the config data.
+
+        Returns:
+            int: OpenCL CN 2 worksize property, or "N/A" if not available.
+        """
         return self._get_data_from_response(self._config_response, ["opencl", "cn/2", 0, "worksize"], self._config_table_name)
 
     @property
     def conf_opencl_cn_2_strided_index_property(self) -> List[int]:
+        """
+        Retrieves the OpenCL CN 2 strided index property from the config data.
+
+        Returns:
+            List[int]: OpenCL CN 2 strided index property, or "N/A" if not available.
+        """
         return self._get_data_from_response(self._config_response, ["opencl", "cn/2", 0, "strided_index"], self._config_table_name)
 
     @property
     def conf_opencl_cn_2_threads_property(self) -> List[int]:
+        """
+        Retrieves the OpenCL CN 2 threads property from the config data.
+
+        Returns:
+            List[int]: OpenCL CN 2 threads property, or "N/A" if not available.
+        """
         return self._get_data_from_response(self._config_response, ["opencl", "cn/2", 0, "threads"], self._config_table_name)
 
     @property
     def conf_opencl_cn_2_unroll_property(self) -> int:
+        """
+        Retrieves the OpenCL CN 2 unroll property from the config data.
+
+        Returns:
+            int: OpenCL CN 2 unroll property, or "N/A" if not available.
+        """
         return self._get_data_from_response(self._config_response, ["opencl", "cn/2", 0, "unroll"], self._config_table_name)
 
     @property
     def conf_opencl_cn_gpu_property(self) -> List[Dict[str, Union[int, List[int]]]]:
+        """
+        Retrieves the OpenCL CN GPU property from the config data.
+
+        Returns:
+            List[Dict[str, Union[int, List[int]]]]: OpenCL CN GPU property, or "N/A" if not available.
+        """
         return self._get_data_from_response(self._config_response, ["opencl", "cn/gpu"], self._config_table_name)
 
     @property
     def conf_opencl_cn_gpu_index_property(self) -> int:
+        """
+        Retrieves the OpenCL CN GPU index property from the config data.
+
+        Returns:
+            int: OpenCL CN GPU index property, or "N/A" if not available.
+        """
         return self._get_data_from_response(self._config_response, ["opencl", "cn/gpu", 0, "index"], self._config_table_name)
 
     @property
     def conf_opencl_cn_gpu_intensity_property(self) -> int:
+        """
+        Retrieves the OpenCL CN GPU intensity property from the config data.
+
+        Returns:
+            int: OpenCL CN GPU intensity property, or "N/A" if not available.
+        """
         return self._get_data_from_response(self._config_response, ["opencl", "cn/gpu", 0, "intensity"], self._config_table_name)
 
     @property
     def conf_opencl_cn_gpu_worksize_property(self) -> int:
+        """
+        Retrieves the OpenCL CN GPU worksize property from the config data.
+
+        Returns:
+            int: OpenCL CN GPU worksize property, or "N/A" if not available.
+        """
         return self._get_data_from_response(self._config_response, ["opencl", "cn/gpu", 0, "worksize"], self._config_table_name)
 
     @property
     def conf_opencl_cn_gpu_strided_index_property(self) -> List[int]:
+        """
+        Retrieves the OpenCL CN GPU strided index property from the config data.
+
+        Returns:
+            List[int]: OpenCL CN GPU strided index property, or "N/A" if not available.
+        """
         return self._get_data_from_response(self._config_response, ["opencl", "cn/gpu", 0, "strided_index"], self._config_table_name)
 
     @property
     def conf_opencl_cn_gpu_threads_property(self) -> List[int]:
+        """
+        Retrieves the OpenCL CN GPU threads from the config data.
+
+        Returns:
+            List[int]: OpenCL CN GPU threads, or "N/A" if not available.
+        """
         return self._get_data_from_response(self._config_response, ["opencl", "cn/gpu", 0, "threads"], self._config_table_name)
 
     @property
     def conf_opencl_cn_gpu_unroll_property(self) -> int:
+        """
+        Retrieves the OpenCL CN GPU unroll from the config data.
+
+        Returns:
+            int: OpenCL CN GPU unroll, or "N/A" if not available.
+        """
         return self._get_data_from_response(self._config_response, ["opencl", "cn/gpu", 0, "unroll"], self._config_table_name)
 
     @property
     def conf_opencl_cn_upx2_property(self) -> List[Dict[str, Union[int, List[int]]]]:
+        """
+        Retrieves the OpenCL CN UPX2 from the config data.
+
+        Returns:
+            List[Dict[str, Union[int, List[int]]]]: OpenCL CN UPX2, or "N/A" if not available.
+        """
         return self._get_data_from_response(self._config_response, ["opencl", "cn/upx2"], self._config_table_name)
 
     @property
     def conf_opencl_cn_upx2_index_property(self) -> int:
+        """
+        Retrieves the OpenCL CN UPX2 index from the config data.
+
+        Returns:
+            int: OpenCL CN UPX2 index, or "N/A" if not available.
+        """
         return self._get_data_from_response(self._config_response, ["opencl", "cn/upx2", 0, "index"], self._config_table_name)
 
     @property
     def conf_opencl_cn_upx2_intensity_property(self) -> int:
+        """
+        Retrieves the OpenCL CN UPX2 intensity from the config data.
+
+        Returns:
+            int: OpenCL CN UPX2 intensity, or "N/A" if not available.
+        """
         return self._get_data_from_response(self._config_response, ["opencl", "cn/upx2", 0, "intensity"], self._config_table_name)
 
     @property
     def conf_opencl_cn_upx2_worksize_property(self) -> int:
+        """
+        Retrieves the OpenCL CN UPX2 worksize from the config data.
+
+        Returns:
+            int: OpenCL CN UPX2 worksize, or "N/A" if not available.
+        """
         return self._get_data_from_response(self._config_response, ["opencl", "cn/upx2", 0, "worksize"], self._config_table_name)
 
     @property
     def conf_opencl_cn_upx2_strided_index_property(self) -> List[int]:
+        """
+        Retrieves the OpenCL CN UPX2 strided index from the config data.
+
+        Returns:
+            List[int]: OpenCL CN UPX2 strided index, or "N/A" if not available.
+        """
         return self._get_data_from_response(self._config_response, ["opencl", "cn/upx2", 0, "strided_index"], self._config_table_name)
 
     @property
     def conf_opencl_cn_upx2_threads_property(self) -> List[int]:
+        """
+        Retrieves the OpenCL CN UPX2 threads from the config data.
+
+        Returns:
+            List[int]: OpenCL CN UPX2 threads, or "N/A" if not available.
+        """
         return self._get_data_from_response(self._config_response, ["opencl", "cn/upx2", 0, "threads"], self._config_table_name)
 
     @property
     def conf_opencl_cn_upx2_unroll_property(self) -> int:
+        """
+        Retrieves the OpenCL CN UPX2 unroll from the config data.
+
+        Returns:
+            int: OpenCL CN UPX2 unroll, or "N/A" if not available.
+        """
         return self._get_data_from_response(self._config_response, ["opencl", "cn/upx2", 0, "unroll"], self._config_table_name)
 
     @property
     def conf_opencl_kawpow_property(self) -> List[Dict[str, Union[int, List[int]]]]:
+        """
+        Retrieves the OpenCL KawPow from the config data.
+
+        Returns:
+            List[Dict[str, Union[int, List[int]]]]: OpenCL KawPow, or "N/A" if not available.
+        """
         return self._get_data_from_response(self._config_response, ["opencl", "kawpow"], self._config_table_name)
 
     @property
     def conf_opencl_kawpow_index_property(self) -> int:
+        """
+        Retrieves the OpenCL KawPow index from the config data.
+
+        Returns:
+            int: OpenCL KawPow index, or "N/A" if not available.
+        """
         return self._get_data_from_response(self._config_response, ["opencl", "kawpow", 0, "index"], self._config_table_name)
 
     @property
     def conf_opencl_kawpow_intensity_property(self) -> int:
+        """
+        Retrieves the OpenCL KawPow intensity from the config data.
+
+        Returns:
+            int: OpenCL KawPow intensity, or "N/A" if not available.
+        """
         return self._get_data_from_response(self._config_response, ["opencl", "kawpow", 0, "intensity"], self._config_table_name)
 
     @property
     def conf_opencl_kawpow_worksize_property(self) -> int:
+        """
+        Retrieves the OpenCL KawPow worksize from the config data.
+
+        Returns:
+            int: OpenCL KawPow worksize, or "N/A" if not available.
+        """
         return self._get_data_from_response(self._config_response, ["opencl", "kawpow", 0, "worksize"], self._config_table_name)
 
     @property
     def conf_opencl_kawpow_threads_property(self) -> List[int]:
+        """
+        Retrieves the OpenCL KawPow threads from the config data.
+
+        Returns:
+            List[int]: OpenCL KawPow threads, or "N/A" if not available.
+        """
         return self._get_data_from_response(self._config_response, ["opencl", "kawpow", 0, "threads"], self._config_table_name)
 
     @property
     def conf_opencl_kawpow_unroll_property(self) -> int:
+        """
+        Retrieves the OpenCL KawPow unroll from the config data.
+
+        Returns:
+            int: OpenCL KawPow unroll, or "N/A" if not available.
+        """
         return self._get_data_from_response(self._config_response, ["opencl", "kawpow", 0, "unroll"], self._config_table_name)
 
     @property
     def conf_opencl_rx_property(self) -> List[Dict[str, Union[int, List[int], bool]]]:
+        """
+        Retrieves the OpenCL RX from the config data.
+
+        Returns:
+            List[Dict[str, Union[int, List[int], bool]]]: OpenCL RX, or "N/A" if not available.
+        """
         return self._get_data_from_response(self._config_response, ["opencl", "rx"], self._config_table_name)
 
     @property
     def conf_opencl_rx_index_property(self) -> int:
+        """
+        Retrieves the OpenCL RX index from the config data.
+
+        Returns:
+            int: OpenCL RX index, or "N/A" if not available.
+        """
         return self._get_data_from_response(self._config_response, ["opencl", "rx", 0, "index"], self._config_table_name)
 
     @property
     def conf_opencl_rx_intensity_property(self) -> int:
+        """
+        Retrieves the OpenCL RX intensity from the config data.
+
+        Returns:
+            int: OpenCL RX intensity, or "N/A" if not available.
+        """
         return self._get_data_from_response(self._config_response, ["opencl", "rx", 0, "intensity"], self._config_table_name)
 
     @property
     def conf_opencl_rx_worksize_property(self) -> int:
+        """
+        Retrieves the OpenCL RX worksize from the config data.
+
+        Returns:
+            int: OpenCL RX worksize, or "N/A" if not available.
+        """
         return self._get_data_from_response(self._config_response, ["opencl", "rx", 0, "worksize"], self._config_table_name)
 
     @property
     def conf_opencl_rx_threads_property(self) -> List[int]:
+        """
+        Retrieves the OpenCL RX threads from the config data.
+
+        Returns:
+            List[int]: OpenCL RX threads, or "N/A" if not available.
+        """
         return self._get_data_from_response(self._config_response, ["opencl", "rx", 0, "threads"], self._config_table_name)
 
     @property
     def conf_opencl_rx_bfactor_property(self) -> int:
+        """
+        Retrieves the OpenCL RX bfactor from the config data.
+
+        Returns:
+            int: OpenCL RX bfactor, or "N/A" if not available.
+        """
         return self._get_data_from_response(self._config_response, ["opencl", "rx", 0, "bfactor"], self._config_table_name)
 
     @property
     def conf_opencl_rx_gcn_asm_property(self) -> bool:
+        """
+        Retrieves the OpenCL RX GCN ASM from the config data.
+
+        Returns:
+            bool: OpenCL RX GCN ASM, or "N/A" if not available.
+        """
         return self._get_data_from_response(self._config_response, ["opencl", "rx", 0, "gcn_asm"], self._config_table_name)
 
     @property
     def conf_opencl_rx_dataset_host_property(self) -> bool:
+        """
+        Retrieves the OpenCL RX dataset host from the config data.
+
+        Returns:
+            bool: OpenCL RX dataset host, or "N/A" if not available.
+        """
         return self._get_data_from_response(self._config_response, ["opencl", "rx", 0, "dataset_host"], self._config_table_name)
 
     @property
     def conf_opencl_cn_lite_0_property(self) -> bool:
+        """
+        Retrieves the OpenCL CN Lite 0 from the config data.
+
+        Returns:
+            bool: OpenCL CN Lite 0, or "N/A" if not available.
+        """
         return self._get_data_from_response(self._config_response, ["opencl", "cn-lite/0"], self._config_table_name)
 
     @property
     def conf_opencl_cn_0_property(self) -> bool:
+        """
+        Retrieves the OpenCL CN 0 from the config data.
+
+        Returns:
+            bool: OpenCL CN 0, or "N/A" if not available.
+        """
         return self._get_data_from_response(self._config_response, ["opencl", "cn/0"], self._config_table_name)
 
     @property
     def conf_opencl_panthera_property(self) -> bool:
+        """
+        Retrieves the OpenCL Panthera from the config data.
+
+        Returns:
+            bool: OpenCL Panthera, or "N/A" if not available.
+        """
         return self._get_data_from_response(self._config_response, ["opencl", "panthera"], self._config_table_name)
 
     @property
     def conf_cuda_property(self) -> Dict[str, Union[str, bool, None]]:
+        """
+        Retrieves the CUDA from the config data.
+
+        Returns:
+            Dict[str, Union[str, bool, None]]: CUDA, or "N/A" if not available.
+        """
         return self._get_data_from_response(self._config_response, ["cuda"], self._config_table_name)
 
     @property
     def conf_cuda_enabled_property(self) -> bool:
+        """
+        Retrieves the CUDA enabled status from the config data.
+
+        Returns:
+            bool: CUDA enabled status, or "N/A" if not available.
+        """
         return self._get_data_from_response(self._config_response, ["cuda", "enabled"], self._config_table_name)
 
     @property
     def conf_cuda_loader_property(self) -> Optional[str]:
+        """
+        Retrieves the CUDA loader from the config data.
+
+        Returns:
+            Optional[str]: CUDA loader, or "N/A" if not available.
+        """
         return self._get_data_from_response(self._config_response, ["cuda", "loader"], self._config_table_name)
 
     @property
     def conf_cuda_nvml_property(self) -> bool:
+        """
+        Retrieves the CUDA NVML from the config data.
+
+        Returns:
+            bool: CUDA NVML, or "N/A" if not available.
+        """
         return self._get_data_from_response(self._config_response, ["cuda", "nvml"], self._config_table_name)
 
     @property
     def conf_cuda_cn_lite_0_property(self) -> bool:
+        """
+        Retrieves the CUDA CN Lite 0 from the config data.
+
+        Returns:
+            bool: CUDA CN Lite 0, or "N/A" if not available.
+        """
         return self._get_data_from_response(self._config_response, ["cuda", "cn-lite/0"], self._config_table_name)
 
     @property
     def conf_cuda_cn_0_property(self) -> bool:
+        """
+        Retrieves the CUDA CN 0 from the config data.
+
+        Returns:
+            bool: CUDA CN 0, or "N/A" if not available.
+        """
         return self._get_data_from_response(self._config_response, ["cuda", "cn/0"], self._config_table_name)
 
     @property
     def conf_cuda_panthera_property(self) -> bool:
+        """
+        Retrieves the CUDA Panthera from the config data.
+
+        Returns:
+            bool: CUDA Panthera, or "N/A" if not available.
+        """
         return self._get_data_from_response(self._config_response, ["cuda", "panthera"], self._config_table_name)
 
     @property
     def conf_log_file_property(self) -> Optional[str]:
+        """
+        Retrieves the log file from the config data.
+
+        Returns:
+            Optional[str]: Log file, or "N/A" if not available.
+        """
         return self._get_data_from_response(self._config_response, ["log-file"], self._config_table_name)
 
     @property
     def conf_donate_level_property(self) -> int:
+        """
+        Retrieves the donate level from the config data.
+
+        Returns:
+            int: Donate level, or "N/A" if not available.
+        """
         return self._get_data_from_response(self._config_response, ["donate-level"], self._config_table_name)
 
     @property
     def conf_donate_over_proxy_property(self) -> int:
+        """
+        Retrieves the donate over proxy from the config data.
+
+        Returns:
+            int: Donate over proxy, or "N/A" if not available.
+        """
         return self._get_data_from_response(self._config_response, ["donate-over-proxy"], self._config_table_name)
 
     @property
     def conf_pools_property(self) -> List[Dict[str, Union[str, int, bool, None]]]:
+        """
+        Retrieves the pools from the config data.
+
+        Returns:
+            List[Dict[str, Union[str, int, bool, None]]]: Pools, or "N/A" if not available.
+        """
         return self._get_data_from_response(self._config_response, ["pools"], self._config_table_name)
 
     @property
     def conf_pools_algo_property(self) -> str:
+        """
+        Retrieves the pools algorithm from the config data.
+
+        Returns:
+            str: Pools algorithm, or "N/A" if not available.
+        """
         return self._get_data_from_response(self._config_response, ["pools", 0, "algo"], self._config_table_name)
 
     @property
     def conf_pools_coin_property(self) -> str:
+        """
+        Retrieves the pools coin from the config data.
+
+        Returns:
+            str: Pools coin, or "N/A" if not available.
+        """
         return self._get_data_from_response(self._config_response, ["pools", 0, "coin"], self._config_table_name)
 
     @property
     def conf_pools_url_property(self) -> str:
+        """
+        Retrieves the pools URL from the config data.
+
+        Returns:
+            str: Pools URL, or "N/A" if not available.
+        """
         return self._get_data_from_response(self._config_response, ["pools", 0, "url"], self._config_table_name)
 
     @property
     def conf_pools_user_property(self) -> str:
+        """
+        Retrieves the pools user from the config data.
+
+        Returns:
+            str: Pools user, or "N/A" if not available.
+        """
         return self._get_data_from_response(self._config_response, ["pools", 0, "user"], self._config_table_name)
 
     @property
     def conf_pools_pass_property(self) -> str:
+        """
+        Retrieves the pools password from the config data.
+
+        Returns:
+            str: Pools password, or "N/A" if not available.
+        """
         return self._get_data_from_response(self._config_response, ["pools", 0, "pass"], self._config_table_name)
 
     @property
     def conf_pools_rig_id_property(self) -> str:
+        """
+        Retrieves the pools rig ID from the config data.
+
+        Returns:
+            str: Pools rig ID, or "N/A" if not available.
+        """
         return self._get_data_from_response(self._config_response, ["pools", 0, "rig-id"], self._config_table_name)
 
     @property
     def conf_pools_nicehash_property(self) -> bool:
+        """
+        Retrieves the pools NiceHash status from the config data.
+
+        Returns:
+            bool: Pools NiceHash status, or "N/A" if not available.
+        """
         return self._get_data_from_response(self._config_response, ["pools", 0, "nicehash"], self._config_table_name)
 
     @property
     def conf_pools_keepalive_property(self) -> bool:
+        """
+        Retrieves the pools keepalive status from the config data.
+
+        Returns:
+            bool: Pools keepalive status, or "N/A" if not available.
+        """
         return self._get_data_from_response(self._config_response, ["pools", 0, "keepalive"], self._config_table_name)
 
     @property
     def conf_pools_enabled_property(self) -> bool:
+        """
+        Retrieves the pools enabled status from the config data.
+
+        Returns:
+            bool: Pools enabled status, or "N/A" if not available.
+        """
         return self._get_data_from_response(self._config_response, ["pools", 0, "enabled"], self._config_table_name)
 
     @property
     def conf_pools_tls_property(self) -> bool:
+        """
+        Retrieves the pools TLS status from the config data.
+
+        Returns:
+            bool: Pools TLS status, or "N/A" if not available.
+        """
         return self._get_data_from_response(self._config_response, ["pools", 0, "tls"], self._config_table_name)
 
     @property
     def conf_pools_sni_property(self) -> bool:
+        """
+        Retrieves the pools SNI status from the config data.
+
+        Returns:
+            bool: Pools SNI status, or "N/A" if not available.
+        """
         return self._get_data_from_response(self._config_response, ["pools", 0, "sni"], self._config_table_name)
 
     @property
     def conf_pools_tls_fingerprint_property(self) -> Optional[str]:
+        """
+        Retrieves the pools TLS fingerprint from the config data.
+
+        Returns:
+            Optional[str]: Pools TLS fingerprint, or "N/A" if not available.
+        """
         return self._get_data_from_response(self._config_response, ["pools", 0, "tls-fingerprint"], self._config_table_name)
 
     @property
     def conf_pools_daemon_property(self) -> bool:
+        """
+        Retrieves the pools daemon status from the config data.
+
+        Returns:
+            bool: Pools daemon status, or "N/A" if not available.
+        """
         return self._get_data_from_response(self._config_response, ["pools", 0, "daemon"], self._config_table_name)
 
     @property
     def conf_pools_socks5_property(self) -> Optional[str]:
+        """
+        Retrieves the pools SOCKS5 from the config data.
+
+        Returns:
+            Optional[str]: Pools SOCKS5, or "N/A" if not available.
+        """
         return self._get_data_from_response(self._config_response, ["pools", 0, "socks5"], self._config_table_name)
 
     @property
     def conf_pools_self_select_property(self) -> Optional[str]:
+        """
+        Retrieves the pools self-select from the config data.
+
+        Returns:
+            Optional[str]: Pools self-select, or "N/A" if not available.
+        """
         return self._get_data_from_response(self._config_response, ["pools", 0, "self-select"], self._config_table_name)
 
     @property
     def conf_pools_submit_to_origin_property(self) -> bool:
+        """
+        Retrieves the pools submit to origin status from the config data.
+
+        Returns:
+            bool: Pools submit to origin status, or "N/A" if not available.
+        """
         return self._get_data_from_response(self._config_response, ["pools", 0, "submit-to-origin"], self._config_table_name)
 
     @property
     def conf_retries_property(self) -> int:
+        """
+        Retrieves the retries from the config data.
+
+        Returns:
+            int: Retries, or "N/A" if not available.
+        """
         return self._get_data_from_response(self._config_response, ["retries"], self._config_table_name)
 
     @property
     def conf_retry_pause_property(self) -> int:
+        """
+        Retrieves the retry pause from the config data.
+
+        Returns:
+            int: Retry pause, or "N/A" if not available.
+        """
         return self._get_data_from_response(self._config_response, ["retry-pause"], self._config_table_name)
 
     @property
     def conf_print_time_property(self) -> int:
+        """
+        Retrieves the print time from the config data.
+
+        Returns:
+            int: Print time, or "N/A" if not available.
+        """
         return self._get_data_from_response(self._config_response, ["print-time"], self._config_table_name)
 
     @property
     def conf_health_print_time_property(self) -> int:
+        """
+        Retrieves the health print time from the config data.
+
+        Returns:
+            int: Health print time, or "N/A" if not available.
+        """
         return self._get_data_from_response(self._config_response, ["health-print-time"], self._config_table_name)
 
     @property
     def conf_dmi_property(self) -> bool:
+        """
+        Retrieves the DMI status from the config data.
+
+        Returns:
+            bool: DMI status, or "N/A" if not available.
+        """
         return self._get_data_from_response(self._config_response, ["dmi"], self._config_table_name)
 
     @property
     def conf_syslog_property(self) -> bool:
+        """
+        Retrieves the syslog status from the config data.
+
+        Returns:
+            bool: Syslog status, or "N/A" if not available.
+        """
         return self._get_data_from_response(self._config_response, ["syslog"], self._config_table_name)
 
     @property
     def conf_tls_property(self) -> Dict[str, Optional[Union[str, bool]]]:
+        """
+        Retrieves the TLS property from the config data.
+
+        Returns:
+            Dict[str, Optional[Union[str, bool]]]: TLS property, or "N/A" if not available.
+        """
         return self._get_data_from_response(self._config_response, ["tls"], self._config_table_name)
 
     @property
     def conf_tls_enabled_property(self) -> bool:
+        """
+        Retrieves the TLS enabled status from the config data.
+
+        Returns:
+            bool: TLS enabled status, or "N/A" if not available.
+        """
         return self._get_data_from_response(self._config_response, ["tls", "enabled"], self._config_table_name)
 
     @property
     def conf_tls_protocols_property(self) -> Optional[str]:
+        """
+        Retrieves the TLS protocols from the config data.
+
+        Returns:
+            Optional[str]: TLS protocols, or "N/A" if not available.
+        """
         return self._get_data_from_response(self._config_response, ["tls", "protocols"], self._config_table_name)
 
     @property
     def conf_tls_cert_property(self) -> Optional[str]:
+        """
+        Retrieves the TLS certificate from the config data.
+
+        Returns:
+            Optional[str]: TLS certificate, or "N/A" if not available.
+        """
         return self._get_data_from_response(self._config_response, ["tls", "cert"], self._config_table_name)
 
     @property
     def conf_tls_cert_key_property(self) -> Optional[str]:
+        """
+        Retrieves the TLS certificate key from the config data.
+
+        Returns:
+            Optional[str]: TLS certificate key, or "N/A" if not available.
+        """
         return self._get_data_from_response(self._config_response, ["tls", "cert_key"], self._config_table_name)
 
     @property
     def conf_tls_ciphers_property(self) -> Optional[str]:
+        """
+        Retrieves the TLS ciphers from the config data.
+
+        Returns:
+            Optional[str]: TLS ciphers, or "N/A" if not available.
+        """
         return self._get_data_from_response(self._config_response, ["tls", "ciphers"], self._config_table_name)
 
     @property
     def conf_tls_ciphersuites_property(self) -> Optional[str]:
+        """
+        Retrieves the TLS ciphersuites from the config data.
+
+        Returns:
+            Optional[str]: TLS ciphersuites, or "N/A" if not available.
+        """
         return self._get_data_from_response(self._config_response, ["tls", "ciphersuites"], self._config_table_name)
 
     @property
     def conf_tls_dhparam_property(self) -> Optional[str]:
+        """
+        Retrieves the TLS DH parameter from the config data.
+
+        Returns:
+            Optional[str]: TLS DH parameter, or "N/A" if not available.
+        """
         return self._get_data_from_response(self._config_response, ["tls", "dhparam"], self._config_table_name)
 
     @property
     def conf_dns_property(self) -> Dict[str, Union[bool, int]]:
+        """
+        Retrieves the DNS property from the config data.
+
+        Returns:
+            Dict[str, Union[bool, int]]: DNS property, or "N/A" if not available.
+        """
         return self._get_data_from_response(self._config_response, ["dns"], self._config_table_name)
 
     @property
     def conf_dns_ipv6_property(self) -> bool:
+        """
+        Retrieves the DNS IPv6 status from the config data.
+
+        Returns:
+            bool: DNS IPv6 status, or "N/A" if not available.
+        """
         return self._get_data_from_response(self._config_response, ["dns", "ipv6"], self._config_table_name)
 
     @property
     def conf_dns_ttl_property(self) -> int:
+        """
+        Retrieves the DNS TTL from the config data.
+
+        Returns:
+            int: DNS TTL, or "N/A" if not available.
+        """
         return self._get_data_from_response(self._config_response, ["dns", "ttl"], self._config_table_name)
 
     @property
     def conf_user_agent_property(self) -> Optional[str]:
+        """
+        Retrieves the user agent from the config data.
+
+        Returns:
+            Optional[str]: User agent, or "N/A" if not available.
+        """
         return self._get_data_from_response(self._config_response, ["user-agent"], self._config_table_name)
 
     @property
     def conf_verbose_property(self) -> int:
+        """
+        Retrieves the verbose level from the config data.
+
+        Returns:
+            int: Verbose level, or "N/A" if not available.
+        """
         return self._get_data_from_response(self._config_response, ["verbose"], self._config_table_name)
 
     @property
     def conf_watch_property(self) -> bool:
+        """
+        Retrieves the watch status from the config data.
+
+        Returns:
+            bool: Watch status, or "N/A" if not available.
+        """
         return self._get_data_from_response(self._config_response, ["watch"], self._config_table_name)
 
     @property
     def conf_rebench_algo_property(self) -> bool:
+        """
+        Retrieves the rebench algorithm status from the config data.
+
+        Returns:
+            bool: Rebench algorithm status, or "N/A" if not available.
+        """
         return self._get_data_from_response(self._config_response, ["rebench-algo"], self._config_table_name)
 
     @property
     def conf_bench_algo_time_property(self) -> int:
+        """
+        Retrieves the bench algorithm time from the config data.
+
+        Returns:
+            int: Bench algorithm time, or "N/A" if not available.
+        """
         return self._get_data_from_response(self._config_response, ["bench-algo-time"], self._config_table_name)
 
     @property
     def conf_algo_min_time_property(self) -> int:
+        """
+        Retrieves the algorithm minimum time from the config data.
+
+        Returns:
+            int: Algorithm minimum time, or "N/A" if not available.
+        """
         return self._get_data_from_response(self._config_response, ["algo-min-time"], self._config_table_name)
 
     @property
     def conf_algo_perf_property(self) -> Dict[str, float]:
+        """
+        Retrieves the algorithm performance from the config data.
+
+        Returns:
+            Dict[str, float]: Algorithm performance, or "N/A" if not available.
+        """
         return self._get_data_from_response(self._config_response, ["algo-perf"], self._config_table_name)
 
     @property
     def conf_algo_perf_cn_0_property(self) -> float:
+        """
+        Retrieves the algorithm performance for CN 0 from the config data.
+
+        Returns:
+            float: Algorithm performance for CN 0, or "N/A" if not available.
+        """
         return self._get_data_from_response(self._config_response, ["algo-perf", "cn/0"], self._config_table_name)
 
     @property
     def conf_algo_perf_cn_1_property(self) -> float:
+        """
+        Retrieves the algorithm performance for CN 1 from the config data.
+
+        Returns:
+            float: Algorithm performance for CN 1, or "N/A" if not available.
+        """
         return self._get_data_from_response(self._config_response, ["algo-perf", "cn/1"], self._config_table_name)
 
     @property
     def conf_algo_perf_cn_2_property(self) -> float:
+        """
+        Retrieves the algorithm performance for CN 2 from the config data.
+
+        Returns:
+            float: Algorithm performance for CN 2, or "N/A" if not available.
+        """
         return self._get_data_from_response(self._config_response, ["algo-perf", "cn/2"], self._config_table_name)
 
     @property
     def conf_algo_perf_cn_r_property(self) -> float:
+        """
+        Retrieves the algorithm performance for CN R from the config data.
+
+        Returns:
+            float: Algorithm performance for CN R, or "N/A" if not available.
+        """
         return self._get_data_from_response(self._config_response, ["algo-perf", "cn/r"], self._config_table_name)
 
     @property
     def conf_algo_perf_cn_fast_property(self) -> float:
+        """
+        Retrieves the algorithm performance for CN Fast from the config data.
+
+        Returns:
+            float: Algorithm performance for CN Fast, or "N/A" if not available.
+        """
         return self._get_data_from_response(self._config_response, ["algo-perf", "cn/fast"], self._config_table_name)
 
     @property
     def conf_algo_perf_cn_half_property(self) -> float:
+        """
+        Retrieves the algorithm performance for CN Half from the config data.
+
+        Returns:
+            float: Algorithm performance for CN Half, or "N/A" if not available.
+        """
         return self._get_data_from_response(self._config_response, ["algo-perf", "cn/half"], self._config_table_name)
 
     @property
     def conf_algo_perf_cn_xao_property(self) -> float:
+        """
+        Retrieves the algorithm performance for CN XAO from the config data.
+
+        Returns:
+            float: Algorithm performance for CN XAO, or "N/A" if not available.
+        """
         return self._get_data_from_response(self._config_response, ["algo-perf", "cn/xao"], self._config_table_name)
 
     @property
     def conf_algo_perf_cn_rto_property(self) -> float:
+        """
+        Retrieves the algorithm performance for CN RTO from the config data.
+
+        Returns:
+            float: Algorithm performance for CN RTO, or "N/A" if not available.
+        """
         return self._get_data_from_response(self._config_response, ["algo-perf", "cn/rto"], self._config_table_name)
 
     @property
     def conf_algo_perf_cn_rwz_property(self) -> float:
+        """
+        Retrieves the algorithm performance for CN RWZ from the config data.
+
+        Returns:
+            float: Algorithm performance for CN RWZ, or "N/A" if not available.
+        """
         return self._get_data_from_response(self._config_response, ["algo-perf", "cn/rwz"], self._config_table_name)
 
     @property
     def conf_algo_perf_cn_zls_property(self) -> float:
+        """
+        Retrieves the algorithm performance for CN ZLS from the config data.
+
+        Returns:
+            float: Algorithm performance for CN ZLS, or "N/A" if not available.
+        """
         return self._get_data_from_response(self._config_response, ["algo-perf", "cn/zls"], self._config_table_name)
 
     @property
     def conf_algo_perf_cn_double_property(self) -> float:
+        """
+        Retrieves the algorithm performance for CN Double from the config data.
+
+        Returns:
+            float: Algorithm performance for CN Double, or "N/A" if not available.
+        """
         return self._get_data_from_response(self._config_response, ["algo-perf", "cn/double"], self._config_table_name)
 
     @property
     def conf_algo_perf_cn_ccx_property(self) -> float:
+        """
+        Retrieves the algorithm performance for CN CCX from the config data.
+
+        Returns:
+            float: Algorithm performance for CN CCX, or "N/A" if not available.
+        """
         return self._get_data_from_response(self._config_response, ["algo-perf", "cn/ccx"], self._config_table_name)
 
     @property
     def conf_algo_perf_cn_lite_0_property(self) -> float:
+        """
+        Retrieves the algorithm performance for CN Lite 0 from the config data.
+
+        Returns:
+            float: Algorithm performance for CN Lite 0, or "N/A" if not available.
+        """
         return self._get_data_from_response(self._config_response, ["algo-perf", "cn-lite/0"], self._config_table_name)
 
     @property
     def conf_algo_perf_cn_lite_1_property(self) -> float:
+        """
+        Retrieves the algorithm performance for CN Lite 1 from the config data.
+
+        Returns:
+            float: Algorithm performance for CN Lite 1, or "N/A" if not available.
+        """
         return self._get_data_from_response(self._config_response, ["algo-perf", "cn-lite/1"], self._config_table_name)
 
     @property
     def conf_algo_perf_cn_heavy_xhv_property(self) -> float:
+        """
+        Retrieves the algorithm performance for CN Heavy XHV from the config data.
+
+        Returns:
+            float: Algorithm performance for CN Heavy XHV, or "N/A" if not available.
+        """
         return self._get_data_from_response(self._config_response, ["algo-perf", "cn-heavy/xhv"], self._config_table_name)
 
     @property
     def conf_algo_perf_cn_pico_property(self) -> float:
+        """
+        Retrieves the algorithm performance for CN Pico from the config data.
+
+        Returns:
+            float: Algorithm performance for CN Pico, or "N/A" if not available.
+        """
         return self._get_data_from_response(self._config_response, ["algo-perf", "cn-pico"], self._config_table_name)
 
     @property
     def conf_algo_perf_cn_pico_tlo_property(self) -> float:
+        """
+        Retrieves the algorithm performance for CN Pico TLO from the config data.
+
+        Returns:
+            float: Algorithm performance for CN Pico TLO, or "N/A" if not available.
+        """
         return self._get_data_from_response(self._config_response, ["algo-perf", "cn-pico/tlo"], self._config_table_name)
 
     @property
     def conf_algo_perf_cn_gpu_property(self) -> float:
+        """
+        Retrieves the algorithm performance for CN GPU from the config data.
+
+        Returns:
+            float: Algorithm performance for CN GPU, or "N/A" if not available.
+        """
         return self._get_data_from_response(self._config_response, ["algo-perf", "cn/gpu"], self._config_table_name)
 
     @property
     def conf_algo_perf_rx_0_property(self) -> float:
+        """
+        Retrieves the algorithm performance for RX 0 from the config data.
+
+        Returns:
+            float: Algorithm performance for RX 0, or "N/A" if not available.
+        """
         return self._get_data_from_response(self._config_response, ["algo-perf", "rx/0"], self._config_table_name)
 
     @property
     def conf_algo_perf_rx_arq_property(self) -> float:
+        """
+        Retrieves the algorithm performance for RX ARQ from the config data.
+
+        Returns:
+            float: Algorithm performance for RX ARQ, or "N/A" if not available.
+        """
         return self._get_data_from_response(self._config_response, ["algo-perf", "rx/arq"], self._config_table_name)
 
     @property
     def conf_algo_perf_rx_xeq_property(self) -> float:
+        """
+        Retrieves the algorithm performance for RX XEQ from the config data.
+
+        Returns:
+            float: Algorithm performance for RX XEQ, or "N/A" if not available.
+        """
         return self._get_data_from_response(self._config_response, ["algo-perf", "rx/xeq"], self._config_table_name)
 
     @property
     def conf_algo_perf_rx_graft_property(self) -> float:
+        """
+        Retrieves the algorithm performance for RX Graft from the config data.
+
+        Returns:
+            float: Algorithm performance for RX Graft, or "N/A" if not available.
+        """
         return self._get_data_from_response(self._config_response, ["algo-perf", "rx/graft"], self._config_table_name)
 
     @property
     def conf_algo_perf_rx_sfx_property(self) -> float:
+        """
+        Retrieves the algorithm performance for RX SFX from the config data.
+
+        Returns:
+            float: Algorithm performance for RX SFX, or "N/A" if not available.
+        """
         return self._get_data_from_response(self._config_response, ["algo-perf", "rx/sfx"], self._config_table_name)
 
     @property
     def conf_algo_perf_panthera_property(self) -> float:
+        """
+        Retrieves the algorithm performance for Panthera from the config data.
+
+        Returns:
+            float: Algorithm performance for Panthera, or "N/A" if not available.
+        """
         return self._get_data_from_response(self._config_response, ["algo-perf", "panthera"], self._config_table_name)
 
     @property
     def conf_algo_perf_argon2_chukwav2_property(self) -> float:
+        """
+        Retrieves the algorithm performance for Argon2 ChukwaV2 from the config data.
+
+        Returns:
+            float: Algorithm performance for Argon2 ChukwaV2, or "N/A" if not available.
+        """
         return self._get_data_from_response(self._config_response, ["algo-perf", "argon2/chukwav2"], self._config_table_name)
 
     @property
     def conf_algo_perf_kawpow_property(self) -> float:
+        """
+        Retrieves the algorithm performance for KawPow from the config data.
+
+        Returns:
+            float: Algorithm performance for KawPow, or "N/A" if not available.
+        """
         return self._get_data_from_response(self._config_response, ["algo-perf", "kawpow"], self._config_table_name)
 
     @property
     def conf_algo_perf_ghostrider_property(self) -> float:
+        """
+        Retrieves the algorithm performance for GhostRider from the config data.
+
+        Returns:
+            float: Algorithm performance for GhostRider, or "N/A" if not available.
+        """
         return self._get_data_from_response(self._config_response, ["algo-perf", "ghostrider"], self._config_table_name)
 
     @property
     def conf_algo_perf_flex_property(self) -> float:
+        """
+        Retrieves the algorithm performance for Flex from the config data.
+
+        Returns:
+            float: Algorithm performance for Flex, or "N/A" if not available.
+        """
         return self._get_data_from_response(self._config_response, ["algo-perf", "flex"], self._config_table_name)
 
     @property
     def conf_pause_on_battery_property(self) -> bool:
+        """
+        Retrieves the pause on battery status from the config data.
+
+        Returns:
+            bool: Pause on battery status, or "N/A" if not available.
+        """
         return self._get_data_from_response(self._config_response, ["pause-on-battery"], self._config_table_name)
 
     @property
     def conf_pause_on_active_property(self) -> bool:
+        """
+        Retrieves the pause on active status from the config data.
+
+        Returns:
+            bool: Pause on active status, or "N/A" if not available.
+        """
         return self._get_data_from_response(self._config_response, ["pause-on-active"], self._config_table_name)
