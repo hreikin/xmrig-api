@@ -81,7 +81,8 @@ class XMRigProperties:
                 log.error(f"An error occurred fetching the data from the response using the provided keys: {e}")
                 return "N/A"
 
-    # TODO: Add config data points to properties.
+    # TODO: Research all possible config properties and add them here, change own miners 
+    # TODO: to use xmrig-mo fork and try to figure out most of options then work from there.
 
     ############################
     # Full data from endpoints #

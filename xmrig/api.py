@@ -17,12 +17,13 @@ from xmrig.properties import XMRigProperties
 from xmrig.db import XMRigDatabase
 from typing import Optional, Dict, Any
 
-# TODO: Add config properties docstrings to the XMRigProperties class
-# TODO: Remove unwanted config properties, try find a complete one online to compare with and add any missing keys
-# TODO: Test config properties work on a live miner
-# TODO: Update mock and live tests to reflect the changes in the module
-# TODO: Update docstrings
-# TODO: Update the documentation to include all classses, methods, attributes, exceptions, modules, public functions, private functions, properties, etc
+# TODO: Create methods to edit miner details like IP, port, access token, etc.
+# TODO: Research all possible config options for properties.
+# TODO: Test config properties work on a live miner.
+# TODO: Add reStructuredText formatting to docstrings.
+# TODO: Update mock and live tests to reflect the changes in the module.
+# TODO: Update docstrings.
+# TODO: Update the documentation to include all classses, methods, attributes, exceptions, modules, public functions, private functions, properties, etc.
 
 class XMRigAPI:
     """
