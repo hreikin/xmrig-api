@@ -44,7 +44,6 @@ class XMRigDatabase:
                 cls._engines[db_url] = create_engine(db_url)
             return cls._engines[db_url]
         except Exception as e:
-            log.error(f"An error occurred initializing the database: {e}")
             raise XMRigDatabaseError(f"An error occurred initializing the database: {e}") from e
     
     @classmethod
@@ -70,8 +69,7 @@ class XMRigDatabase:
                     return True
             return False
         except Exception as e:
-            log.error(f"An error occurred checking if the table exists: {e}")
-            raise XMRigDatabaseError() from e
+            raise XMRigDatabaseError(f"An error occurred checking if the table exists: {e}") from e
     
     @classmethod
     def insert_data_to_db(cls, json_data: Dict[str, Any], table_name: str, db_url: str) -> None:
@@ -95,8 +93,7 @@ class XMRigDatabase:
             df.to_sql(table_name, engine, if_exists="append", index=False)
             log.debug("Data inserted successfully")
         except Exception as e:
-            log.error(f"An error occurred inserting data to the database: {e}")
-            raise XMRigDatabaseError() from e
+            raise XMRigDatabaseError(f"An error occurred inserting data to the database: {e}") from e
     
     @classmethod
     def fallback_to_db(cls, table_name: Union[str, List[str]], keys: List[Union[str, int]], db_url: str) -> Any:
@@ -128,8 +125,7 @@ class XMRigDatabase:
                     return data
                 return "N/A"
         except Exception as e:
-            log.error(f"An error occurred retrieving data from the database: {e}")
-            raise XMRigDatabaseError() from e
+            raise XMRigDatabaseError(f"An error occurred retrieving data from the database: {e}") from e
 
     # TODO: Check this works after recent changes
     @classmethod
@@ -156,5 +152,4 @@ class XMRigDatabase:
                 connection.execute(text(f"DROP TABLE IF EXISTS {summary_table}"))
             log.debug(f"All tables for '{miner_name}' have been deleted from the database")
         except Exception as e:
-            log.error(f"An error occurred deleting miner '{miner_name}' from the database: {e}")
-            raise XMRigDatabaseError() from e
+            raise XMRigDatabaseError(f"An error occurred deleting miner '{miner_name}' from the database: {e}") from e

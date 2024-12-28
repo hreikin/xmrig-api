@@ -113,8 +113,7 @@ class XMRigAPI:
             log.debug(f"Authorization header successfully changed.")
             return True
         except XMRigAuthorizationError as e:
-            log.error(f"An error occurred setting the Authorization Header: {e}")
-            raise XMRigAuthorizationError() from e
+            raise XMRigAuthorizationError(f"An error occurred setting the Authorization Header: {e}") from e
 
     def get_summary(self) -> bool:
         """
@@ -143,8 +142,7 @@ class XMRigAPI:
             log.error(f"An error occurred while connecting to {self._summary_url}: {e}")
             return False
         except XMRigAuthorizationError as e:
-            log.error(f"An authorization error occurred updating the summary: {e}")
-            raise XMRigAuthorizationError() from e
+            raise XMRigAuthorizationError(f"An authorization error occurred updating the summary: {e}") from e
         except Exception as e:
             log.error(f"An error occurred updating the summary: {e}")
             return False
@@ -186,8 +184,7 @@ class XMRigAPI:
             log.error(f"An error occurred while connecting to {self._backends_url}: {e}")
             return False
         except XMRigAuthorizationError as e:
-            log.error(f"An authorization error occurred updating the backends: {e}")
-            raise XMRigAuthorizationError() from e
+            raise XMRigAuthorizationError(f"An authorization error occurred updating the backends: {e}") from e
         except Exception as e:
             log.error(f"An error occurred updating the backends: {e}")
             return False
@@ -219,8 +216,7 @@ class XMRigAPI:
             log.error(f"An error occurred while connecting to {self._config_url}: {e}")
             return False
         except XMRigAuthorizationError as e:
-            log.error(f"An authorization error occurred updating the config: {e}")
-            raise XMRigAuthorizationError() from e
+            raise XMRigAuthorizationError(f"An authorization error occurred updating the config: {e}") from e
         except Exception as e:
             log.error(f"An error occurred updating the config: {e}")
             return False
@@ -245,14 +241,11 @@ class XMRigAPI:
             log.debug(f"Config endpoint successfully updated.")
             return True
         except requests.exceptions.RequestException as e:
-            log.error(f"An error occurred while connecting to {self._config_url}: {e}")
-            raise XMRigConnectionError() from e
+            raise XMRigConnectionError(f"An error occurred while connecting to {self._config_url}: {e}") from e
         except XMRigAuthorizationError as e:
-            log.error(f"An error occurred updating the summary: {e}")
-            raise XMRigAuthorizationError() from e
+            raise XMRigAuthorizationError(f"An authorization error occurred posting the config: {e}") from e
         except Exception as e:
-            log.error(f"An error occurred posting the config: {e}")
-            raise XMRigAPIError() from e
+            raise XMRigAPIError(f"An error occurred posting the config: {e}") from e
 
     def get_all_responses(self) -> bool:
         """
@@ -286,11 +279,9 @@ class XMRigAPI:
             log.debug(f"Miner successfully paused.")
             return True
         except requests.exceptions.RequestException as e:
-            log.error(f"An error occurred pausing the miner: {e}")
-            raise XMRigConnectionError() from e
+            raise XMRigConnectionError(f"A connection error occurred pausing the miner: {e}") from e
         except Exception as e:
-            log.error(f"An error occurred pausing the miner: {e}")
-            raise XMRigAPIError() from e
+            raise XMRigAPIError(f"An error occurred pausing the miner: {e}") from e
 
     def resume_miner(self) -> bool:
         """
@@ -308,11 +299,9 @@ class XMRigAPI:
             log.debug(f"Miner successfully resumed.")
             return True
         except requests.exceptions.RequestException as e:
-            log.error(f"An error occurred resuming the miner: {e}")
-            raise XMRigConnectionError() from e
+            raise XMRigConnectionError(f"A connection error occurred resuming the miner: {e}") from e
         except Exception as e:
-            log.error(f"An error occurred resuming the miner: {e}")
-            raise XMRigAPIError() from e
+            raise XMRigAPIError(f"An error occurred resuming the miner: {e}") from e
 
     def stop_miner(self) -> bool:
         """
@@ -330,11 +319,9 @@ class XMRigAPI:
             log.debug(f"Miner successfully stopped.")
             return True
         except requests.exceptions.RequestException as e:
-            log.error(f"An error occurred stopping the miner: {e}")
-            raise XMRigConnectionError() from e
+            raise XMRigConnectionError(f"A connection error occurred stopping the miner: {e}") from e
         except Exception as e:
-            log.error(f"An error occurred stopping the miner: {e}")
-            raise XMRigAPIError() from e
+            raise XMRigAPIError(f"An error occurred stopping the miner: {e}") from e
 
     # TODO: The `start` json RPC method is not implemented by XMRig yet, use alternative function below until PR 3030 is 
     # TODO: merged see https://github.com/xmrig/xmrig/issues/2826#issuecomment-1146465641
@@ -353,8 +340,6 @@ class XMRigAPI:
             log.debug(f"Miner successfully started.")
             return True
         except requests.exceptions.RequestException as e:
-            log.error(f"An error occurred starting the miner: {e}")
-            raise XMRigConnectionError() from e
+            raise XMRigConnectionError(f"A connection error occurred starting the miner: {e}") from e
         except Exception as e:
-            log.error(f"An error occurred starting the miner: {e}")
-            raise XMRigAPIError() from e
+            raise XMRigAPIError(f"An error occurred starting the miner: {e}") from e
