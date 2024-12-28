@@ -256,7 +256,7 @@ from .db import XMRigDatabase
 from .helpers import XMRigAPIError, XMRigAuthorizationError, XMRigConnectionError
 
 __name__ = "xmrig"
-__version__ = "0.0.12"
+__version__ = "0.0.13"
 __author__ = "hreikin"
 __email__ = "hreikin@gmail.com"
 __license__ = "MIT"
