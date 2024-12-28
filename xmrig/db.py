@@ -81,7 +81,7 @@ class XMRigDatabase:
         Args:
             json_data (Dict[str, Any]): JSON data to insert.
             table_name (str): Name of the table to insert data into.
-            engine (Engine): SQLAlchemy engine instance.
+            db_url (str): Database URL for creating the engine.
         """
         try:
             # Create a dataframe with the required columns and data
@@ -106,7 +106,7 @@ class XMRigDatabase:
         Args:
             table_name (Union[str, List[str]]): The name of the table or list of table names to use to retrieve the data.
             keys (List[Union[str, int]]): The keys to use to retrieve the data.
-            engine (Engine): The SQLAlchemy engine instance.
+            db_url (str): The Database URL for creating the engine.
 
         Returns:
             Any: The retrieved data, or "N/A" if not available.
@@ -139,7 +139,7 @@ class XMRigDatabase:
 
         Args:
             miner_name (str): The unique name of the miner.
-            engine (Engine): SQLAlchemy engine instance.
+            db_url (str): Database URL for creating the engine.
         """
         try:
             # Use quotes to avoid SQL syntax errors
