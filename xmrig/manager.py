@@ -28,7 +28,7 @@ class XMRigManager:
         _db_url (str): Database URL for storing miner data.
     """
 
-    def __init__(self, api_factory: Callable[..., XMRigAPI] = XMRigAPI, db_url: str = 'sqlite:///xmrig-api.db'):
+    def __init__(self, api_factory: Callable[..., XMRigAPI] = XMRigAPI, db_url: str = "sqlite:///xmrig-api.db"):
         """
         Initializes the manager with an empty collection of miners.
 

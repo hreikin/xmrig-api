@@ -112,7 +112,7 @@ class XMRigAPI:
             bool: True if the Authorization header was changed, or False if an error occurred.
         """
         try:
-            self._headers['Authorization'] = f"Bearer {self._access_token}"
+            self._headers["Authorization"] = f"Bearer {self._access_token}"
             log.debug(f"Authorization header successfully changed.")
             return True
         except XMRigAuthorizationError as e:

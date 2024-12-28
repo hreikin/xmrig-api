@@ -86,13 +86,13 @@ class XMRigDatabase:
         try:
             # Create a dataframe with the required columns and data
             data = {
-                'timestamp': [datetime.now()],
-                'full_json': [json.dumps(json_data)]
+                "timestamp": [datetime.now()],
+                "full_json": [json.dumps(json_data)]
             }
             engine = cls.init_db(db_url)
             df = pd.DataFrame(data)
             # Insert data into the database
-            df.to_sql(table_name, engine, if_exists='append', index=False)
+            df.to_sql(table_name, engine, if_exists="append", index=False)
             log.debug("Data inserted successfully")
         except Exception as e:
             log.error(f"An error occurred inserting data to the database: {e}")
