@@ -67,8 +67,9 @@ class XMRigAPI:
         self._ip = ip
         self._port = port
         self._access_token = access_token
+        self._tls_enabled = tls_enabled
         self._base_url = f"http://{ip}:{port}"
-        if tls_enabled:
+        if self._tls_enabled:
             self._base_url = f"https://{ip}:{port}"
         self._db_url = db_url
         self._json_rpc_url = f"{self._base_url}/json_rpc"
