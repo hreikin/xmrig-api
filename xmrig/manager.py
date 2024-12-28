@@ -100,6 +100,7 @@ class XMRigManager:
             log.error(f"An error occurred retrieving miner '{miner_name}': {e}")
             raise XMRigManagerError() from e
     
+    # TODO: Check this works
     def edit_miner(self, miner_name: str, new_details: dict) -> None:
         """
         Edits the details of a miner. The following details can be edited:

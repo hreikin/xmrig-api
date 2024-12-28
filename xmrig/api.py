@@ -17,9 +17,7 @@ from xmrig.properties import XMRigProperties
 from xmrig.db import XMRigDatabase
 from typing import Optional, Dict, Any
 
-# TODO: Research all possible config options for properties.
 # TODO: Test config properties work on a live miner.
-# TODO: Add reStructuredText formatting to docstrings.
 # TODO: Update mock and live tests to reflect the changes in the module.
 # TODO: Update docstrings.
 # TODO: Update the documentation to include all classses, methods, attributes, exceptions, modules, public functions, private functions, properties, etc.

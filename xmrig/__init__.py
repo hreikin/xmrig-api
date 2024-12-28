@@ -1,6 +1,5 @@
 """
 XMRig module initializer
-========================
 
 This module provides objects to interact with the XMRig miner API, manage multiple miners, 
 and store collected data in a database. It includes functionalities for:
@@ -12,8 +11,7 @@ and store collected data in a database. It includes functionalities for:
 - Fallback to the database if the data is not available in the cached responses.
 - Deleting all miner-related data from the database.
 
-Classes
--------
+Classes:
 
 - XMRigAPI: Interacts with the XMRig miner API.
 - XMRigAPIError: Custom exception for general API errors.
@@ -23,8 +21,7 @@ Classes
 - XMRigProperties: Retrieves and caches properties and statistics from the XMRig miner's API responses.
 - XMRigDatabase: Handles database operations for storing and managing miner data.
 
-Modules
--------
+Modules:
 
 - api: Contains the XMRigAPI class and related functionalities.
 - manager: Contains the XMRigManager class for managing multiple miners.
@@ -32,11 +29,9 @@ Modules
 - properties: Contains the XMRigProperties class for retrieving and caching properties.
 - db: Contains the XMRigDatabase class for database operations.
 
-Public Functions
-----------------
+Public Functions:
 
-XMRigAPI
-~~~~~~~~
+XMRigAPI:
 
 - set_auth_header
 - get_summary
@@ -49,8 +44,7 @@ XMRigAPI
 - stop_miner
 - start_miner
 
-XMRigManager
-~~~~~~~~~~~~
+XMRigManager:
 
 - add_miner
 - remove_miner
@@ -59,8 +53,7 @@ XMRigManager
 - get_all_miners_endpoints
 - list_miners
 
-XMRigDatabase
-~~~~~~~~~~~~~
+XMRigDatabase:
 
 - init_db
 - check_table_exists
@@ -68,8 +61,7 @@ XMRigDatabase
 - fallback_to_db
 - delete_all_miner_data_from_db
 
-XMRigProperties
-~~~~~~~~~~~~~~~
+XMRigProperties:
 
 - summary
 - backends
@@ -237,21 +229,17 @@ XMRigProperties
 - be_cuda_threads_clock
 - be_cuda_threads_memory_clock
 
-Private Functions
------------------
+Private Functions:
 
-XMRigAPI
-~~~~~~~~
+XMRigAPI:
 
 - _update_properties_cache
 
-XMRigProperties
-~~~~~~~~~~~~~~~
+XMRigProperties:
 
 - _get_data_from_response
 
-Exceptions
-----------
+Exceptions:
 
 - XMRigAPIError
 - XMRigAuthorizationError
