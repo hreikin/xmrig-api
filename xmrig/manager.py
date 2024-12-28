@@ -128,13 +128,15 @@ class XMRigManager:
             details (dict): The new details for the miner.
         """
         try:
+            new_name = ""
             miner_api = self.get_miner(miner_name)
             for key, value in new_details.items():
                 if key == "miner_name":
                     if value in self._miners:
                         raise ValueError(f"Miner with name '{value}' already exists.")
-                    miner_api._miner_name = value
-                    # remove old entry and replace with new entry
+                    new_name = value
+                    miner_api._miner_name = new_name
+                    # Remove old entry and replace with new entry
                     del self._miners[miner_name]
                     self._miners[value] = miner_api
                 elif key == "ip":
@@ -145,12 +147,15 @@ class XMRigManager:
                     miner_api.set_auth_header(value)
                 elif key == "tls_enabled":
                     miner_api._tls_enabled = value
-            # check if keys "ip", "port" or "tls_enabled" are in the new_details dictionary to construct the new base URL
+            # Get the miner API instance with the new name to edit further and then return
+            miner_api = self.get_miner(new_name)
+            # Check if keys "ip", "port" or "tls_enabled" are in the new_details dictionary to construct the new base URL
             if "ip" in new_details or "port" in new_details or "tls_enabled" in new_details:
                 miner_api._base_url = f"http://{miner_api._ip}:{miner_api._port}"
                 if miner_api._tls_enabled:
                     self._base_url = f"https://{miner_api._ip}:{miner_api._port}"
-            log.info(f"Miner '{miner_name}' successfully edited.")
+            log.info(f"Miner '{miner_name}' successfully edited." if new_name == "" else f"Miner '{miner_name}' successfully edited to '{new_name}'.")
+            return miner_api
         except Exception as e:
             raise XMRigManagerError(f"An error occurred editing miner '{miner_name}': {e}") from e
 
