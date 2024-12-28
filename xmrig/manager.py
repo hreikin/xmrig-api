@@ -99,6 +99,49 @@ class XMRigManager:
         except Exception as e:
             log.error(f"An error occurred retrieving miner '{miner_name}': {e}")
             raise XMRigManagerError() from e
+    
+    def edit_miner(self, miner_name: str, new_details: dict) -> None:
+        """
+        Edits the details of a miner. The following details can be edited:
+
+        - miner_name (str): A unique name for the miner.
+        - ip (str): IP address or domain of the XMRig API.
+        - port (str): Port of the XMRig API.
+        - access_token (Optional[str]): Access token for authorization.
+        - tls_enabled (bool): TLS status of the miner/API.
+
+        The dictionary can be in any order and can contain any number of the above keys. For example:
+        
+        full_details = {
+            'miner_name': 'new_name',
+            'ip': 'new_ip_or_domain_with_tld',
+            'port': '1234',
+            'access_token': 'new-token',
+            'tls_enabled': True
+        }
+
+        partial_details = {
+            'miner_name': 'new_name',
+            'port': '1234'
+        }
+
+        Args:
+            miner_name (str): The unique name of the miner.
+            details (dict): The new details for the miner.
+        """
+        try:
+            miner_api = self.get_miner(miner_name)
+            for key, value in new_details.items():
+                setattr(miner_api, f"_{key}", value)
+            # check if keys "ip" or "port" are in the new_details dictionary to construct the new base URL
+            if "ip" in new_details or "port" in new_details:
+                miner_api._base_url = f"http://{miner_api._ip}:{miner_api._port}"
+                if miner_api._tls_enabled:
+                    self._base_url = f"https://{miner_api._ip}:{miner_api._port}"
+            log.info(f"Miner '{miner_name}' successfully edited.")
+        except Exception as e:
+            log.error(f"An error occurred editing miner '{miner_name}': {e}")
+            raise XMRigManagerError() from e
 
     def perform_action_on_all(self, action: str) -> None:
         """
