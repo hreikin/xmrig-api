@@ -45,7 +45,7 @@ class XMRigDatabase:
             return cls._engines[db_url]
         except Exception as e:
             log.error(f"An error occurred initializing the database: {e}")
-            raise XMRigDatabaseError(f"Could not parse SQLAlchemy URL from string '{db_url}'") from e
+            raise XMRigDatabaseError(f"An error occurred initializing the database: {e}") from e
     
     @classmethod
     def check_table_exists(cls, db_url: str, table_name: str) -> bool:
