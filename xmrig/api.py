@@ -17,7 +17,9 @@ from xmrig.properties import XMRigProperties
 from xmrig.db import XMRigDatabase
 from typing import Optional, Dict, Any
 
+# TODO: Check database fallback functionality after changes to update_backends, it no longer falls back to the database.
 # TODO: Test config properties work on a live miner.
+# TODO: Fix examples to run from root of project as well as from the examples folder.
 # TODO: Update mock and live tests to reflect the changes in the module.
 # TODO: Update docstrings.
 # TODO: Update the documentation to include all classses, methods, attributes, exceptions, modules, public functions, private functions, properties, etc.
@@ -95,11 +97,18 @@ class XMRigAPI:
         self.get_all_responses()
         log.info(f"XMRigAPI initialized for {self._base_url}")
     
-    def _update_properties_cache(self) -> None:
+    # TODO: Modify to only update one response at a time.
+    def _update_properties_cache(self, response, endpoint) -> None:
         """
         Sets the properties for the XMRigAPI instance.
         """
-        self.data = XMRigProperties(self._summary_response, self._backends_response, self._config_response, self._miner_name, self._db_url)
+        if endpoint == "summary":
+            setattr(self.data, "_summary_response", response)
+        if endpoint == "backends":
+            setattr(self.data, "_backends_response", response)
+        if endpoint == "config":
+            setattr(self.data, "_config_response", response)
+        # self.data = XMRigProperties(self._summary_response, self._backends_response, self._config_response, self._miner_name, self._db_url)
 
     def set_auth_header(self) -> bool:
         """
@@ -131,13 +140,15 @@ class XMRigAPI:
             try:
                 self._summary_response = summary_response.json()
             except requests.exceptions.JSONDecodeError as e:
-                log.error(f"An error occurred decoding the summary response: {e}")
-                return False
-            self._update_properties_cache()
+                raise requests.exceptions.JSONDecodeError() from e
+            self._update_properties_cache(self._summary_response, "summary")
             log.debug(f"Summary endpoint successfully fetched.")
             if self._db_url is not None:
                 XMRigDatabase.insert_data_to_db(self._summary_response, f"{self._miner_name}-summary", self._db_url)
             return True
+        except requests.exceptions.JSONDecodeError as e:
+            log.error(f"An error occurred decoding the summary response: {e}")
+            return False
         except requests.exceptions.RequestException as e:
             log.error(f"An error occurred while connecting to {self._summary_url}: {e}")
             return False
@@ -163,9 +174,10 @@ class XMRigAPI:
             try:
                 self._backends_response = backends_response.json()
             except requests.exceptions.JSONDecodeError as e:
-                log.error(f"An error occurred decoding the backends response: {e}")
-                return False
-            self._update_properties_cache()
+                raise requests.exceptions.JSONDecodeError() from e
+            # TODO: Is this running if a JSONDecodeError occurs?
+            # something breaks the backend table if the response is malformed so it wont even fallback to the database
+            self._update_properties_cache(self._backends_response, "backends")     # should this only update 1 response at a time and be moved inside the nested try block ?
             log.debug(f"Backends endpoint successfully fetched.")
             if self._db_url is not None:
                 # insert each item from the self._backends_response into the database as its own table
@@ -178,6 +190,9 @@ class XMRigAPI:
                         prefix = "cuda"
                     XMRigDatabase.insert_data_to_db(backend, f"{self._miner_name}-{prefix}-backend", self._db_url)
             return True
+        except requests.exceptions.JSONDecodeError as e:
+            log.error(f"An error occurred decoding the backends response: {e}")
+            return False
         except requests.exceptions.RequestException as e:
             log.error(f"An error occurred while connecting to {self._backends_url}: {e}")
             return False
@@ -203,13 +218,15 @@ class XMRigAPI:
             try:
                 self._config_response = config_response.json()
             except requests.exceptions.JSONDecodeError as e:
-                log.error(f"An error occurred decoding the config response: {e}")
-                return False
-            self._update_properties_cache()
+                raise requests.exceptions.JSONDecodeError() from e
+            self._update_properties_cache(self._config_response, "config")
             log.debug(f"Config endpoint successfully fetched.")
             if self._db_url is not None:
                 XMRigDatabase.insert_data_to_db(self._config_response, f"{self._miner_name}-config", self._db_url)
             return True
+        except requests.exceptions.JSONDecodeError as e:
+            log.error(f"An error occurred decoding the config response: {e}")
+            return False
         except requests.exceptions.RequestException as e:
             log.error(f"An error occurred while connecting to {self._config_url}: {e}")
             return False
@@ -235,9 +252,12 @@ class XMRigAPI:
                 raise XMRigAuthorizationError()
             # Raise an HTTPError for bad responses (4xx and 5xx)
             self._post_config_response.raise_for_status()
-            self._update_properties_cache()
+            self._update_properties_cache(self._post_config_response, "config")
             log.debug(f"Config endpoint successfully updated.")
             return True
+        except requests.exceptions.JSONDecodeError as e:
+            log.error(f"An error occurred decoding the config response: {e}")
+            return False
         except requests.exceptions.RequestException as e:
             raise XMRigConnectionError(f"An error occurred while connecting to {self._config_url}: {e}") from e
         except XMRigAuthorizationError as e:
