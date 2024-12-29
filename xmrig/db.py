@@ -28,6 +28,7 @@ class XMRigDatabase:
 
     _engines = {}
 
+    # TODO: Check if this works, probably needs rethinking
     @classmethod
     def init_db(cls, db_url: str) -> Engine:
         """
@@ -42,10 +43,31 @@ class XMRigDatabase:
         try:
             if db_url not in cls._engines:
                 cls._engines[db_url] = create_engine(db_url)
+            # create 3 tables for summary, backends and config
+            # how to handle xmrig-mo with extra backends for cuda/opencl?
+            # cls._engines[db_url].execute(text(f"CREATE TABLE IF NOT EXISTS {miner_name}-summary (timestamp TIMESTAMP, full_json TEXT)"))
+            # cls._engines[db_url].execute(text(f"CREATE TABLE IF NOT EXISTS {miner_name}-cpu-backend (timestamp TIMESTAMP, full_json TEXT)"))
+            # cls._engines[db_url].execute(text(f"CREATE TABLE IF NOT EXISTS {miner_name}-config (timestamp TIMESTAMP, full_json TEXT)"))
             return cls._engines[db_url]
         except Exception as e:
             raise XMRigDatabaseError(f"An error occurred initializing the database: {e}") from e
     
+    @classmethod
+    def get_db(cls, db_url: str) -> Engine:
+        """
+        Returns the database engine for the specified database URL.
+
+        Args:
+            db_url (str): Database URL for creating the engine.
+
+        Returns:
+            Engine: SQLAlchemy engine instance.
+        """
+        try:
+            return cls._engines[db_url]
+        except KeyError:
+            raise XMRigDatabaseError(f"Database engine for '{db_url}' does not exist. Please initialize the database first.") from None
+
     @classmethod
     def check_table_exists(cls, db_url: str, table_name: str) -> bool:
         """
@@ -122,10 +144,12 @@ class XMRigDatabase:
                     if len(keys) > 0:
                         for key in keys:
                             data = data[key]
-                    return data
-                return "N/A"
+                return data
+            return "N/A"
         except Exception as e:
             raise XMRigDatabaseError(f"An error occurred retrieving data from the database: {e}") from e
+        finally:
+            connection.close()
 
     # TODO: Check this works after recent changes
     @classmethod
