@@ -75,7 +75,7 @@ class XMRigProperties:
                 try:
                     return XMRigDatabase.fallback_to_db(fallback_table_name, keys, self._db_url)
                 except Exception as db_e:
-                    log.error(f"An error occurred fetching the data from the database: {db_e}")
+                    log.error(f"An error occurred fetching the backends data, has the miner just been added and started/restarted within the last 15 minutes ? {db_e}")
                     return "N/A"
             else:
                 log.error(f"An error occurred fetching the data from the response using the provided keys: {e}")
@@ -1024,8 +1024,11 @@ class XMRigProperties:
             Union[List[int], Any]: CPU backend threads intensity information, or "N/A" if not available.
         """
         intensities = []
-        for i in self._get_data_from_response(self._backends_response, [0, "threads"], self._backends_table_names[0]):
-                intensities.append(i["intensity"])
+        try:
+            for i in self._get_data_from_response(self._backends_response, [0, "threads"], self._backends_table_names[0]):
+                    intensities.append(i["intensity"])
+        except TypeError as e:
+            return "N/A"
         return intensities
 
     @property
@@ -1037,8 +1040,11 @@ class XMRigProperties:
             Union[List[int], Any]: CPU backend threads affinity information, or "N/A" if not available.
         """
         affinities = []
-        for i in self._get_data_from_response(self._backends_response, [0, "threads"], self._backends_table_names[0]):
-                affinities.append(i["affinity"])
+        try:
+            for i in self._get_data_from_response(self._backends_response, [0, "threads"], self._backends_table_names[0]):
+                    affinities.append(i["affinity"])
+        except TypeError as e:
+            return "N/A"
         return affinities
 
     @property
@@ -1050,8 +1056,11 @@ class XMRigProperties:
             Union[List[int], Any]: CPU backend threads AV information, or "N/A" if not available.
         """
         avs = []
-        for i in self._get_data_from_response(self._backends_response, [0, "threads"], self._backends_table_names[0]):
-                avs.append(i["av"])
+        try:
+            for i in self._get_data_from_response(self._backends_response, [0, "threads"], self._backends_table_names[0]):
+                    avs.append(i["av"])
+        except TypeError as e:
+            return "N/A"
         return avs
 
     @property
@@ -1063,8 +1072,11 @@ class XMRigProperties:
             Union[List[float], Any]: CPU backend threads hashrates for the last 10 seconds, or "N/A" if not available.
         """
         hashrates_10s = []
-        for i in self._get_data_from_response(self._backends_response, [0, "threads"], self._backends_table_names[0]):
-                hashrates_10s.append(i["hashrate"][0])
+        try:
+            for i in self._get_data_from_response(self._backends_response, [0, "threads"], self._backends_table_names[0]):
+                    hashrates_10s.append(i["hashrate"][0])
+        except TypeError as e:
+            return "N/A"
         return hashrates_10s
 
     @property
@@ -1076,8 +1088,11 @@ class XMRigProperties:
             Union[List[float], Any]: CPU backend threads hashrates for the last 1 minute, or "N/A" if not available.
         """
         hashrates_1m = []
-        for i in self._get_data_from_response(self._backends_response, [0, "threads"], self._backends_table_names[0]):
-                hashrates_1m.append(i["hashrate"][1])
+        try:
+           for i in self._get_data_from_response(self._backends_response, [0, "threads"], self._backends_table_names[0]):
+                    hashrates_1m.append(i["hashrate"][1])
+        except TypeError as e:
+            return "N/A"
         return hashrates_1m
 
     @property
@@ -1089,8 +1104,11 @@ class XMRigProperties:
             Union[List[float], Any]: CPU backend threads hashrates for the last 15 minutes, or "N/A" if not available.
         """
         hashrates_15m = []
-        for i in self._get_data_from_response(self._backends_response, [0, "threads"], self._backends_table_names[0]):
-                hashrates_15m.append(i["hashrate"][2])
+        try:
+            for i in self._get_data_from_response(self._backends_response, [0, "threads"], self._backends_table_names[0]):
+                    hashrates_15m.append(i["hashrate"][2])
+        except TypeError as e:
+            return "N/A"
         return hashrates_15m
 
     @property
