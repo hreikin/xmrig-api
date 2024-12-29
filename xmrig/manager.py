@@ -57,6 +57,9 @@ class XMRigManager:
 
             # Use the injected factory to create the API instance
             self._miners[miner_name] = self._api_factory(miner_name, ip, port, access_token, tls_enabled, self._db_url)
+            # Check if the database URL is set and create the tables if it is
+            if self._db_url is not None:
+                XMRigDatabase.init_db(self._db_url)
             log.info(f"Miner '{miner_name}' added to manager.")
         except Exception as e:
             raise XMRigManagerError(f"An error occurred adding miner '{miner_name}': {e}") from e
