@@ -17,9 +17,9 @@ from xmrig.properties import XMRigProperties
 from xmrig.db import XMRigDatabase
 from typing import Optional, Dict, Any
 
-# TODO: Work through exceptions and logging.
+# TODO: Work through exceptions and logging. Use default exceptions if available instead of custom ones.
 # TODO: Test config properties work on a live miner.
-# TODO: Fix examples to run from root of project as well as from the examples folder.
+# TODO: Fix examples to run from root of project as well as from the examples folder after recent changes.
 # TODO: Update mock and live tests to reflect the changes in the module.
 # TODO: Update docstrings.
 # TODO: Update the documentation to include all classses, methods, attributes, exceptions, modules, public functions, private functions, properties, etc.
@@ -165,6 +165,7 @@ class XMRigAPI:
             log.error(f"An error occurred updating the {endpoint}: {e}")
             return False
 
+    # TODO: Needs checking and testing.
     def post_config(self, config: Dict[str, Any]) -> bool:
         """
         Updates the miners config data via the XMRig API.
@@ -282,8 +283,8 @@ class XMRigAPI:
             bool: True if the miner was successfully started, or False if an error occurred.
         """
         try:
-            self.get_config()
-            self.post_config(self._config_response)
+            self.get_endpoint("config")
+            self.post_config(self.data._config_response)
             log.debug(f"Miner successfully started.")
             return True
         except requests.exceptions.RequestException as e:

@@ -28,7 +28,6 @@ class XMRigDatabase:
 
     _engines = {}
 
-    # TODO: Check if this works, probably needs rethinking
     @classmethod
     def init_db(cls, db_url: str) -> Engine:
         """
@@ -43,15 +42,11 @@ class XMRigDatabase:
         try:
             if db_url not in cls._engines:
                 cls._engines[db_url] = create_engine(db_url)
-            # create 3 tables for summary, backends and config
-            # how to handle xmrig-mo with extra backends for cuda/opencl?
-            # cls._engines[db_url].execute(text(f"CREATE TABLE IF NOT EXISTS {miner_name}-summary (timestamp TIMESTAMP, full_json TEXT)"))
-            # cls._engines[db_url].execute(text(f"CREATE TABLE IF NOT EXISTS {miner_name}-cpu-backend (timestamp TIMESTAMP, full_json TEXT)"))
-            # cls._engines[db_url].execute(text(f"CREATE TABLE IF NOT EXISTS {miner_name}-config (timestamp TIMESTAMP, full_json TEXT)"))
             return cls._engines[db_url]
         except Exception as e:
             raise XMRigDatabaseError(f"An error occurred initializing the database: {e}") from e
     
+    # TODO: Implement across the codebase
     @classmethod
     def get_db(cls, db_url: str) -> Engine:
         """
@@ -133,13 +128,13 @@ class XMRigDatabase:
         column_name = "full_json"
         engine = cls.init_db(db_url)
         try:
-            # Connect to the database and fetch the data in column_name from the table_name
             with engine.connect() as connection:
                 # special handling for backends property, enables support for xmrig-mo fork
                 if len(keys) < 1 and "backend" in table_name:
-                    # get all backend tables and construct the response ?
+                    # get all backend tables and construct the response
                     backends = []
                     miner_name = table_name.split("-")[0].lstrip("'")
+                    # Connect to the database and fetch the data in column_name from the table_name for each backend
                     if cls.check_table_exists(db_url, f"{miner_name}-cpu-backend"):
                         backends.append(json.loads(connection.execute(text(f"SELECT {column_name} FROM '{miner_name}-cpu-backend' ORDER BY timestamp DESC LIMIT 1")).fetchone()[0]))
                     if cls.check_table_exists(db_url, f"{miner_name}-opencl-backend"):
@@ -147,15 +142,17 @@ class XMRigDatabase:
                     if cls.check_table_exists(db_url, f"{miner_name}-cuda-backend"):
                         backends.append(json.loads(connection.execute(text(f"SELECT {column_name} FROM '{miner_name}-cuda-backend' ORDER BY timestamp DESC LIMIT 1")).fetchone()[0]))
                     return backends
+                # default handling
                 else:
-                    # default handling
+                    # Connect to the database and fetch the data in column_name from the table_name
                     result = connection.execute(text(f"SELECT {column_name} FROM {table_name} ORDER BY timestamp DESC LIMIT 1"))
                     # Fetch the last item from the result
                     data = result.fetchone()
                     if data:
                         data = json.loads(data[0])
-                    # if the first key is an int then that means we are dealing with the backends tables
-                    # remove the first item from the keys list if its an int
+                    # if the first key is an int then that means we are dealing with the properties that require the
+                    # backends tables, remove the first item from the keys list because the backends are stored in 
+                    # individual tables
                     if isinstance(keys[0], int):
                         keys.pop(0)
                     # Use the list of keys/indices to access the correct data
