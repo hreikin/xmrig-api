@@ -62,7 +62,7 @@ class XMRigProperties:
             Union[Any, str]: The retrieved data, or a default string value of "N/A" if not available.
         """
         try:
-            if response == None or response == [None]:
+            if response == None:
                 if self._db_url is not None:
                     log.debug(f"An error occurred fetching the data from the response using the provided keys, trying database.")
                     try:
@@ -94,7 +94,7 @@ class XMRigProperties:
         """
         return self._get_data_from_response(self._summary_response, [], self._summary_table_name)
 
-    # TODO: Handle this correctly after recent changes
+    # TODO: Could this be handled better without the table check ?
     @property
     def backends(self) -> Union[List[Dict[str, Any]], str]:
         """
@@ -103,12 +103,9 @@ class XMRigProperties:
         Returns:
             Union[List[Dict[str, Any]], str]: Current backends response, or "N/A" if not available.
         """
-        all_backends = []
-        for backend_table in self._backends_table_names:
-            if XMRigDatabase.check_table_exists(self._db_url, backend_table):
-                all_backends.append(self._get_data_from_response(self._backends_response, [], backend_table))
-        all_backends = [i for i in all_backends if i != "N/A"]
-        return all_backends
+        # table name for this property shouldnt matter as long as it is a backend table because it is used 
+        # to get the miners name because it has its own special handling when it falls back to the db
+        return self._get_data_from_response(self._backends_response, [], self._backends_table_names[0])
 
     @property
     def config(self) -> Union[Dict[str, Any], str]:
