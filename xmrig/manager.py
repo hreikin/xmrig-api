@@ -215,3 +215,6 @@ class XMRigManager:
             return list(self._miners.keys())
         except Exception as e:
             raise XMRigManagerError(f"An error occurred listing miners: {e}") from e
+
+# Define the public interface of the module
+__all__ = ["XMRigManager"]

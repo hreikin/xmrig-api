@@ -119,3 +119,6 @@ class XMRigPropertiesError(Exception):
         """
         self.message = message
         super().__init__(self.message)
+
+# Define the public interface of the module
+__all__ = ["XMRigAPIError", "XMRigAuthorizationError", "XMRigConnectionError", "XMRigDatabaseError", "XMRigManagerError", "XMRigPropertiesError"]

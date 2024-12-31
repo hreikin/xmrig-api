@@ -192,3 +192,6 @@ class XMRigDatabase:
             log.debug(f"All tables for '{miner_name}' have been deleted from the database")
         except Exception as e:
             raise XMRigDatabaseError(f"An error occurred deleting miner '{miner_name}' from the database: {e}") from e
+
+# Define the public interface of the module
+__all__ = ["XMRigDatabase"]

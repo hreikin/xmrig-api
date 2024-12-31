@@ -2762,3 +2762,6 @@ class XMRigProperties:
             bool: Pause on active status, or "N/A" if not available.
         """
         return self._get_data_from_response(self._config_response, ["pause-on-active"], self._config_table_name)
+
+# Define the public interface of the module
+__all__ = ["XMRigProperties"]

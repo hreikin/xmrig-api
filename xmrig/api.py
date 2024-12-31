@@ -291,3 +291,6 @@ class XMRigAPI:
             raise XMRigConnectionError(f"A connection error occurred starting the miner: {e}") from e
         except Exception as e:
             raise XMRigAPIError(f"An error occurred starting the miner: {e}") from e
+
+# Define the public interface of the module
+__all__ = ["XMRigAPI"]
