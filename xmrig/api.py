@@ -76,9 +76,7 @@ class XMRigAPI:
         self._summary_url = f"{self._base_url}/2/summary"
         self._backends_url = f"{self._base_url}/2/backends"
         self._config_url = f"{self._base_url}/2/config"
-        self._summary_response = None
-        self._backends_response = None
-        self._config_response = None
+        # Do i need these 2 or just use local variables?
         self._post_config_response = None
         self._new_config = None
         self._headers = {
@@ -93,11 +91,10 @@ class XMRigAPI:
             "jsonrpc": "2.0",
             "id": 1,
         }
-        self.data = XMRigProperties(self._summary_response, self._backends_response, self._config_response, self._miner_name, self._db_url)
+        self.data = XMRigProperties(None, None, None, self._miner_name, self._db_url)
         self.get_all_responses()
         log.info(f"XMRigAPI initialized for {self._base_url}")
     
-    # TODO: Modify to only update one response at a time.
     def _update_properties_cache(self, response, endpoint) -> None:
         """
         Sets the properties for the XMRigAPI instance.
@@ -108,7 +105,6 @@ class XMRigAPI:
             setattr(self.data, "_backends_response", response)
         if endpoint == "config":
             setattr(self.data, "_config_response", response)
-        # self.data = XMRigProperties(self._summary_response, self._backends_response, self._config_response, self._miner_name, self._db_url)
 
     def set_auth_header(self) -> bool:
         """
@@ -124,116 +120,52 @@ class XMRigAPI:
         except XMRigAuthorizationError as e:
             raise XMRigAuthorizationError(f"An error occurred setting the Authorization Header: {e}") from e
 
-    def get_summary(self) -> bool:
+    def get_endpoint(self, endpoint: str) -> bool:
         """
-        Updates the cached summary data from the XMRig API.
+        Updates the cached data from the specified XMRig API endpoint.
+
+        Args:
+            endpoint (str): The endpoint to fetch data from. Should be one of 'summary', 'backends', or 'config'.
 
         Returns:
             bool: True if the cached data is successfully updated or False if an error occurred.
         """
+        url_map = {
+            "summary": self._summary_url,
+            "backends": self._backends_url,
+            "config": self._config_url
+        }
         try:
-            summary_response = requests.get(self._summary_url, headers=self._headers)
-            if summary_response.status_code == 401:
+            response = requests.get(url_map[endpoint], headers=self._headers)
+            if response.status_code == 401:
                 raise XMRigAuthorizationError()
-            # Raise an HTTPError for bad responses (4xx and 5xx)
-            summary_response.raise_for_status()
+            response.raise_for_status()
             try:
-                self._summary_response = summary_response.json()
+                json_response = response.json()
             except requests.exceptions.JSONDecodeError as e:
-                raise requests.exceptions.JSONDecodeError() from e
-            self._update_properties_cache(self._summary_response, "summary")
-            log.debug(f"Summary endpoint successfully fetched.")
-            if self._db_url is not None:
-                XMRigDatabase.insert_data_to_db(self._summary_response, f"{self._miner_name}-summary", self._db_url)
-            return True
+                json_response = None
+                raise e
+            else:
+                self._update_properties_cache(json_response, endpoint)
+                log.debug(f"{endpoint.capitalize()} endpoint successfully fetched.")
+                if self._db_url is not None:
+                    if endpoint == "backends":
+                        for backend in json_response:
+                            prefix = ["cpu", "opencl", "cuda"][json_response.index(backend)]
+                            XMRigDatabase.insert_data_to_db(backend, f"{self._miner_name}-{prefix}-backend", self._db_url)
+                    else:
+                        XMRigDatabase.insert_data_to_db(json_response, f"{self._miner_name}-{endpoint}", self._db_url)
+                return True
         except requests.exceptions.JSONDecodeError as e:
-            log.error(f"An error occurred decoding the summary response: {e}")
+            log.error(f"An error occurred decoding the {endpoint} response: {e}")
             return False
         except requests.exceptions.RequestException as e:
-            log.error(f"An error occurred while connecting to {self._summary_url}: {e}")
+            log.error(f"An error occurred while connecting to {url_map[endpoint]}: {e}")
             return False
         except XMRigAuthorizationError as e:
-            raise XMRigAuthorizationError(f"An authorization error occurred updating the summary, please provide a valid access token: {e}") from e
+            raise XMRigAuthorizationError(f"An authorization error occurred updating the {endpoint}, please provide a valid access token: {e}") from e
         except Exception as e:
-            log.error(f"An error occurred updating the summary: {e}")
-            return False
-
-    def get_backends(self) -> bool:
-        """
-        Updates the cached backends data from the XMRig API.
-
-        Returns:
-            bool: True if the cached data is successfully updated or False if an error occurred.
-        """
-        try:
-            backends_response = requests.get(self._backends_url, headers=self._headers)
-            if backends_response.status_code == 401:
-                raise XMRigAuthorizationError()
-            # Raise an HTTPError for bad responses (4xx and 5xx)
-            backends_response.raise_for_status()
-            try:
-                self._backends_response = backends_response.json()
-            except requests.exceptions.JSONDecodeError as e:
-                raise requests.exceptions.JSONDecodeError() from e
-            # TODO: Is this running if a JSONDecodeError occurs?
-            # something breaks the backend table if the response is malformed so it wont even fallback to the database
-            self._update_properties_cache(self._backends_response, "backends")     # should this only update 1 response at a time and be moved inside the nested try block ?
-            log.debug(f"Backends endpoint successfully fetched.")
-            if self._db_url is not None:
-                # insert each item from the self._backends_response into the database as its own table
-                for backend in self._backends_response:
-                    if self._backends_response.index(backend) == 0:
-                        prefix = "cpu"
-                    if self._backends_response.index(backend) == 1:
-                        prefix = "opencl"
-                    if self._backends_response.index(backend) == 2:
-                        prefix = "cuda"
-                    XMRigDatabase.insert_data_to_db(backend, f"{self._miner_name}-{prefix}-backend", self._db_url)
-            return True
-        except requests.exceptions.JSONDecodeError as e:
-            log.error(f"An error occurred decoding the backends response: {e}")
-            return False
-        except requests.exceptions.RequestException as e:
-            log.error(f"An error occurred while connecting to {self._backends_url}: {e}")
-            return False
-        except XMRigAuthorizationError as e:
-            raise XMRigAuthorizationError(f"An authorization error occurred updating the backends, please provide a valid access token: {e}") from e
-        except Exception as e:
-            log.error(f"An error occurred updating the backends: {e}")
-            return False
-
-    def get_config(self) -> bool:
-        """
-        Updates the cached config data from the XMRig API.
-
-        Returns:
-            bool: True if the cached data is successfully updated, or False if an error occurred.
-        """
-        try:
-            config_response = requests.get(self._config_url, headers=self._headers)
-            if config_response.status_code == 401:
-                raise XMRigAuthorizationError()
-            # Raise an HTTPError for bad responses (4xx and 5xx)
-            config_response.raise_for_status()
-            try:
-                self._config_response = config_response.json()
-            except requests.exceptions.JSONDecodeError as e:
-                raise requests.exceptions.JSONDecodeError() from e
-            self._update_properties_cache(self._config_response, "config")
-            log.debug(f"Config endpoint successfully fetched.")
-            if self._db_url is not None:
-                XMRigDatabase.insert_data_to_db(self._config_response, f"{self._miner_name}-config", self._db_url)
-            return True
-        except requests.exceptions.JSONDecodeError as e:
-            log.error(f"An error occurred decoding the config response: {e}")
-            return False
-        except requests.exceptions.RequestException as e:
-            log.error(f"An error occurred while connecting to {self._config_url}: {e}")
-            return False
-        except XMRigAuthorizationError as e:
-            raise XMRigAuthorizationError(f"An authorization error occurred updating the config, please provide a valid access token: {e}") from e
-        except Exception as e:
-            log.error(f"An error occurred updating the config: {e}")
+            log.error(f"An error occurred updating the {endpoint}: {e}")
             return False
 
     def post_config(self, config: Dict[str, Any]) -> bool:
@@ -273,9 +205,9 @@ class XMRigAPI:
             bool: True if successful, or False if an error occurred.
         """
         try:
-            summary_success = self.get_summary()
-            backends_success = self.get_backends()
-            config_success = self.get_config()
+            summary_success = self.get_endpoint("summary")
+            backends_success = self.get_endpoint("backends")
+            config_success = self.get_endpoint("config")
             return summary_success and backends_success and config_success
         except Exception as e:
             log.error(f"An error occurred fetching all responses: {e}")
