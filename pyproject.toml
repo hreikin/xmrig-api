@@ -1,6 +1,6 @@
 [project]
 name = "xmrig-api"
-version = "0.0.14"
+version = "0.0.15"
 authors = [
   { name="hreikin", email="hreikin@gmail.com" },
 ]
