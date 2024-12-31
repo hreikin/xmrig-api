@@ -135,16 +135,34 @@ class XMRigDatabase:
         try:
             # Connect to the database and fetch the data in column_name from the table_name
             with engine.connect() as connection:
-                result = connection.execute(text(f"SELECT {column_name} FROM {table_name} ORDER BY timestamp DESC LIMIT 1"))
-                # Fetch the last item from the result
-                data = result.fetchone()
-                if data:
-                    data = json.loads(data[0])
+                # special handling for backends property, enables support for xmrig-mo fork
+                if len(keys) < 1 and "backend" in table_name:
+                    # get all backend tables and construct the response ?
+                    backends = []
+                    miner_name = table_name.split("-")[0].lstrip("'")
+                    if cls.check_table_exists(db_url, f"{miner_name}-cpu-backend"):
+                        backends.append(json.loads(connection.execute(text(f"SELECT {column_name} FROM '{miner_name}-cpu-backend' ORDER BY timestamp DESC LIMIT 1")).fetchone()[0]))
+                    if cls.check_table_exists(db_url, f"{miner_name}-opencl-backend"):
+                        backends.append(json.loads(connection.execute(text(f"SELECT {column_name} FROM '{miner_name}-opencl-backend' ORDER BY timestamp DESC LIMIT 1")).fetchone()[0]))
+                    if cls.check_table_exists(db_url, f"{miner_name}-cuda-backend"):
+                        backends.append(json.loads(connection.execute(text(f"SELECT {column_name} FROM '{miner_name}-cuda-backend' ORDER BY timestamp DESC LIMIT 1")).fetchone()[0]))
+                    return backends
+                else:
+                    # default handling
+                    result = connection.execute(text(f"SELECT {column_name} FROM {table_name} ORDER BY timestamp DESC LIMIT 1"))
+                    # Fetch the last item from the result
+                    data = result.fetchone()
+                    if data:
+                        data = json.loads(data[0])
+                    # if the first key is an int then that means we are dealing with the backends tables
+                    # remove the first item from the keys list if its an int
+                    if isinstance(keys[0], int):
+                        keys.pop(0)
                     # Use the list of keys/indices to access the correct data
                     if len(keys) > 0:
                         for key in keys:
                             data = data[key]
-                return data
+                    return data
             return "N/A"
         except Exception as e:
             raise XMRigDatabaseError(f"An error occurred retrieving data from the database: {e}") from e
