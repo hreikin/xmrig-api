@@ -17,7 +17,7 @@ from xmrig.properties import XMRigProperties
 from xmrig.db import XMRigDatabase
 from typing import Optional, Dict, Any
 
-# TODO: Check database fallback functionality after changes to update_backends, it no longer falls back to the database.
+# TODO: Work through exceptions and logging.
 # TODO: Test config properties work on a live miner.
 # TODO: Fix examples to run from root of project as well as from the examples folder.
 # TODO: Update mock and live tests to reflect the changes in the module.
@@ -38,9 +38,6 @@ class XMRigAPI:
         _summary_url (str): URL for the summary endpoint.
         _backends_url (str): URL for the backends endpoint.
         _config_url (str): URL for the config endpoint.
-        _summary_response (Optional[Dict[str, Any]]): Response from the summary endpoint.
-        _backends_response (Optional[List[Dict[str, Any]]]): Response from the backends endpoint.
-        _config_response (Optional[Dict[str, Any]]): Response from the config `GET` endpoint.
         _post_config_response (Optional[Dict[str, Any]]): Response from the config `PUT` endpoint.
         _new_config (Optional[Dict[str, Any]]): Config to update with.
         _headers (Dict[str, str]): Headers for all API/RPC requests.
