@@ -160,25 +160,20 @@ class XMRigManager:
         except Exception as e:
             raise XMRigManagerError(e, traceback.print_exc(), f"An error occurred editing miner '{miner_name}':") from e
 
-    # TODO: Update this to use the new method from api.py
     def perform_action_on_all(self, action: str) -> None:
         """
         Performs the specified action on all miners.
 
         Args:
-            action (str): The action to perform ('pause', 'resume', 'stop', etc.).
+            action (str): The action to perform ('pause', 'resume', 'stop', 'start').
         """
         try:
             for miner_name, miner_api in self._miners.items():
-                method = getattr(miner_api, f"{action}_miner", None)
-                if method and callable(method):
-                    success = method()
-                    if success:
-                        log.info(f"Action '{action}' successfully performed on '{miner_name}'.")
-                    else:
-                        log.warning(f"Action '{action}' failed on '{miner_name}'.")
+                success = miner_api.perform_action(action)
+                if success:
+                    log.info(f"Action '{action}' successfully performed on '{miner_name}'.")
                 else:
-                    raise XMRigManagerError(f"Action '{action}' is not a valid method for miner API.")
+                    log.warning(f"Action '{action}' failed on '{miner_name}'.")
         except Exception as e:
             raise XMRigManagerError(e, traceback.print_exc(), f"An error occurred performing action '{action}' on all miners:") from e
 
