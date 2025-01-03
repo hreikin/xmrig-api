@@ -18,22 +18,6 @@ from xmrig.properties import XMRigProperties
 from xmrig.db import XMRigDatabase
 from typing import Optional, Dict, Any
 
-# // TODO: Work through exceptions and logging. Catch default exceptions if available and raise custom ones ?
-# // TODO: Update custom exception usage to include the error and traceback.
-# // TODO: Test config properties work on a live miner.
-# // TODO: Implement the `perform_action` method across the codebase.
-# // TODO: Update method in XMRigManager to handle an optional single endpoint.
-# // TODO: Implement get_db across the codebase.
-# // TODO: Fix examples after recent changes.
-# // TODO: Test/check delete_all_miner_data_from_db method.
-# // TODO: Test/check edit_miner method.
-# // TODO: Test/check/refactor post_config method to use local variables.
-# // TODO: Refactor enabled_backends property after recent changes.
-# // TODO: Refactor logging statements to use the appropriate level.
-# TODO: Update mock and live tests to reflect the changes in the module.
-# TODO: Update docstrings.
-# TODO: Update the documentation to include all classses, methods, attributes, exceptions, modules, public functions, private functions, properties, etc.
-
 class XMRigAPI:
     """
     A class to interact with the XMRig miner API.
@@ -48,8 +32,6 @@ class XMRigAPI:
         _summary_url (str): URL for the summary endpoint.
         _backends_url (str): URL for the backends endpoint.
         _config_url (str): URL for the config endpoint.
-        _post_config_response (Optional[Dict[str, Any]]): Response from the config `PUT` endpoint.
-        _new_config (Optional[Dict[str, Any]]): Config to update with.
         _headers (Dict[str, str]): Headers for all API/RPC requests.
         _json_rpc_payload (Dict[str, Union[str, int]]): Default payload to send with RPC request.
         data (XMRigProperties): Instance of XMRigProperties for accessing cached data.
@@ -116,6 +98,9 @@ class XMRigAPI:
 
         Returns:
             bool: True if the Authorization header was changed, or False if an error occurred.
+        
+        Raises:
+            XMRigAuthorizationError: An error occurred setting the Authorization Header.
         """
         try:
             self._headers["Authorization"] = f"Bearer {self._access_token}"
@@ -133,6 +118,11 @@ class XMRigAPI:
 
         Returns:
             bool: True if the cached data is successfully updated or False if an error occurred.
+
+        Raises:
+            XMRigAuthorizationError: If an authorization error occurs.
+            XMRigConnectionError: If a connection error occurs.
+            XMRigAPIError: If a general API error occurs.
         """
         url_map = {
             "summary": self._summary_url,
@@ -183,6 +173,11 @@ class XMRigAPI:
 
         Returns:
             bool: True if the config was changed successfully, or False if an error occurred.
+
+        Raises:
+            XMRigAuthorizationError: If an authorization error occurs.
+            XMRigConnectionError: If a connection error occurs.
+            XMRigAPIError: If a general API error occurs.
         """
         try:
             response = requests.post(self._config_url, json=config, headers=self._headers)
@@ -209,6 +204,11 @@ class XMRigAPI:
 
         Returns:
             bool: True if successful, or False if an error occurred.
+
+        Raises:
+            XMRigAuthorizationError: If an authorization error occurs.
+            XMRigConnectionError: If a connection error occurs.
+            XMRigAPIError: If a general API error occurs.
         """
         summary_success = self.get_endpoint("summary")
         backends_success = self.get_endpoint("backends")
@@ -224,6 +224,10 @@ class XMRigAPI:
 
         Returns:
             bool: True if the action was successfully performed, or False if an error occurred.
+
+        Raises:
+            XMRigConnectionError: If a connection error occurs.
+            XMRigAPIError: If a general API error occurs.
         """
         try:
             # TODO: The `start` json RPC method is not implemented by XMRig yet, use alternative implementation 
