@@ -2477,6 +2477,16 @@ class XMRigProperties:
         return self._get_data_from_response(self._config_response, ["pools", 0, "sni"], self._config_table_name)
 
     @property
+    def conf_pools_spend_secret_key_property(self) -> bool:
+        """
+        Retrieves the pools spend secret key status from the config data.
+
+        Returns:
+            bool: Pools SNI status, or "N/A" if not available.
+        """
+        return self._get_data_from_response(self._config_response, ["pools", 0, "sni"], self._config_table_name)
+
+    @property
     def conf_pools_tls_fingerprint_property(self) -> Optional[str]:
         """
         Retrieves the pools TLS fingerprint from the config data.
@@ -2495,6 +2505,36 @@ class XMRigProperties:
             bool: Pools daemon status, or "N/A" if not available.
         """
         return self._get_data_from_response(self._config_response, ["pools", 0, "daemon"], self._config_table_name)
+
+    @property
+    def conf_pools_daemon_poll_interval_property(self) -> bool:
+        """
+        Retrieves the pools daemon poll interval from the config data.
+
+        Returns:
+            bool: Pools daemon poll interval, or "N/A" if not available.
+        """
+        return self._get_data_from_response(self._config_response, ["pools", 0, "daemon-poll-interval"], self._config_table_name)
+
+    @property
+    def conf_pools_daemon_job_timeout_property(self) -> bool:
+        """
+        Retrieves the pools daemon job timeout from the config data.
+
+        Returns:
+            bool: Pools daemon job timeout, or "N/A" if not available.
+        """
+        return self._get_data_from_response(self._config_response, ["pools", 0, "daemon-job-timeout"], self._config_table_name)
+    
+    @property
+    def conf_pools_daemon_zmq_port_property(self) -> bool:
+        """
+        Retrieves the pools daemon ZMQ port from the config data.
+
+        Returns:
+            bool: Pools daemon ZMQ port, or "N/A" if not available.
+        """
+        return self._get_data_from_response(self._config_response, ["pools", 0, "daemon-zmq-port"], self._config_table_name)
 
     @property
     def conf_pools_socks5_property(self) -> Optional[str]:
