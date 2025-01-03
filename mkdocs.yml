@@ -31,17 +31,17 @@ nav:
   - "Examples": "examples.md"
   - "Reference":
     - "Classes":
-      - "XMRigManager": "reference/XMRigManager.md"
-      - "XMRigAPI": "reference/XMRigAPI.md"
-      - "XMRigProperties": "reference/XMRigProperties.md"
-      - "XMRigDatabase": "reference/XMRigDatabase.md"
+      - "XMRigManager": "reference/xmrigmanager.md"
+      - "XMRigAPI": "reference/xmrigapi.md"
+      - "XMRigProperties": "reference/xmrigproperties.md"
+      - "XMRigDatabase": "reference/xmrigdatabase.md"
     - "Exceptions":
-      - "XMRigAPIError": "reference/exceptions/XMRigAPIError.md"
-      - "XMRigAuthorizationError": "reference/exceptions/XMRigAuthorizationError.md"
-      - "XMRigConnectionError": "reference/exceptions/XMRigConnectionError.md"
-      - "XMRigDatabaseError": "reference/exceptions/XMRigDatabaseError.md"
-      - "XMRigManagerError": "reference/exceptions/XMRigManagerError.md"
-      - "XMRigPropertiesError": "reference/exceptions/XMRigPropertiesError.md"
+      - "XMRigAPIError": "reference/exceptions/xmrigapierror.md"
+      - "XMRigAuthorizationError": "reference/exceptions/xmrigauthorizationerror.md"
+      - "XMRigConnectionError": "reference/exceptions/xmrigconnectionerror.md"
+      - "XMRigDatabaseError": "reference/exceptions/xmrigdatabaseerror.md"
+      - "XMRigManagerError": "reference/exceptions/xmrigmanagererror.md"
+      - "XMRigPropertiesError": "reference/exceptions/xmrigpropertieserror.md"
   - "Contributing": "CONTRIBUTING.md"
 
 plugins:
