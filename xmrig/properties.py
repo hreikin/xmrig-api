@@ -62,6 +62,7 @@ class XMRigProperties:
         Returns:
             Union[Any, str]: The retrieved data, or a default string value of "N/A" if not available.
         """
+        data = "N/A"
         try:
             if response == None:
                 raise JSONDecodeError("No response data available, trying database.", "", 0)
@@ -79,9 +80,7 @@ class XMRigProperties:
                     data = "N/A"
         except KeyError as e:
             log.error(f"Key not found in the response data: {e}")
-            data = "N/A"
-        finally:
-            return data
+        return data
 
     ############################
     # Full data from endpoints #
