@@ -60,8 +60,8 @@ This example demonstrates how to update the endpoints for individual XMRig miner
 
 This example demonstrates how to update all endpoints for all XMRig miners using the XMRigManager. It shows how to configure logging, add miners to the manager, and update all endpoints for all miners in the manager.
 
-```python title="update_all_endpoints_for_all_miners.py" linenums="1"
-{% include "../examples/update_all_endpoints_for_all_miners.py" %}
+```python title="update_all_miners.py" linenums="1"
+{% include "../examples/update_all_miners.py" %}
 ```
 
 ## Start Or Stop All Miners
