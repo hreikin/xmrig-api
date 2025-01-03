@@ -18,10 +18,17 @@ from xmrig.properties import XMRigProperties
 from xmrig.db import XMRigDatabase
 from typing import Optional, Dict, Any
 
-# TODO: Work through exceptions and logging. Catch default exceptions if available and raise custom ones ?
-# TODO: Update custom exception usage to include the error and traceback.
+# // TODO: Work through exceptions and logging. Catch default exceptions if available and raise custom ones ?
+# // TODO: Update custom exception usage to include the error and traceback.
 # // TODO: Test config properties work on a live miner.
-# // TODO: Fix examples to run from root of project as well as from the examples folder after recent changes.
+# // TODO: Implement the `perform_action` method across the codebase.
+# // TODO: Update method in XMRigManager to handle an optional single endpoint.
+# // TODO: Implement get_db across the codebase.
+# // TODO: Fix examples after recent changes.
+# // TODO: Test/check delete_all_miner_data_from_db method.
+# // TODO: Test/check edit_miner method.
+# // TODO: Test/check/refactor post_config method to use local variables.
+# TODO: Refactor enabled_backends property after recent changes.
 # TODO: Property error handling or is it currently adequate and just needs a few tweaks to the logging ?
 # TODO: Update mock and live tests to reflect the changes in the module.
 # TODO: Update docstrings.
@@ -76,9 +83,6 @@ class XMRigAPI:
         self._summary_url = f"{self._base_url}/2/summary"
         self._backends_url = f"{self._base_url}/2/backends"
         self._config_url = f"{self._base_url}/2/config"
-        # TODO: Do i need these 2 or just use local variables?
-        self._post_config_response = None
-        self._new_config = None
         self._headers = {
             "Content-Type": "application/json",
             "Accept": "application/json",
@@ -181,22 +185,23 @@ class XMRigAPI:
             bool: True if the config was changed successfully, or False if an error occurred.
         """
         try:
-            self._post_config_response = requests.post(self._config_url, json=config, headers=self._headers)
-            if self._post_config_response.status_code == 401:
+            response = requests.post(self._config_url, json=config, headers=self._headers)
+            if response.status_code == 401:
                 raise XMRigAuthorizationError()
             # Raise an HTTPError for bad responses (4xx and 5xx)
-            self._post_config_response.raise_for_status()
-            self._update_properties_cache(self._post_config_response, "config")
+            response.raise_for_status()
+            # Get the updated config data from the endpoint and update the cached data
+            self.get_endpoint("config")
             log.debug(f"Config endpoint successfully updated.")
             return True
         except requests.exceptions.JSONDecodeError as e:
-            raise requests.exceptions.JSONDecodeError("JSON decode error", self._post_config_response.text, self._post_config_response.status_code)
+            raise requests.exceptions.JSONDecodeError("JSON decode error", response.text, response.status_code)
         except requests.exceptions.RequestException as e:
-            raise XMRigConnectionError(e, traceback.print_exc(), f"An error occurred while connecting to {self._config_url}: {e}") from e
+            raise XMRigConnectionError(e, traceback.print_exc(), f"An error occurred while connecting to {self._config_url}:") from e
         except XMRigAuthorizationError as e:
-            raise XMRigAuthorizationError(e, traceback.print_exc(), f"An authorization error occurred posting the config, please provide a valid access token: {e}") from e
+            raise XMRigAuthorizationError(e, traceback.print_exc(), f"An authorization error occurred posting the config, please provide a valid access token:") from e
         except Exception as e:
-            raise XMRigAPIError(e, traceback.print_exc(), f"An error occurred posting the config: {e}") from e
+            raise XMRigAPIError(e, traceback.print_exc(), f"An error occurred posting the config:") from e
 
     def get_all_responses(self) -> bool:
         """
