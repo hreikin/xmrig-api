@@ -1,4 +1,4 @@
 # XMRigDatabaseError
 
-::: xmrig.helpers.XMRigDatabaseError
+::: xmrig.exceptions.XMRigDatabaseError
     handler: python

@@ -1,4 +1,4 @@
 # XMRigAPIError
 
-::: xmrig.helpers.XMRigAPIError
+::: xmrig.exceptions.XMRigAPIError
     handler: python

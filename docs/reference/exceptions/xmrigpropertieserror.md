@@ -1,4 +1,4 @@
 # XMRigPropertiesError
 
-::: xmrig.helpers.XMRigPropertiesError
+::: xmrig.exceptions.XMRigPropertiesError
     handler: python

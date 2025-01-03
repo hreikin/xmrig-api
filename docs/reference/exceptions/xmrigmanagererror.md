@@ -1,4 +1,4 @@
 # XMRigManagerError
 
-::: xmrig.helpers.XMRigManagerError
+::: xmrig.exceptions.XMRigManagerError
     handler: python
