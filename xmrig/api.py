@@ -202,95 +202,38 @@ class XMRigAPI:
         Returns:
             bool: True if successful, or False if an error occurred.
         """
-        try:
-            summary_success = self.get_endpoint("summary")
-            backends_success = self.get_endpoint("backends")
-            config_success = self.get_endpoint("config")
-            return summary_success and backends_success and config_success
-        except Exception as e:
-            log.error(f"An error occurred fetching all responses: {e}")
-            return False
-
-    def pause_miner(self) -> bool:
+    def perform_action(self, action: str) -> bool:
         """
-        Pauses the miner.
+        Controls the miner by performing the specified action.
+
+        Args:
+            action (str): The action to perform. Valid actions are 'pause', 'resume', 'stop', 'start'.
 
         Returns:
-            bool: True if the miner was successfully paused, or False if an error occurred.
+            bool: True if the action was successfully performed, or False if an error occurred.
         """
         try:
-            url = f"{self._json_rpc_url}"
-            payload = self._json_rpc_payload
-            payload["method"] = "pause"
-            response = requests.post(url, json=payload, headers=self._headers)
-            response.raise_for_status()
-            log.debug(f"Miner successfully paused.")
+            # TODO: The `start` json RPC method is not implemented by XMRig yet, use alternative implementation 
+            # TODO: until PR 3030 is merged, see the following issues and PRs for more information: 
+            # TODO: https://github.com/xmrig/xmrig/issues/2826#issuecomment-1146465641
+            # TODO: https://github.com/xmrig/xmrig/issues/3220#issuecomment-1450691309
+            # TODO: https://github.com/xmrig/xmrig/pull/3030
+            if action == "start":
+                self.get_endpoint("config")
+                self.post_config(self.data._config_response)
+                log.debug(f"Miner successfully started.")
+            else:
+                url = f"{self._json_rpc_url}"
+                payload = self._json_rpc_payload
+                payload["method"] = action
+                response = requests.post(url, json=payload, headers=self._headers)
+                response.raise_for_status()
+                log.debug(f"Miner successfully {action}ed.")
             return True
         except requests.exceptions.RequestException as e:
-            raise XMRigConnectionError(f"A connection error occurred pausing the miner: {e}") from e
+            raise XMRigConnectionError(e, traceback.print_exc(), f"A connection error occurred {action}ing the miner:") from e
         except Exception as e:
-            raise XMRigAPIError(f"An error occurred pausing the miner: {e}") from e
-
-    def resume_miner(self) -> bool:
-        """
-        Resumes the miner.
-
-        Returns:
-            bool: True if the miner was successfully resumed, or False if an error occurred.
-        """
-        try:
-            url = f"{self._json_rpc_url}"
-            payload = self._json_rpc_payload
-            payload["method"] = "resume"
-            response = requests.post(url, json=payload, headers=self._headers)
-            response.raise_for_status()
-            log.debug(f"Miner successfully resumed.")
-            return True
-        except requests.exceptions.RequestException as e:
-            raise XMRigConnectionError(f"A connection error occurred resuming the miner: {e}") from e
-        except Exception as e:
-            raise XMRigAPIError(f"An error occurred resuming the miner: {e}") from e
-
-    def stop_miner(self) -> bool:
-        """
-        Stops the miner.
-
-        Returns:
-            bool: True if the miner was successfully stopped, or False if an error occurred.
-        """
-        try:
-            url = f"{self._json_rpc_url}"
-            payload = self._json_rpc_payload
-            payload["method"] = "stop"
-            response = requests.post(url, json=payload, headers=self._headers)
-            response.raise_for_status()
-            log.debug(f"Miner successfully stopped.")
-            return True
-        except requests.exceptions.RequestException as e:
-            raise XMRigConnectionError(f"A connection error occurred stopping the miner: {e}") from e
-        except Exception as e:
-            raise XMRigAPIError(f"An error occurred stopping the miner: {e}") from e
-
-    # TODO: The `start` json RPC method is not implemented by XMRig yet, use alternative function below until PR 3030 is 
-    # TODO: merged see https://github.com/xmrig/xmrig/issues/2826#issuecomment-1146465641
-    # TODO: https://github.com/xmrig/xmrig/issues/3220#issuecomment-1450691309 and
-    # TODO: https://github.com/xmrig/xmrig/pull/3030 for more infomation.
-    def start_miner(self) -> bool:
-        """
-        Starts the miner.
-
-        Returns:
-            bool: True if the miner was successfully started, or False if an error occurred.
-        """
-        try:
-            self.get_endpoint("config")
-            self.post_config(self.data._config_response)
-            log.debug(f"Miner successfully started.")
-            return True
-        except requests.exceptions.RequestException as e:
-            raise XMRigConnectionError(f"A connection error occurred starting the miner: {e}") from e
-        except Exception as e:
-            raise XMRigAPIError(f"An error occurred starting the miner: {e}") from e
+            raise XMRigAPIError(e, traceback.print_exc(), f"An error occurred {action}ing the miner:") from e
 
 # Define the public interface of the module
 __all__ = ["XMRigAPI"]
