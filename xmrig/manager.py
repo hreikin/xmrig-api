@@ -12,7 +12,7 @@ It includes functionalities for:
 - Listing all managed miners.
 - Deleting all miner-related data from the database.
 """
-import requests, traceback
+import traceback
 from xmrig.api import XMRigAPI
 from xmrig.logger import log
 from xmrig.exceptions import XMRigManagerError
@@ -62,7 +62,7 @@ class XMRigManager:
                 raise ValueError(f"Miner with name '{miner_name}' already exists.")
             # Use the injected factory to create the API instance
             self._miners[miner_name] = self._api_factory(miner_name, ip, port, access_token, tls_enabled, self._db_url)
-            log.info(f"Miner '{miner_name}' added to manager.")
+            log.info(f"Miner called '{miner_name}' added to manager.")
         except Exception as e:
             raise XMRigManagerError(e, traceback.print_exc(), f"An error occurred adding miner '{miner_name}':") from e
 
@@ -165,7 +165,7 @@ class XMRigManager:
                 miner_api._base_url = f"http://{miner_api._ip}:{miner_api._port}"
                 if miner_api._tls_enabled:
                     self._base_url = f"https://{miner_api._ip}:{miner_api._port}"
-            log.info(f"Miner '{miner_name}' successfully edited." if new_name == "" else f"Miner '{miner_name}' successfully edited to '{new_name}'.")
+            log.info(f"Miner called '{miner_name}' successfully edited." if new_name == "" else f"Miner called '{miner_name}' successfully edited to '{new_name}'.")
             return miner_api
         except Exception as e:
             raise XMRigManagerError(e, traceback.print_exc(), f"An error occurred editing miner '{miner_name}':") from e
@@ -208,13 +208,13 @@ class XMRigManager:
                 if endpoint:
                     response = miner_api.call_endpoint(endpoint)
                     if response:
-                        log.info(f"Endpoint '{endpoint}' successfully called on '{miner_name}'.")
+                        log.info(f"{endpoint.capitalize()} endpoint successfully called on '{miner_name}'.")
                     else:
-                        log.warning(f"Failed to call endpoint '{endpoint}' on '{miner_name}'.")
+                        log.warning(f"Failed to call '{endpoint}' endpoint on '{miner_name}'.")
                 else:
                     success = miner_api.get_all_responses()
                     if success:
-                        log.info(f"Miner '{miner_name}' successfully updated.")
+                        log.info(f"Miner called '{miner_name}' successfully updated.")
                     else:
                         log.warning(f"Failed to update miner '{miner_name}'.")
             return True
