@@ -53,6 +53,9 @@ class XMRigManager:
             port (int): Port of the XMRig API.
             access_token (Optional[str], optional): Access token for authorization. Defaults to None.
             tls_enabled (bool, optional): TLS status of the miner/API. Defaults to False.
+
+        Raises:
+            XMRigManagerError: If an error occurs while adding the miner.
         """
         try:
             if miner_name in self._miners:
@@ -69,6 +72,9 @@ class XMRigManager:
 
         Args:
             miner_name (str): The unique name of the miner to remove.
+
+        Raises:
+            XMRigManagerError: If an error occurs while removing the miner.
         """
         try:
             if miner_name not in self._miners:
@@ -89,6 +95,9 @@ class XMRigManager:
 
         Returns:
             XMRigAPI: The API instance for the requested miner.
+
+        Raises:
+            XMRigManagerError: If an error occurs while retrieving the miner.
         """
         try:
             if miner_name not in self._miners:
@@ -97,7 +106,6 @@ class XMRigManager:
         except Exception as e:
             raise XMRigManagerError(e, traceback.print_exc(), f"An error occurred retrieving miner '{miner_name}':") from e
     
-    # TODO: Check this works, add example and tests
     def edit_miner(self, miner_name: str, new_details: dict) -> None:
         """
         Edits the details of a miner. The following details can be edited:
@@ -126,6 +134,9 @@ class XMRigManager:
         Args:
             miner_name (str): The unique name of the miner.
             new_details (dict): The new details for the miner.
+
+        Raises:
+            XMRigManagerError: If an error occurs while editing the miner.
         """
         try:
             new_name = ""
@@ -165,6 +176,9 @@ class XMRigManager:
 
         Args:
             action (str): The action to perform ('pause', 'resume', 'stop', 'start').
+
+        Raises:
+            XMRigManagerError: If an error occurs while performing the action on all miners.
         """
         try:
             for miner_name, miner_api in self._miners.items():
@@ -185,6 +199,9 @@ class XMRigManager:
 
         Returns:
             bool: True if successful, or False if an error occurred.
+
+        Raises:
+            XMRigManagerError: If an error occurs while updating the miners or calling the endpoint.
         """
         try:
             for miner_name, miner_api in self._miners.items():

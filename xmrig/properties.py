@@ -61,6 +61,11 @@ class XMRigProperties:
 
         Returns:
             Union[Any, str]: The retrieved data, or a default string value of "N/A" if not available.
+
+        Raises:
+            JSONDecodeError: If there is an error decoding the JSON response.
+            KeyError: If a key is not found in the response data.
+            XMRigDatabaseError: If there is an error retrieving data from the database.
         """
         data = "N/A"
         try:
