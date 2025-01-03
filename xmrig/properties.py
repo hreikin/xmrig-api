@@ -63,22 +63,24 @@ class XMRigProperties:
         """
         try:
             if response == None:
-                if self._db_url is not None:
-                    log.debug(f"An error occurred fetching the data from the response using the provided keys, trying database.")
-                    try:
-                        return XMRigDatabase.fallback_to_db(fallback_table_name, keys, self._db_url)
-                    except Exception as db_e:
-                        log.error(f"An error occurred fetching the backends data, has the miner just been added and started/restarted within the last 15 minutes ? {db_e}")
-                        return "N/A"
+                raise JSONDecodeError("No response data available, trying database.", "", 0)
             else:
                 data = response
                 if len(keys) > 0:
                     for key in keys:
                         data = data[key]
-                return data
-        except (KeyError, TypeError, JSONDecodeError) as e:
-            log.error(f"An error occurred fetching the data from the response using the provided keys: {e}")
-            return "N/A"
+        except JSONDecodeError as e:
+            if self._db_url is not None:
+                try:
+                    return XMRigDatabase.fallback_to_db(fallback_table_name, keys, self._db_url)
+                except XMRigDatabaseError as db_e:
+                    log.error(f"An error occurred fetching the backends data from the database, has the miner just been added AND started/restarted within the last 15 minutes ? {db_e}")
+                    data = "N/A"
+        except KeyError as e:
+            log.error(f"Key not found in the response data: {e}")
+            data = "N/A"
+        finally:
+            return data
 
     ############################
     # Full data from endpoints #
