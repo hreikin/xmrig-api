@@ -12,9 +12,10 @@ It includes functionalities for:
 - Listing all managed miners.
 - Deleting all miner-related data from the database.
 """
-import requests
+import requests, traceback
 from xmrig.api import XMRigAPI
-from xmrig.helpers import log, XMRigManagerError
+from xmrig.logger import log
+from xmrig.exceptions import XMRigManagerError
 from xmrig.db import XMRigDatabase
 from typing import Callable, Optional, List
 
