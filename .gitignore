@@ -167,4 +167,4 @@ cython_debug/
 .vscode/
 
 # Database
-*.db
+xmrig-api.db
