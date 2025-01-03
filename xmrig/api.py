@@ -11,15 +11,18 @@ It includes functionalities for:
 - Fallback to the database if the data is not available in the cached responses.
 """
 
-import requests
-from xmrig.helpers import log, XMRigAPIError, XMRigConnectionError, XMRigAuthorizationError
+import requests, traceback
+from xmrig.logger import log
+from xmrig.exceptions import XMRigAPIError, XMRigAuthorizationError, XMRigConnectionError
 from xmrig.properties import XMRigProperties
 from xmrig.db import XMRigDatabase
 from typing import Optional, Dict, Any
 
-# TODO: Work through exceptions and logging. Use default exceptions if available instead of custom ones.
-# TODO: Test config properties work on a live miner.
-# TODO: Fix examples to run from root of project as well as from the examples folder after recent changes.
+# TODO: Work through exceptions and logging. Catch default exceptions if available and raise custom ones ?
+# TODO: Update custom exception usage to include the error and traceback.
+# // TODO: Test config properties work on a live miner.
+# // TODO: Fix examples to run from root of project as well as from the examples folder after recent changes.
+# TODO: Property error handling or is it currently adequate and just needs a few tweaks to the logging ?
 # TODO: Update mock and live tests to reflect the changes in the module.
 # TODO: Update docstrings.
 # TODO: Update the documentation to include all classses, methods, attributes, exceptions, modules, public functions, private functions, properties, etc.
@@ -73,7 +76,7 @@ class XMRigAPI:
         self._summary_url = f"{self._base_url}/2/summary"
         self._backends_url = f"{self._base_url}/2/backends"
         self._config_url = f"{self._base_url}/2/config"
-        # Do i need these 2 or just use local variables?
+        # TODO: Do i need these 2 or just use local variables?
         self._post_config_response = None
         self._new_config = None
         self._headers = {
@@ -115,7 +118,7 @@ class XMRigAPI:
             log.debug(f"Authorization header successfully changed.")
             return True
         except XMRigAuthorizationError as e:
-            raise XMRigAuthorizationError(f"An error occurred setting the Authorization Header: {e}") from e
+            raise XMRigAuthorizationError(e, traceback.print_exc(), f"An error occurred setting the Authorization Header: {e}") from e
 
     def get_endpoint(self, endpoint: str) -> bool:
         """
@@ -135,13 +138,13 @@ class XMRigAPI:
         try:
             response = requests.get(url_map[endpoint], headers=self._headers)
             if response.status_code == 401:
-                raise XMRigAuthorizationError()
+                raise XMRigAuthorizationError(message = "401 UNAUTHORIZED")
             response.raise_for_status()
             try:
                 json_response = response.json()
             except requests.exceptions.JSONDecodeError as e:
                 json_response = None
-                raise e
+                raise requests.exceptions.JSONDecodeError("JSON decode error", response.text, response.status_code)
             else:
                 self._update_properties_cache(json_response, endpoint)
                 log.debug(f"{endpoint.capitalize()} endpoint successfully fetched.")
@@ -154,18 +157,19 @@ class XMRigAPI:
                         XMRigDatabase.insert_data_to_db(json_response, f"{self._miner_name}-{endpoint}", self._db_url)
                 return True
         except requests.exceptions.JSONDecodeError as e:
+            # INFO: Due to a bug in XMRig, the first 15 minutes a miner is running/restarted its backends 
+            # INFO: endpoint will return a malformed JSON response, allow the program to continue running 
+            # INFO: to bypass this bug for now until a fix is provided by the XMRig developers.
             log.error(f"An error occurred decoding the {endpoint} response: {e}")
             return False
         except requests.exceptions.RequestException as e:
-            log.error(f"An error occurred while connecting to {url_map[endpoint]}: {e}")
-            return False
+            raise XMRigConnectionError(e, traceback.print_exc(), f"An error occurred while connecting to {url_map[endpoint]}:") from e
         except XMRigAuthorizationError as e:
-            raise XMRigAuthorizationError(f"An authorization error occurred updating the {endpoint}, please provide a valid access token: {e}") from e
+            raise XMRigAuthorizationError(e, traceback.print_exc(), f"An authorization error occurred updating the {endpoint}, please provide a valid access token:") from e
         except Exception as e:
-            log.error(f"An error occurred updating the {endpoint}: {e}")
-            return False
+            raise XMRigAPIError(e, traceback.print_exc(), f"An error occurred updating the {endpoint}:") from e
 
-    # TODO: Needs checking and testing.
+    # TODO: Needs checking and testing. Use local variables or class properties?
     def post_config(self, config: Dict[str, Any]) -> bool:
         """
         Updates the miners config data via the XMRig API.
@@ -186,14 +190,13 @@ class XMRigAPI:
             log.debug(f"Config endpoint successfully updated.")
             return True
         except requests.exceptions.JSONDecodeError as e:
-            log.error(f"An error occurred decoding the config response: {e}")
-            return False
+            raise requests.exceptions.JSONDecodeError("JSON decode error", self._post_config_response.text, self._post_config_response.status_code)
         except requests.exceptions.RequestException as e:
-            raise XMRigConnectionError(f"An error occurred while connecting to {self._config_url}: {e}") from e
+            raise XMRigConnectionError(e, traceback.print_exc(), f"An error occurred while connecting to {self._config_url}: {e}") from e
         except XMRigAuthorizationError as e:
-            raise XMRigAuthorizationError(f"An authorization error occurred posting the config, please provide a valid access token: {e}") from e
+            raise XMRigAuthorizationError(e, traceback.print_exc(), f"An authorization error occurred posting the config, please provide a valid access token: {e}") from e
         except Exception as e:
-            raise XMRigAPIError(f"An error occurred posting the config: {e}") from e
+            raise XMRigAPIError(e, traceback.print_exc(), f"An error occurred posting the config: {e}") from e
 
     def get_all_responses(self) -> bool:
         """
@@ -202,6 +205,11 @@ class XMRigAPI:
         Returns:
             bool: True if successful, or False if an error occurred.
         """
+        summary_success = self.get_endpoint("summary")
+        backends_success = self.get_endpoint("backends")
+        config_success = self.get_endpoint("config")
+        return summary_success and backends_success and config_success
+
     def perform_action(self, action: str) -> bool:
         """
         Controls the miner by performing the specified action.
