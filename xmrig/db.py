@@ -78,7 +78,7 @@ class XMRigDatabase:
         """
         try:
             # Create an engine
-            engine = cls.init_db(db_url)
+            engine = cls.get_db(db_url)
             # Create an inspector
             inspector = inspect(engine)
             # Check if the table exists
@@ -105,7 +105,7 @@ class XMRigDatabase:
                 "timestamp": [datetime.now()],
                 "full_json": [json.dumps(json_data)]
             }
-            engine = cls.init_db(db_url)
+            engine = cls.get_db(db_url)
             df = pd.DataFrame(data)
             # Insert data into the database
             df.to_sql(table_name, engine, if_exists="append", index=False)
@@ -127,7 +127,7 @@ class XMRigDatabase:
             Any: The retrieved data, or "N/A" if not available.
         """
         column_name = "full_json"
-        engine = cls.init_db(db_url)
+        engine = cls.get_db(db_url)
         try:
             with engine.connect() as connection:
                 # special handling for backends property, enables support for xmrig-mo fork
@@ -182,7 +182,7 @@ class XMRigDatabase:
             backends_tables = [f"'{miner_name}-cpu-backend'", f"'{miner_name}-opencl-backend'", f"'{miner_name}-cuda-backend'"]
             config_table = f"'{miner_name}-config'"
             summary_table = f"'{miner_name}-summary'"
-            engine = cls.init_db(db_url)
+            engine = cls.get_db(db_url)
             with engine.connect() as connection:
                 # Wrap the raw SQL strings in SQLAlchemy's `text` function so it isn't a raw string
                 connection.execute(text(f"DROP TABLE IF EXISTS {backends_tables[0]}"))
