@@ -29,7 +29,7 @@ from typing import Optional, Dict, Any
 # // TODO: Test/check edit_miner method.
 # // TODO: Test/check/refactor post_config method to use local variables.
 # // TODO: Refactor enabled_backends property after recent changes.
-# TODO: Refactor logging statements to use the appropriate level.
+# // TODO: Refactor logging statements to use the appropriate level.
 # TODO: Update mock and live tests to reflect the changes in the module.
 # TODO: Update docstrings.
 # TODO: Update the documentation to include all classses, methods, attributes, exceptions, modules, public functions, private functions, properties, etc.
@@ -164,6 +164,7 @@ class XMRigAPI:
             # INFO: Due to a bug in XMRig, the first 15 minutes a miner is running/restarted its backends 
             # INFO: endpoint will return a malformed JSON response, allow the program to continue running 
             # INFO: to bypass this bug for now until a fix is provided by the XMRig developers.
+            log.error("Due to a bug in XMRig, the first 15 minutes a miner is running/restarted its backends endpoint will return a malformed JSON response. If that is the case then this error/warning can be safely ignored.")
             log.error(f"An error occurred decoding the {endpoint} response: {e}")
             return False
         except requests.exceptions.RequestException as e:
@@ -173,7 +174,6 @@ class XMRigAPI:
         except Exception as e:
             raise XMRigAPIError(e, traceback.print_exc(), f"An error occurred updating the {endpoint}:") from e
 
-    # TODO: Needs checking and testing. Use local variables or class properties?
     def post_config(self, config: Dict[str, Any]) -> bool:
         """
         Updates the miners config data via the XMRig API.
