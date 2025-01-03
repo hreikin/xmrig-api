@@ -40,7 +40,7 @@ miner_b.get_endpoint("backends")
 miner_b.get_endpoint("config")
 # Update all endpoints for all miners
 log.info("Updating all endpoints for all miners...")
-manager.get_all_miners_endpoints()
+manager.update_miners()
 # Pause all miners
 log.info("Pausing all miners...")
 manager.perform_action_on_all("pause")
@@ -48,14 +48,14 @@ log.info("Resuming all miners...")
 manager.perform_action_on_all("resume")
 # Start/stop a specific miner
 log.info(f"Stopping miner: {miner_a._miner_name}")
-miner_a.stop_miner()
+miner_a.perform_action("stop")
 log.info(f"Starting miner: {miner_a._miner_name}")
-miner_a.start_miner()
+miner_a.perform_action("start")
 # Pause/Resume a specific miner
 log.info(f"Pausing miner: {miner_b._miner_name}")
-miner_b.pause_miner()
+miner_b.perform_action("pause")
 log.info(f"Resuming miner: {miner_b._miner_name}")
-miner_b.resume_miner()
+miner_b.perform_action("resume")
 # Edit and update the miners `config.json` via the HTTP API.
 log.info(f"Editing config for miner: {miner_a._miner_name}")
 miner_a.get_endpoint("config")

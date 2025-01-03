@@ -10,5 +10,6 @@ log.info("Changing miner name...")
 new_details = {
     'miner_name': "NewMinerName",
 }
-miner_a = manager.edit_miner(miner_a, new_details)
+manager.edit_miner(name_a, new_details)
+miner_a = manager.get_miner("NewMinerName")
 log.info(f"New miner name: {miner_a._miner_name}")
