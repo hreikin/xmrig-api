@@ -39,6 +39,9 @@ class XMRigDatabase:
 
         Returns:
             Engine: SQLAlchemy engine instance.
+
+        Raises:
+            XMRigDatabaseError: If an error occurs while initializing the database.
         """
         try:
             if db_url not in cls._engines:
@@ -58,6 +61,9 @@ class XMRigDatabase:
 
         Returns:
             Engine: SQLAlchemy engine instance.
+
+        Raises:
+            XMRigDatabaseError: If the database engine does not exist.
         """
         try:
             return cls._engines[db_url]
@@ -75,6 +81,9 @@ class XMRigDatabase:
 
         Returns:
             bool: True if the table exists, False otherwise.
+
+        Raises:
+            XMRigDatabaseError: If an error occurs while checking if the table exists.
         """
         try:
             # Create an engine
@@ -98,6 +107,9 @@ class XMRigDatabase:
             json_data (Dict[str, Any]): JSON data to insert.
             table_name (str): Name of the table to insert data into.
             db_url (str): Database URL for creating the engine.
+
+        Raises:
+            XMRigDatabaseError: If an error occurs while inserting data into the database.
         """
         try:
             # Create a dataframe with the required columns and data
@@ -125,6 +137,9 @@ class XMRigDatabase:
 
         Returns:
             Any: The retrieved data, or "N/A" if not available.
+
+        Raises:
+            XMRigDatabaseError: If an error occurs while retrieving data from the database.
         """
         column_name = "full_json"
         engine = cls.get_db(db_url)
@@ -167,7 +182,6 @@ class XMRigDatabase:
         finally:
             connection.close()
 
-    # TODO: Check this works after recent changes
     @classmethod
     def delete_all_miner_data_from_db(cls, miner_name: str, db_url: str) -> None:
         """
@@ -176,6 +190,9 @@ class XMRigDatabase:
         Args:
             miner_name (str): The unique name of the miner.
             db_url (str): Database URL for creating the engine.
+
+        Raises:
+            XMRigDatabaseError: If an error occurs while deleting the miner data from the database.
         """
         try:
             # Use quotes to avoid SQL syntax errors
