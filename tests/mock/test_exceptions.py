@@ -1,7 +1,7 @@
 import unittest
-from xmrig.helpers import XMRigAPIError, XMRigAuthorizationError, XMRigConnectionError, XMRigDatabaseError, XMRigManagerError, XMRigPropertiesError
+from xmrig.exceptions import XMRigAPIError, XMRigAuthorizationError, XMRigConnectionError, XMRigDatabaseError, XMRigManagerError, XMRigPropertiesError
 
-class TestXMRigHelpers(unittest.TestCase):
+class TestXMRigExceptions(unittest.TestCase):
 
     def test_XMRigAPIError(self):
         with self.assertRaises(XMRigAPIError):

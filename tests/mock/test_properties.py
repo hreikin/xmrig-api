@@ -39,8 +39,14 @@ class TestXMRigProperties(unittest.TestCase):
     @patch('xmrig.properties.XMRigDatabase.fallback_to_db')
     def test_fallback_to_db(self, mock_fallback_to_db):
         mock_fallback_to_db.return_value = "db_value"
-        self.properties._db_engine = MagicMock()
-        self.assertEqual(self.properties._get_data_from_response({}, ["key"], "table"), "db_value")
+        self.properties._db_url = self.db_url
+        self.assertEqual(self.properties._get_data_from_response(None, ["key"], "table"), "db_value")
+
+    @patch('xmrig.properties.XMRigDatabase.fallback_to_db')
+    def test_get_data_from_response(self, mock_fallback_to_db):
+        mock_fallback_to_db.return_value = "db_value"
+        self.properties._db_url = self.db_url
+        self.assertEqual(self.properties._get_data_from_response(None, ["key"], "table"), "db_value")
 
 if __name__ == '__main__':
     unittest.main()
