@@ -177,20 +177,33 @@ class XMRigManager:
         except Exception as e:
             raise XMRigManagerError(e, traceback.print_exc(), f"An error occurred performing action '{action}' on all miners:") from e
 
-    def get_all_miners_endpoints(self) -> bool:
+    def update_miners(self, endpoint: Optional[str] = None) -> bool:
         """
-        Updates all miners' cached data.
+        Updates all miners' cached data or calls a specific endpoint on all miners.
+
+        Args:
+            endpoint (Optional[str], optional): The endpoint to call on each miner. If None, updates all cached data. Defaults to None.
 
         Returns:
             bool: True if successful, or False if an error occurred.
         """
-        for miner_name, miner_api in self._miners.items():
-            success = miner_api.get_all_responses()
-            if success:
-                log.info(f"Miner '{miner_name}' successfully updated.")
-            else:
-                log.warning(f"Failed to update miner '{miner_name}'.")
-        return True
+        try:
+            for miner_name, miner_api in self._miners.items():
+                if endpoint:
+                    response = miner_api.call_endpoint(endpoint)
+                    if response:
+                        log.info(f"Endpoint '{endpoint}' successfully called on '{miner_name}'.")
+                    else:
+                        log.warning(f"Failed to call endpoint '{endpoint}' on '{miner_name}'.")
+                else:
+                    success = miner_api.get_all_responses()
+                    if success:
+                        log.info(f"Miner '{miner_name}' successfully updated.")
+                    else:
+                        log.warning(f"Failed to update miner '{miner_name}'.")
+            return True
+        except Exception as e:
+            raise XMRigManagerError(e, traceback.print_exc(), f"An error occurred updating miners or calling endpoint '{endpoint}' on all miners:") from e
 
     def list_miners(self) -> List[str]:
         """
