@@ -13,7 +13,8 @@ Features:
 
 from typing import Any, Dict, List, Union, Optional
 from datetime import timedelta
-from xmrig.helpers import log
+from xmrig.logger import log
+from xmrig.exceptions import XMRigDatabaseError
 from xmrig.db import XMRigDatabase
 from json import JSONDecodeError
 
