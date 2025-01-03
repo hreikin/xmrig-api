@@ -253,7 +253,7 @@ Exceptions:
 from .api import XMRigAPI
 from .manager import XMRigManager
 from .db import XMRigDatabase
-from .logger import XMRigAPIError, XMRigAuthorizationError, XMRigConnectionError
+from .exceptions import XMRigAPIError, XMRigAuthorizationError, XMRigConnectionError, XMRigDatabaseError, XMRigManagerError, XMRigPropertiesError
 
 __name__ = "xmrig"
 __version__ = "0.0.16"
