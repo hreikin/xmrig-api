@@ -252,7 +252,7 @@ from .db import XMRigDatabase
 from .exceptions import XMRigAPIError, XMRigAuthorizationError, XMRigConnectionError, XMRigDatabaseError, XMRigManagerError, XMRigPropertiesError
 
 __name__ = "xmrig"
-__version__ = "0.0.16"
+__version__ = "0.1.0"
 __author__ = "hreikin"
 __email__ = "hreikin@gmail.com"
 __license__ = "MIT"
