@@ -125,7 +125,7 @@ class XMRigManager:
 
         Args:
             miner_name (str): The unique name of the miner.
-            details (dict): The new details for the miner.
+            new_details (dict): The new details for the miner.
         """
         try:
             new_name = ""

@@ -25,7 +25,7 @@ Modules:
 
 - api: Contains the XMRigAPI class and related functionalities.
 - manager: Contains the XMRigManager class for managing multiple miners.
-- helpers: Configures logging and handles custom exceptions.
+- exceptions: Handles custom exceptions.
 - properties: Contains the XMRigProperties class for retrieving and caching properties.
 - db: Contains the XMRigDatabase class for database operations.
 
@@ -34,15 +34,10 @@ Public Functions:
 XMRigAPI:
 
 - set_auth_header
-- get_summary
-- get_backends
-- get_config
+- get_endpoint
 - post_config
 - get_all_responses
-- pause_miner
-- resume_miner
-- stop_miner
-- start_miner
+- perform_action
 
 XMRigManager:
 
@@ -51,12 +46,13 @@ XMRigManager:
 - get_miner
 - edit_miner
 - perform_action_on_all
-- get_all_miners_endpoints
+- update_miners
 - list_miners
 
 XMRigDatabase:
 
 - init_db
+- get_db
 - check_table_exists
 - insert_data_to_db
 - fallback_to_db
