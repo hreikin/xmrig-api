@@ -838,22 +838,22 @@ class XMRigProperties:
     # Data from backends endpoint #
     ###############################
 
-    # TODO: Refactor this, no longer working at all
-    # @property
-    # def enabled_backends(self) -> Union[List[str], Any]:
-    #     """
-    #     Retrieves the enabled backends from the backends data.
+    @property
+    def enabled_backends(self) -> Union[List[str], Any]:
+        """
+        Retrieves the enabled backends from the backends data.
 
-    #     Returns:
-    #         Union[List[str], Any]: Enabled backends, or "N/A" if not available.
-    #     """
-    #     all_backend_types = []
-    #     for backend_table in self._backends_table_names:
-    #         if XMRigDatabase.check_table_exists(self._db_url, backend_table):
-    #             all_backend_types.append(self._get_data_from_response(self._backends_response, ["type"], backend_table))
-    #     # edit all_backend_types to remove any value that is "N/A"
-    #     all_backend_types = [i for i in all_backend_types if i != "N/A"]
-    #     return all_backend_types
+        Returns:
+            Union[List[str], Any]: Enabled backends, or "N/A" if not available.
+        """
+        enabled_backends = []
+        # get the enabled backends from the backends data, the backends data is a list of variable length, use _get_data_from_response to get the data
+        for i in range(len(self._backends_response)):
+            if self._get_data_from_response(self._backends_response, [i, "enabled"], self._backends_table_names[i]):
+                enabled_backends.append(self._get_data_from_response(self._backends_response, [i, "type"], self._backends_table_names[i]))
+        # remove any entries that match "N/A"
+        enabled_backends = [x for x in enabled_backends if x != "N/A"]
+        return enabled_backends
 
     @property
     def be_cpu_type(self) -> Union[str, Any]:

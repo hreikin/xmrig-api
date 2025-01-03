@@ -28,8 +28,8 @@ from typing import Optional, Dict, Any
 # // TODO: Test/check delete_all_miner_data_from_db method.
 # // TODO: Test/check edit_miner method.
 # // TODO: Test/check/refactor post_config method to use local variables.
-# TODO: Refactor enabled_backends property after recent changes.
-# TODO: Property error handling or is it currently adequate and just needs a few tweaks to the logging ?
+# // TODO: Refactor enabled_backends property after recent changes.
+# TODO: Refactor logging statements to use the appropriate level.
 # TODO: Update mock and live tests to reflect the changes in the module.
 # TODO: Update docstrings.
 # TODO: Update the documentation to include all classses, methods, attributes, exceptions, modules, public functions, private functions, properties, etc.
