@@ -108,7 +108,7 @@ class XMRigAPI:
             log.debug(f"Authorization header successfully changed.")
             return True
         except XMRigAuthorizationError as e:
-            raise XMRigAuthorizationError(e, traceback.print_exc(), f"An error occurred setting the Authorization Header: {e}") from e
+            raise XMRigAuthorizationError(e, traceback.format_exc(), f"An error occurred setting the Authorization Header: {e}") from e
 
     def get_endpoint(self, endpoint: str) -> bool:
         """
@@ -159,11 +159,11 @@ class XMRigAPI:
             log.error(f"An error occurred decoding the {endpoint} response: {e}")
             return False
         except requests.exceptions.RequestException as e:
-            raise XMRigConnectionError(e, traceback.print_exc(), f"An error occurred while connecting to {url_map[endpoint]}:") from e
+            raise XMRigConnectionError(e, traceback.format_exc(), f"An error occurred while connecting to {url_map[endpoint]}:") from e
         except XMRigAuthorizationError as e:
-            raise XMRigAuthorizationError(e, traceback.print_exc(), f"An authorization error occurred updating the {endpoint}, please provide a valid access token:") from e
+            raise XMRigAuthorizationError(e, traceback.format_exc(), f"An authorization error occurred updating the {endpoint}, please provide a valid access token:") from e
         except Exception as e:
-            raise XMRigAPIError(e, traceback.print_exc(), f"An error occurred updating the {endpoint}:") from e
+            raise XMRigAPIError(e, traceback.format_exc(), f"An error occurred updating the {endpoint}:") from e
 
     def post_config(self, config: Dict[str, Any]) -> bool:
         """
@@ -193,11 +193,11 @@ class XMRigAPI:
         except requests.exceptions.JSONDecodeError as e:
             raise requests.exceptions.JSONDecodeError("JSON decode error", response.text, response.status_code)
         except requests.exceptions.RequestException as e:
-            raise XMRigConnectionError(e, traceback.print_exc(), f"An error occurred while connecting to {self._config_url}:") from e
+            raise XMRigConnectionError(e, traceback.format_exc(), f"An error occurred while connecting to {self._config_url}:") from e
         except XMRigAuthorizationError as e:
-            raise XMRigAuthorizationError(e, traceback.print_exc(), f"An authorization error occurred posting the config, please provide a valid access token:") from e
+            raise XMRigAuthorizationError(e, traceback.format_exc(), f"An authorization error occurred posting the config, please provide a valid access token:") from e
         except Exception as e:
-            raise XMRigAPIError(e, traceback.print_exc(), f"An error occurred posting the config:") from e
+            raise XMRigAPIError(e, traceback.format_exc(), f"An error occurred posting the config:") from e
 
     def get_all_responses(self) -> bool:
         """
@@ -249,8 +249,9 @@ class XMRigAPI:
                 log.debug(f"Miner successfully {action}ed.")
             return True
         except requests.exceptions.RequestException as e:
-            raise XMRigConnectionError(e, traceback.print_exc(), f"A connection error occurred {action}ing the miner:") from e
+            raise XMRigConnectionError(e, traceback.format_exc(), f"A connection error occurred {action}ing the miner:") from e
         except Exception as e:
+            raise XMRigAPIError(e, traceback.format_exc(), f"An error occurred {action}ing the miner:") from e
 
     def retrieve_data(self, table_name: str, selection: Union[str, List[str]] = "*", start_time: datetime = datetime.now() - timedelta(days=1), end_time: datetime = datetime.now(), limit: Optional[int] = None) -> List[Dict[str, Any]]:
         """

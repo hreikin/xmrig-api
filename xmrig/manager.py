@@ -64,7 +64,7 @@ class XMRigManager:
             self._miners[miner_name] = self._api_factory(miner_name, ip, port, access_token, tls_enabled, self._db_url)
             log.info(f"Miner called '{miner_name}' added to manager.")
         except Exception as e:
-            raise XMRigManagerError(e, traceback.print_exc(), f"An error occurred adding miner '{miner_name}':") from e
+            raise XMRigManagerError(e, traceback.format_exc(), f"An error occurred adding miner '{miner_name}':") from e
 
     def remove_miner(self, miner_name: str) -> None:
         """
@@ -84,7 +84,7 @@ class XMRigManager:
             del self._miners[miner_name]
             log.info(f"Miner '{miner_name}' removed from manager.")
         except Exception as e:
-            raise XMRigManagerError(e, traceback.print_exc(), f"An error occurred removing miner '{miner_name}':") from e
+            raise XMRigManagerError(e, traceback.format_exc(), f"An error occurred removing miner '{miner_name}':") from e
 
     def get_miner(self, miner_name: str) -> XMRigAPI:
         """
@@ -104,7 +104,7 @@ class XMRigManager:
                 raise ValueError(f"Miner with name '{miner_name}' does not exist.")
             return self._miners[miner_name]
         except Exception as e:
-            raise XMRigManagerError(e, traceback.print_exc(), f"An error occurred retrieving miner '{miner_name}':") from e
+            raise XMRigManagerError(e, traceback.format_exc(), f"An error occurred retrieving miner '{miner_name}':") from e
     
     def edit_miner(self, miner_name: str, new_details: dict) -> None:
         """
@@ -168,7 +168,7 @@ class XMRigManager:
             log.info(f"Miner called '{miner_name}' successfully edited." if new_name == "" else f"Miner called '{miner_name}' successfully edited to '{new_name}'.")
             return miner_api
         except Exception as e:
-            raise XMRigManagerError(e, traceback.print_exc(), f"An error occurred editing miner '{miner_name}':") from e
+            raise XMRigManagerError(e, traceback.format_exc(), f"An error occurred editing miner '{miner_name}':") from e
 
     def perform_action_on_all(self, action: str) -> None:
         """
@@ -188,7 +188,7 @@ class XMRigManager:
                 else:
                     log.warning(f"Action '{action}' failed on '{miner_name}'.")
         except Exception as e:
-            raise XMRigManagerError(e, traceback.print_exc(), f"An error occurred performing action '{action}' on all miners:") from e
+            raise XMRigManagerError(e, traceback.format_exc(), f"An error occurred performing action '{action}' on all miners:") from e
 
     def update_miners(self, endpoint: Optional[str] = None) -> bool:
         """
@@ -219,7 +219,7 @@ class XMRigManager:
                         log.warning(f"Failed to update miner '{miner_name}'.")
             return True
         except Exception as e:
-            raise XMRigManagerError(e, traceback.print_exc(), f"An error occurred updating miners or calling endpoint '{endpoint}' on all miners:") from e
+            raise XMRigManagerError(e, traceback.format_exc(), f"An error occurred updating miners or calling endpoint '{endpoint}' on all miners:") from e
 
     def list_miners(self) -> List[str]:
         """

@@ -48,9 +48,8 @@ class XMRigDatabase:
                 cls._engines[db_url] = create_engine(db_url)
             return cls._engines[db_url]
         except Exception as e:
-            raise XMRigDatabaseError(e, traceback.print_exc(), f"An error occurred initializing the database:") from e
+            raise XMRigDatabaseError(e, traceback.format_exc(), f"An error occurred initializing the database:") from e
     
-    # TODO: Implement across the codebase
     @classmethod
     def get_db(cls, db_url: str) -> Engine:
         """
@@ -68,7 +67,7 @@ class XMRigDatabase:
         try:
             return cls._engines[db_url]
         except KeyError as e:
-            raise XMRigDatabaseError(e, traceback.print_exc(), f"Database engine for '{db_url}' does not exist. Please initialize the database first.") from e
+            raise XMRigDatabaseError(e, traceback.format_exc(), f"Database engine for '{db_url}' does not exist. Please initialize the database first.") from e
 
     @classmethod
     def check_table_exists(cls, db_url: str, table_name: str) -> bool:
@@ -96,7 +95,7 @@ class XMRigDatabase:
                     return True
             return False
         except Exception as e:
-            raise XMRigDatabaseError(e, traceback.print_exc(), f"An error occurred checking if the table exists:") from e
+            raise XMRigDatabaseError(e, traceback.format_exc(), f"An error occurred checking if the table exists:") from e
     
     @classmethod
     def insert_data_to_db(cls, json_data: Dict[str, Any], table_name: str, db_url: str) -> None:
@@ -123,6 +122,7 @@ class XMRigDatabase:
             df.to_sql(table_name, engine, if_exists="append", index=False)
             log.debug("Data inserted successfully")
         except Exception as e:
+            raise XMRigDatabaseError(e, traceback.format_exc(), f"An error occurred inserting data to the database:") from e
     
     @classmethod
     def retrieve_data_from_db(cls, db_url: str, table_name: str, selection: Union[str, List[str]] = "*", start_time: datetime = None, end_time: datetime = None, limit: int = None) -> Union[List[Dict[str, Any]], str]:
@@ -228,7 +228,7 @@ class XMRigDatabase:
                     return data
             return "N/A"
         except Exception as e:
-            raise XMRigDatabaseError(e, traceback.print_exc(), f"An error occurred retrieving data from the database:") from e
+            raise XMRigDatabaseError(e, traceback.format_exc(), f"An error occurred retrieving data from the database:") from e
         finally:
             connection.close()
 
@@ -259,7 +259,7 @@ class XMRigDatabase:
                 connection.execute(text(f"DROP TABLE IF EXISTS {summary_table}"))
             log.debug(f"All tables for '{miner_name}' have been deleted from the database")
         except Exception as e:
-            raise XMRigDatabaseError(e, traceback.print_exc(), f"An error occurred deleting miner '{miner_name}' from the database:") from e
+            raise XMRigDatabaseError(e, traceback.format_exc(), f"An error occurred deleting miner '{miner_name}' from the database:") from e
 
 # Define the public interface of the module
 __all__ = ["XMRigDatabase"]
