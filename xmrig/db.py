@@ -123,7 +123,57 @@ class XMRigDatabase:
             df.to_sql(table_name, engine, if_exists="append", index=False)
             log.debug("Data inserted successfully")
         except Exception as e:
-            raise XMRigDatabaseError(e, traceback.print_exc(), f"An error occurred inserting data to the database:") from e
+    
+    @classmethod
+    def retrieve_data_from_db(cls, db_url: str, table_name: str, selection: Union[str, List[str]] = "*", start_time: datetime = None, end_time: datetime = None, limit: int = None) -> Union[List[Dict[str, Any]], str]:
+        """
+        Retrieves data from the specified database table within the given timeframe.
+
+        Args:
+            db_url (str): Database URL for creating the engine.
+            table_name (str): Name of the table to retrieve data from.
+            selection (Union[str, List[str]], optional): Column(s) to select from the table. Defaults to "*".
+            start_time (datetime, optional): Start time for the data retrieval. Defaults to None.
+            end_time (datetime, optional): End time for the data retrieval. Defaults to None.
+            limit (int, optional): Limit the number of rows retrieved. Defaults to None.
+
+        Returns:
+            Union[List[Dict[str, Any]], str]: List of dictionaries containing the retrieved data or "N/A" if the table does not exist.
+
+        Raises:
+            XMRigDatabaseError: If an error occurs while retrieving data from the database.
+        """
+        data = "N/A"
+        try:
+            if cls.check_table_exists(db_url, table_name) is True:
+                engine = cls.get_db(db_url)
+                if isinstance(selection, list):
+                    selection = ", ".join(selection)
+                query = f"SELECT {selection} FROM {table_name}"
+                conditions = []
+                params = {}
+                if start_time:
+                    conditions.append("timestamp >= :start_time")
+                    params["start_time"] = start_time
+                if end_time:
+                    conditions.append("timestamp <= :end_time")
+                    params["end_time"] = end_time
+                if conditions:
+                    query += " WHERE " + " AND ".join(conditions)
+                query += " ORDER BY timestamp DESC"
+                if limit:
+                    query += " LIMIT :limit"
+                    params["limit"] = limit
+                
+                with engine.connect() as connection:
+                    result = connection.execute(text(query), params)
+                    data = [dict(row) for row in result]
+            else:
+                log.error(f"Table '{table_name}' does not exist in the database")
+        except Exception as e:
+            raise XMRigDatabaseError(e, traceback.format_exc(), f"An error occurred retrieving data from the database:") from e
+        finally:
+            return data
     
     @classmethod
     def fallback_to_db(cls, table_name: Union[str, List[str]], keys: List[Union[str, int]], db_url: str) -> Any:
