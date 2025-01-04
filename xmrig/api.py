@@ -16,7 +16,8 @@ from xmrig.logger import log
 from xmrig.exceptions import XMRigAPIError, XMRigAuthorizationError, XMRigConnectionError
 from xmrig.properties import XMRigProperties
 from xmrig.db import XMRigDatabase
-from typing import Optional, Dict, Any
+from typing import Optional, Dict, List, Any, Union
+from datetime import datetime, timedelta
 
 class XMRigAPI:
     """
@@ -250,7 +251,22 @@ class XMRigAPI:
         except requests.exceptions.RequestException as e:
             raise XMRigConnectionError(e, traceback.print_exc(), f"A connection error occurred {action}ing the miner:") from e
         except Exception as e:
-            raise XMRigAPIError(e, traceback.print_exc(), f"An error occurred {action}ing the miner:") from e
+
+    def retrieve_data(self, table_name: str, selection: Union[str, List[str]] = "*", start_time: datetime = datetime.now() - timedelta(days=1), end_time: datetime = datetime.now(), limit: Optional[int] = None) -> List[Dict[str, Any]]:
+        """
+        Retrieves data from the specified database table within the given timeframe.
+
+        Args:
+            table_name (str): Name of the table to retrieve data from.
+            selection (Union[str, List[str]], optional): Column(s) to select from the table. Defaults to "*".
+            start_time (datetime, optional): Start time for the data retrieval. Defaults to one day ago.
+            end_time (datetime, optional): End time for the data retrieval. Defaults to now.
+            limit (int, optional): Limit the number of rows retrieved. Defaults to None.
+
+        Returns:
+            List[Dict[str, Any]]: List of dictionaries containing the retrieved data.
+        """
+        return XMRigDatabase.retrieve_data_from_db(self._db_url, table_name, selection, start_time, end_time, limit)
 
 # Define the public interface of the module
 __all__ = ["XMRigAPI"]
