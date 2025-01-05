@@ -9,7 +9,6 @@ It includes:
 - XMRigConnectionError: Connection error with the XMRig API.
 - XMRigDatabaseError: Database error with the XMRig API.
 - XMRigManagerError: Manager error with the XMRig API.
-- XMRigPropertiesError: Properties error with the XMRig API.
 """
 class XMRigAPIError(Exception):
     """
@@ -62,12 +61,5 @@ class XMRigManagerError(XMRigAPIError):
     def __init__(self, error: str = None, traceback: str = None, message: str = "An error occurred with the XMRig manager.") -> None:
         super().__init__(error, traceback, message)
 
-class XMRigPropertiesError(XMRigAPIError):
-    """
-    Exception raised when a properties error occurs with the XMRig API.
-    """
-    def __init__(self, error: str = None, traceback: str = None, message: str = "An error occurred retrieving properties from the XMRig API cache. Please check the API response.") -> None:
-        super().__init__(error, traceback, message)
-
 # Define the public interface of the module
-__all__ = ["XMRigAPIError", "XMRigAuthorizationError", "XMRigConnectionError", "XMRigDatabaseError", "XMRigManagerError", "XMRigPropertiesError"]
+__all__ = ["XMRigAPIError", "XMRigAuthorizationError", "XMRigConnectionError", "XMRigDatabaseError", "XMRigManagerError"]
