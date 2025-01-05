@@ -86,6 +86,7 @@ class XMRigProperties:
                     data = "N/A"
         except KeyError as e:
             log.error(f"Key not found in the response data: {e}")
+            data = "N/A"
         return data
 
     ############################
