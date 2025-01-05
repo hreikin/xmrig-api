@@ -89,20 +89,20 @@ miner_b.perform_action("resume")
 # Edit and update the miners `config.json` via the HTTP API.
 log.info(f"Editing config for miner: {miner_a._miner_name}")
 miner_a.get_endpoint("config")
-config = miner_a.data.config
+config = miner_a.config
 config["api"]["worker-id"] = "NEW_WORKER_ID"
 miner_a.post_config(config)
 # Summary and Backends API data is available as properties in either full or individual format.
 log.info(f"Summary data for miner: {miner_b._miner_name}")
-log.info(miner_b.data.summary)
+log.info(miner_b.summary)
 log.info(f"Hashrates for miner: {miner_b._miner_name}")
-log.info(miner_b.data.sum_hashrates)
+log.info(miner_b.sum_hashrates)
 log.info(f"Accepted jobs for miner: {miner_b._miner_name}")
-log.info(miner_b.data.sum_pool_accepted_jobs)
+log.info(miner_b.sum_pool_accepted_jobs)
 log.info(f"Rejected jobs for miner: {miner_b._miner_name}")
-log.info(miner_b.data.sum_pool_rejected_jobs)
+log.info(miner_b.sum_pool_rejected_jobs)
 log.info(f"Current difficulty for miner: {miner_b._miner_name}")
-log.info(miner_b.data.sum_current_difficulty)
+log.info(miner_b.sum_current_difficulty)
 ```
 
 For more examples, visit the [Examples](examples.md) page.

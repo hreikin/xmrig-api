@@ -34,7 +34,6 @@ nav:
     - "Classes":
       - "XMRigManager": "reference/manager.md"
       - "XMRigAPI": "reference/api.md"
-      - "XMRigProperties": "reference/properties.md"
       - "XMRigDatabase": "reference/db.md"
     - "Exceptions":
       - "XMRigAPIError": "reference/exceptions/xmrigapierror.md"
@@ -42,7 +41,6 @@ nav:
       - "XMRigConnectionError": "reference/exceptions/xmrigconnectionerror.md"
       - "XMRigDatabaseError": "reference/exceptions/xmrigdatabaseerror.md"
       - "XMRigManagerError": "reference/exceptions/xmrigmanagererror.md"
-      - "XMRigPropertiesError": "reference/exceptions/xmrigpropertieserror.md"
   - "Contributing": "CONTRIBUTING.md"
 
 plugins:
