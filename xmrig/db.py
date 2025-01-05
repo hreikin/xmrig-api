@@ -91,7 +91,7 @@ class XMRigDatabase:
             inspector = inspect(engine)
             # Check if the table exists
             for i in inspector.get_table_names():
-                if table_name[1:-1] in i:       # Remove the quotes from the table name
+                if table_name in i:
                     return True
             return False
         except Exception as e:
@@ -123,7 +123,8 @@ class XMRigDatabase:
             log.debug("Data inserted successfully")
         except Exception as e:
             raise XMRigDatabaseError(e, traceback.format_exc(), f"An error occurred inserting data to the database:") from e
-    
+
+    # TODO: Use this or fallback_to_db, ?
     @classmethod
     def retrieve_data_from_db(cls, db_url: str, table_name: str, selection: Union[str, List[str]] = "*", start_time: datetime = None, end_time: datetime = None, limit: int = None) -> Union[List[Dict[str, Any]], str]:
         """
@@ -149,7 +150,7 @@ class XMRigDatabase:
                 engine = cls.get_db(db_url)
                 if isinstance(selection, list):
                     selection = ", ".join(selection)
-                query = f"SELECT {selection} FROM {table_name}"
+                query = f"SELECT {selection} FROM '{table_name}'"
                 conditions = []
                 params = {}
                 if start_time:
@@ -211,7 +212,7 @@ class XMRigDatabase:
                 # default handling
                 else:
                     # Connect to the database and fetch the data in column_name from the table_name
-                    result = connection.execute(text(f"SELECT {column_name} FROM {table_name} ORDER BY timestamp DESC LIMIT 1"))
+                    result = connection.execute(text(f"SELECT {column_name} FROM '{table_name}' ORDER BY timestamp DESC LIMIT 1"))
                     # Fetch the last item from the result
                     data = result.fetchone()
                     if data:
@@ -246,17 +247,17 @@ class XMRigDatabase:
         """
         try:
             # Use quotes to avoid SQL syntax errors
-            backends_tables = [f"'{miner_name}-cpu-backend'", f"'{miner_name}-opencl-backend'", f"'{miner_name}-cuda-backend'"]
-            config_table = f"'{miner_name}-config'"
-            summary_table = f"'{miner_name}-summary'"
+            backends_tables = [f"{miner_name}-cpu-backend", f"{miner_name}-opencl-backend", f"{miner_name}-cuda-backend"]
+            config_table = f"{miner_name}-config"
+            summary_table = f"{miner_name}-summary"
             engine = cls.get_db(db_url)
             with engine.connect() as connection:
                 # Wrap the raw SQL strings in SQLAlchemy's `text` function so it isn't a raw string
-                connection.execute(text(f"DROP TABLE IF EXISTS {backends_tables[0]}"))
-                connection.execute(text(f"DROP TABLE IF EXISTS {backends_tables[1]}"))
-                connection.execute(text(f"DROP TABLE IF EXISTS {backends_tables[2]}"))
-                connection.execute(text(f"DROP TABLE IF EXISTS {config_table}"))
-                connection.execute(text(f"DROP TABLE IF EXISTS {summary_table}"))
+                connection.execute(text(f"DROP TABLE IF EXISTS '{backends_tables[0]}'"))
+                connection.execute(text(f"DROP TABLE IF EXISTS '{backends_tables[1]}'"))
+                connection.execute(text(f"DROP TABLE IF EXISTS '{backends_tables[2]}'"))
+                connection.execute(text(f"DROP TABLE IF EXISTS '{config_table}'"))
+                connection.execute(text(f"DROP TABLE IF EXISTS '{summary_table}'"))
             log.debug(f"All tables for '{miner_name}' have been deleted from the database")
         except Exception as e:
             raise XMRigDatabaseError(e, traceback.format_exc(), f"An error occurred deleting miner '{miner_name}' from the database:") from e

@@ -46,9 +46,9 @@ class XMRigProperties:
         self._backends_response = backends_response
         self._config_response = config_response
         self._db_url = db_url
-        self._summary_table_name = f"'{miner_name}-summary'"
-        self._backends_table_names = [f"'{miner_name}-cpu-backend'", f"'{miner_name}-opencl-backend'", f"'{miner_name}-cuda-backend'"]
-        self._config_table_name = f"'{miner_name}-config'"
+        self._summary_table_name = f"{miner_name}-summary"
+        self._backends_table_names = [f"{miner_name}-cpu-backend", f"{miner_name}-opencl-backend", f"{miner_name}-cuda-backend"]
+        self._config_table_name = f"{miner_name}-config"
     
     def _get_data_from_response(self, response: Union[Dict[str, Any], List[Dict[str, Any]]], keys: List[Union[str, int]], fallback_table_name: Union[str, List[str]]) -> Union[Any, str]:
         """
@@ -81,6 +81,7 @@ class XMRigProperties:
                 try:
                     return XMRigDatabase.fallback_to_db(fallback_table_name, keys, self._db_url)
                 except XMRigDatabaseError as db_e:
+                    # TODO: Could this message be better ?
                     log.error(f"An error occurred fetching the backends data from the database, has the miner just been added AND started/restarted within the last 15 minutes ? {db_e}")
                     data = "N/A"
         except KeyError as e:
