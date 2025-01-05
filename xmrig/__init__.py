@@ -230,10 +230,7 @@ Private Functions:
 
 XMRigAPI:
 
-- _update_properties_cache
-
-XMRigProperties:
-
+- _update_response_cache
 - _get_data_from_response
 
 Exceptions:
@@ -243,13 +240,12 @@ Exceptions:
 - XMRigConnectionError
 - XMRigDatabaseError
 - XMRigManagerError
-- XMRigPropertiesError
 """
 
 from .api import XMRigAPI
 from .manager import XMRigManager
 from .db import XMRigDatabase
-from .exceptions import XMRigAPIError, XMRigAuthorizationError, XMRigConnectionError, XMRigDatabaseError, XMRigManagerError, XMRigPropertiesError
+from .exceptions import XMRigAPIError, XMRigAuthorizationError, XMRigConnectionError, XMRigDatabaseError, XMRigManagerError
 
 __name__ = "xmrig"
 __version__ = "0.1.1"
@@ -259,4 +255,4 @@ __license__ = "MIT"
 __description__ = "This module provides objects to interact with the XMRig miner API, manage multiple miners, and store collected data in a database."
 __url__ = "https://hreikin.co.uk/xmrig-api"
 
-__all__ = ["XMRigAPI", "XMRigAPIError", "XMRigAuthorizationError", "XMRigConnectionError", "XMRigDatabase", "XMRigDatabaseError", "XMRigManager", "XMRigManagerError", "XMRigProperties", "XMRigPropertiesError"]
+__all__ = ["XMRigAPI", "XMRigAPIError", "XMRigAuthorizationError", "XMRigConnectionError", "XMRigDatabase", "XMRigDatabaseError", "XMRigManager", "XMRigManagerError", "XMRigProperties"]
