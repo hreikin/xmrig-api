@@ -247,15 +247,13 @@ class XMRigDatabase:
         """
         try:
             # Use quotes to avoid SQL syntax errors
-            backends_tables = [f"{miner_name}-cpu-backend", f"{miner_name}-opencl-backend", f"{miner_name}-cuda-backend"]
+            backends_table = f"{miner_name}-backends"
             config_table = f"{miner_name}-config"
             summary_table = f"{miner_name}-summary"
             engine = cls.get_db(db_url)
             with engine.connect() as connection:
                 # Wrap the raw SQL strings in SQLAlchemy's `text` function so it isn't a raw string
-                connection.execute(text(f"DROP TABLE IF EXISTS '{backends_tables[0]}'"))
-                connection.execute(text(f"DROP TABLE IF EXISTS '{backends_tables[1]}'"))
-                connection.execute(text(f"DROP TABLE IF EXISTS '{backends_tables[2]}'"))
+                connection.execute(text(f"DROP TABLE IF EXISTS '{backends_table}'"))
                 connection.execute(text(f"DROP TABLE IF EXISTS '{config_table}'"))
                 connection.execute(text(f"DROP TABLE IF EXISTS '{summary_table}'"))
             log.debug(f"All tables for '{miner_name}' have been deleted from the database")
