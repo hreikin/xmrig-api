@@ -138,7 +138,7 @@ class XMRigDatabase:
             raise XMRigDatabaseError(e, traceback.format_exc(), f"An error occurred inserting data to the database:") from e
     
     @classmethod
-    def retrieve_data_from_db(cls, db_url: str, table_name: str, selection: Union[str, List[str]] = "*", start_time: datetime = None, end_time: datetime = None, limit: int = None) -> Union[List[Dict[str, Any]], str]:
+    def retrieve_data_from_db(cls, db_url: str, table_name: str, selection: Union[str, List[str]] = "*", start_time: datetime = None, end_time: datetime = None, limit: int = 1) -> Union[List[Dict[str, Any]], str]:
         """
         Retrieves data from the specified database table within the given timeframe.
 
@@ -162,7 +162,8 @@ class XMRigDatabase:
                 engine = cls.get_db(db_url)
                 if isinstance(selection, list):
                     selection = ", ".join(selection)
-                query = f"SELECT {selection} FROM '{table_name}'"
+                # use single quotes for the f-string and double quotes for the selection and table name
+                query = f'SELECT "{selection}" FROM "{table_name}"'
                 conditions = []
                 params = {}
                 if start_time:
@@ -177,73 +178,17 @@ class XMRigDatabase:
                 if limit:
                     query += " LIMIT :limit"
                     params["limit"] = limit
-                
-                with engine.connect() as connection:
-                    result = connection.execute(text(query), params)
-                    data = [dict(row) for row in result]
+                df = pd.read_sql(query, engine, params=params)
+                if not df.empty:
+                    data = df.to_dict(orient='records')
+                else:
+                    data = "N/A"
             else:
                 log.error(f"Table '{table_name}' does not exist in the database")
         except Exception as e:
             raise XMRigDatabaseError(e, traceback.format_exc(), f"An error occurred retrieving data from the database:") from e
         finally:
             return data
-    
-    @classmethod
-    def fallback_to_db(cls, table_name: Union[str, List[str]], keys: List[Union[str, int]], db_url: str) -> Any:
-        """
-        Retrieves the data from the database using the provided table name.
-
-        Args:
-            table_name (Union[str, List[str]]): The name of the table or list of table names to use to retrieve the data.
-            keys (List[Union[str, int]]): The keys to use to retrieve the data.
-            db_url (str): The Database URL for creating the engine.
-
-        Returns:
-            Any: The retrieved data, or "N/A" if not available.
-
-        Raises:
-            XMRigDatabaseError: If an error occurs while retrieving data from the database.
-        """
-        column_name = "full_json"
-        engine = cls.get_db(db_url)
-        try:
-            with engine.connect() as connection:
-                # special handling for backends property, enables support for xmrig-mo fork
-                if len(keys) < 1 and "backend" in table_name:
-                    # get all backend tables and construct the response
-                    backends = []
-                    miner_name = table_name.split("-")[0].lstrip("'")
-                    # Connect to the database and fetch the data in column_name from the table_name for each backend
-                    if cls.check_table_exists(db_url, f"{miner_name}-cpu-backend"):
-                        backends.append(json.loads(connection.execute(text(f"SELECT {column_name} FROM '{miner_name}-cpu-backend' ORDER BY timestamp DESC LIMIT 1")).fetchone()[0]))
-                    if cls.check_table_exists(db_url, f"{miner_name}-opencl-backend"):
-                        backends.append(json.loads(connection.execute(text(f"SELECT {column_name} FROM '{miner_name}-opencl-backend' ORDER BY timestamp DESC LIMIT 1")).fetchone()[0]))
-                    if cls.check_table_exists(db_url, f"{miner_name}-cuda-backend"):
-                        backends.append(json.loads(connection.execute(text(f"SELECT {column_name} FROM '{miner_name}-cuda-backend' ORDER BY timestamp DESC LIMIT 1")).fetchone()[0]))
-                    return backends
-                # default handling
-                else:
-                    # Connect to the database and fetch the data in column_name from the table_name
-                    result = connection.execute(text(f"SELECT {column_name} FROM '{table_name}' ORDER BY timestamp DESC LIMIT 1"))
-                    # Fetch the last item from the result
-                    data = result.fetchone()
-                    if data:
-                        data = json.loads(data[0])
-                    # if the first key is an int then that means we are dealing with the properties that require the
-                    # backends tables, remove the first item from the keys list because the backends are stored in 
-                    # individual tables
-                    if isinstance(keys[0], int):
-                        keys.pop(0)
-                    # Use the list of keys/indices to access the correct data
-                    if len(keys) > 0:
-                        for key in keys:
-                            data = data[key]
-                    return data
-            return "N/A"
-        except Exception as e:
-            raise XMRigDatabaseError(e, traceback.format_exc(), f"An error occurred retrieving data from the database:") from e
-        finally:
-            connection.close()
 
     @classmethod
     def delete_all_miner_data_from_db(cls, miner_name: str, db_url: str) -> None:
