@@ -11,6 +11,18 @@ It includes functionalities for:
 - Fallback to the database if the data is not available in the cached responses.
 """
 
+# // TODO: Remove quotes from table names in variables, add them to the query string instead, update check_table_exists, etc to reflect this change
+# // TODO: Merge properties.py into this class, remove the properties.py file
+# // TODO: Add the json flattened into the db as well as the raw json
+# // TODO: Create new method to retrieve data from the db and return a single item or multiple from a timerange, default to the last 1 result
+# // TODO: Update _get_data_from_cache method to use new method to retrieve data from the db, add a selection argument to the method to allow for selecting specific columns
+# // TODO: Update the property getters
+# // TODO: Update delete_all_miner_data_from_db method and related variables to reflect the new changes to table names stored within the db
+# TODO: Work through methods to make some private ?
+# TODO: PEP compliant docstrings
+# TODO: Merge test_properties.py into test_api.py
+# TODO: Update tests to reflect the recent changes
+
 import requests, traceback
 from xmrig.logger import log
 from xmrig.exceptions import XMRigAPIError, XMRigAuthorizationError, XMRigConnectionError, XMRigDatabaseError
@@ -103,7 +115,7 @@ class XMRigAPI:
         if endpoint == "config":
             self._config_cache = response
     
-    def _get_data_from_response(self, response: Union[Dict[str, Any], List[Dict[str, Any]]], keys: List[Union[str, int]], fallback_table_name: Union[str, List[str]]) -> Union[Any, str]:
+    def _get_data_from_cache(self, response: Union[Dict[str, Any], List[Dict[str, Any]]], keys: List[Union[str, int]], table_name: Union[str, List[str]], selection: Union[str, List[str]]) -> Union[Any, str]:
         """
         Retrieves the data from the response using the provided keys. Falls back to the database if the data is not available.
 
@@ -111,6 +123,7 @@ class XMRigAPI:
             response (Union[Dict[str, Any], List[Dict[str, Any]]]): The response data.
             keys (List[Union[str, int]]): The keys to use to retrieve the data.
             table_name (Union[str, List[str]]): The table name or list of table names to use for fallback database retrieval.
+            selection (Union[str, List[str]], optional): Column(s) to select from the table.
 
         Returns:
             Union[Any, str]: The retrieved data, or a default string value of "N/A" if not available.
@@ -123,6 +136,7 @@ class XMRigAPI:
         data = "N/A"
         try:
             if response == None:
+                # TODO: Use this exception or requests.exceptions.JSONDecodeError ?
                 raise JSONDecodeError("No response data available, trying database.", "", 0)
             else:
                 data = response
@@ -132,7 +146,7 @@ class XMRigAPI:
         except JSONDecodeError as e:
             if self._db_url is not None:
                 try:
-                    return XMRigDatabase.fallback_to_db(fallback_table_name, keys, self._db_url)
+                    return self._fallback_to_db(self._db_url, table_name, selection)
                 except XMRigDatabaseError as db_e:
                     # TODO: Could this message be better ?
                     log.error(f"An error occurred fetching the backends data from the database, has the miner just been added AND started/restarted within the last 15 minutes ? {db_e}")
@@ -141,7 +155,11 @@ class XMRigAPI:
             log.error(f"Key not found in the response data: {e}")
             data = "N/A"
         return data
-
+    
+    def _fallback_to_db(self, db_url, table_name, selection) -> List[Dict[str, Any]]:
+        result = XMRigDatabase.retrieve_data_from_db(db_url, table_name, selection)
+        return result[0].get(selection, "N/A")
+    
     def set_auth_header(self) -> bool:
         """
         Update the Authorization header for the HTTP requests.
@@ -193,12 +211,7 @@ class XMRigAPI:
                 self._update_cache(json_response, endpoint)
                 log.debug(f"{endpoint.capitalize()} endpoint successfully fetched.")
                 if self._db_url is not None:
-                    if endpoint == "backends":
-                        for backend in json_response:
-                            prefix = ["cpu", "opencl", "cuda"][json_response.index(backend)]
-                            XMRigDatabase.insert_data_to_db(backend, f"{self._miner_name}-{prefix}-backend", self._db_url)
-                    else:
-                        XMRigDatabase.insert_data_to_db(json_response, f"{self._miner_name}-{endpoint}", self._db_url)
+                    XMRigDatabase.insert_data_to_db(json_response, f"{self._miner_name}-{endpoint}", self._db_url)
                 return True
         except requests.exceptions.JSONDecodeError as e:
             # INFO: Due to a bug in XMRig, the first 15 minutes a miner is running/restarted its backends 
