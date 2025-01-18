@@ -230,8 +230,8 @@ Private Functions:
 
 XMRigAPI:
 
-- _update_response_cache
-- _get_data_from_response
+- _update_cache
+- _get_data_from_cache
 
 Exceptions:
 
