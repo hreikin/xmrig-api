@@ -111,20 +111,32 @@ class XMRigDatabase:
             XMRigDatabaseError: If an error occurs while inserting data into the database.
         """
         try:
-            # Create a dataframe with the required columns and data
-            data = {
-                "timestamp": [datetime.now()],
+            # Create a DataFrame with the additional metadata columns
+            metadata = pd.DataFrame({
+                "timestamp": [pd.Timestamp.now()],
                 "full_json": [json.dumps(json_data)]
-            }
+            })
+            # Check if json_data is a list of dictionaries (backends endpoint)
+            if isinstance(json_data, list) and all(isinstance(item, dict) for item in json_data):
+                # Flatten the list of dictionaries and prefix column names with their position in the list
+                flattened_data = {}
+                for idx, item in enumerate(json_data):
+                    for key, value in item.items():
+                        flattened_data[f"{idx}.{key}"] = value
+                json_data = flattened_data
+            # Flatten the JSON data
+            df = pd.json_normalize(json_data, sep=".")
+            # Convert list-type values to JSON strings
+            for col in df.columns:
+                df[col] = df[col].apply(lambda x: json.dumps(x) if isinstance(x, list) else x)
+            # Concatenate the additional columns with the original DataFrame
+            df = pd.concat([metadata, df], axis=1)
             engine = cls.get_db(db_url)
-            df = pd.DataFrame(data)
-            # Insert data into the database
             df.to_sql(table_name, engine, if_exists="append", index=False)
             log.debug("Data inserted successfully")
         except Exception as e:
             raise XMRigDatabaseError(e, traceback.format_exc(), f"An error occurred inserting data to the database:") from e
-
-    # TODO: Use this or fallback_to_db, ?
+    
     @classmethod
     def retrieve_data_from_db(cls, db_url: str, table_name: str, selection: Union[str, List[str]] = "*", start_time: datetime = None, end_time: datetime = None, limit: int = None) -> Union[List[Dict[str, Any]], str]:
         """
