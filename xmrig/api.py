@@ -75,7 +75,7 @@ class XMRigAPI:
         self._backends_cache = None
         self._config_cache = None
         self._summary_table_name = f"{self._miner_name}-summary"
-        self._backends_table_names = [f"{self._miner_name}-cpu-backend", f"{self._miner_name}-opencl-backend", f"{self._miner_name}-cuda-backend"]
+        self._backends_table_name = f"{self._miner_name}-backends"
         self._config_table_name = f"{self._miner_name}-config"
         self._headers = {
             "Content-Type": "application/json",
@@ -110,7 +110,7 @@ class XMRigAPI:
         Args:
             response (Union[Dict[str, Any], List[Dict[str, Any]]]): The response data.
             keys (List[Union[str, int]]): The keys to use to retrieve the data.
-            fallback_table_name (Union[str, List[str]]): The table name or list of table names to use for fallback database retrieval.
+            table_name (Union[str, List[str]]): The table name or list of table names to use for fallback database retrieval.
 
         Returns:
             Union[Any, str]: The retrieved data, or a default string value of "N/A" if not available.
