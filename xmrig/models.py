@@ -1,6 +1,7 @@
-from sqlalchemy import Column, Integer, String, Boolean, Float, JSON, ForeignKey
+from sqlalchemy import Column, Integer, String, Boolean, Float, JSON, ForeignKey, DateTime
 from sqlalchemy.orm import relationship
 from sqlalchemy.ext.declarative import declarative_base
+from datetime import datetime
 
 # // TODO: Add Memory ORM model with relationship to Resources
 # // TODO: Add copy of data in JSON format to the sub-tables
@@ -18,6 +19,9 @@ Base = declarative_base()
 
 class Summary(Base):
     __tablename__ = "summary"
+    uid = Column(Integer, primary_key=True)
+    miner_name = Column(String)
+    timestamp = Column(DateTime, default=datetime.now)
     full_json = Column(JSON)
     id = Column(String)
     worker_id = Column(String)
@@ -138,6 +142,9 @@ class Hashrate(Base):
 
 class Config(Base):
     __tablename__ = "config"
+    uid = Column(Integer, primary_key=True)
+    miner_name = Column(String)
+    timestamp = Column(DateTime, default=datetime.now)
     full_json = Column(JSON)
     api_uid = Column(Integer, ForeignKey("api_config.uid"))
     api = relationship("APIConfig", back_populates="config")
@@ -186,7 +193,7 @@ class APIConfig(Base):
     id = Column(String)
     worker_id = Column(String)
 
-    api = relationship("Config", back_populates="api")
+    config = relationship("Config", back_populates="api")
 
 class HTTPConfig(Base):
     __tablename__ = "http_config"
@@ -198,7 +205,7 @@ class HTTPConfig(Base):
     access_token = Column(String)
     restricted = Column(Boolean)
 
-    http = relationship("Config", back_populates="http")
+    config = relationship("Config", back_populates="http")
 
 class RandomXConfig(Base):
     __tablename__ = "randomx_config"
@@ -214,7 +221,7 @@ class RandomXConfig(Base):
     numa = Column(Boolean)
     scratchpad_prefetch_mode = Column(Integer)
 
-    randomx = relationship("Config", back_populates="randomx")
+    config = relationship("Config", back_populates="randomx")
 
 class CPUConfig(Base):
     __tablename__ = "cpu_config"
@@ -231,7 +238,7 @@ class CPUConfig(Base):
     asm = Column(JSON)
     argon2_impl = Column(String)
 
-    cpu = relationship("Config", back_populates="cpu")
+    config = relationship("Config", back_populates="cpu")
 
 class OpenCLConfig(Base):
     __tablename__ = "opencl_config"
@@ -243,9 +250,9 @@ class OpenCLConfig(Base):
     platform = Column(JSON)
     adl = Column(Boolean)
 
-    opencl = relationship("Config", back_populates="opencl")
+    config = relationship("Config", back_populates="opencl")
 
-class CudaConfig(Base):
+class CUDAConfig(Base):
     __tablename__ = "cuda_config"
     uid = Column(Integer, primary_key=True)
     full_json = Column(JSON)
@@ -253,7 +260,7 @@ class CudaConfig(Base):
     loader = Column(String)
     nvml = Column(Boolean)
 
-    cuda = relationship("Config", back_populates="cuda")
+    config = relationship("Config", back_populates="cuda")
 
 class TLSConfig(Base):
     __tablename__ = "tls_config"
@@ -267,7 +274,7 @@ class TLSConfig(Base):
     ciphersuites = Column(String)
     dhparam = Column(String)
 
-    tls = relationship("Config", back_populates="tls")
+    config = relationship("Config", back_populates="tls")
 
 class DNSConfig(Base):
     __tablename__ = "dns_config"
@@ -276,7 +283,7 @@ class DNSConfig(Base):
     ipv6 = Column(Boolean)
     ttl = Column(Integer)
 
-    dns = relationship("Config", back_populates="dns")
+    config = relationship("Config", back_populates="dns")
 
 class BenchmarkConfig(Base):
     __tablename__ = "benchmark_config"
@@ -289,10 +296,13 @@ class BenchmarkConfig(Base):
     seed = Column(String)
     hash_num = Column(String)
 
-    benchmark = relationship("Config", back_populates="benchmark")
+    config = relationship("Config", back_populates="benchmark")
 
 class Backends(Base):
     __tablename__ = "backends"
+    uid = Column(Integer, primary_key=True)
+    miner_name = Column(String)
+    timestamp = Column(DateTime, default=datetime.now)
     full_json = Column(JSON)
     cpu_uid = Column(Integer, ForeignKey("cpu_backend.uid"))
     cpu = relationship("CPUBackend", back_populates="backends")
@@ -330,7 +340,7 @@ class OpenCLBackend(Base):
     algo = Column(String)
     profile = Column(String)
     platform_uid = Column(Integer, ForeignKey("opencl_platform.uid"))
-    platform = relationship("OpenCLPlatform", back_populates="opencl")
+    platform = relationship("OpenCLPlatform", back_populates="opencl_backend")
     hashrate = Column(JSON)
     threads = Column(JSON)
     
@@ -358,7 +368,7 @@ class CUDABackend(Base):
     algo = Column(String)
     profile = Column(String)
     versions_uid = Column(Integer, ForeignKey("cuda_versions.uid"))
-    versions = relationship("CUDAVersions", back_populates="cuda")
+    versions = relationship("CUDAVersions", back_populates="cuda_backend")
     hashrate = Column(JSON)
     threads = Column(JSON)
     
