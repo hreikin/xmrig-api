@@ -18,9 +18,13 @@ It includes functionalities for:
 # // TODO: Update _get_data_from_cache method to use new method to retrieve data from the db, add a selection argument to the method to allow for selecting specific columns
 # // TODO: Update the property getters
 # // TODO: Update delete_all_miner_data_from_db method and related variables to reflect the new changes to table names stored within the db
+# // TODO: Create ORM models for the database tables
+# // TODO: Refactor the code to use the ORM models within insert_data_to_db 
+# // TODO: Refactor the retrieve_data_from_db method 
+# // TODO: Update property getters after database changes
 # TODO: Work through methods to make some private ?
+# TODO: Update the docstrings to reflect the recent changes
 # TODO: PEP compliant docstrings
-# TODO: Merge test_properties.py into test_api.py
 # TODO: Update tests to reflect the recent changes
 
 import requests, traceback
@@ -86,9 +90,9 @@ class XMRigAPI:
         self._summary_cache = None
         self._backends_cache = None
         self._config_cache = None
-        self._summary_table_name = f"{self._miner_name}-summary"
-        self._backends_table_name = f"{self._miner_name}-backends"
-        self._config_table_name = f"{self._miner_name}-config"
+        self._summary_table_name = "summary"
+        self._backends_table_name = "backends"
+        self._config_table_name = "config"
         self._headers = {
             "Content-Type": "application/json",
             "Accept": "application/json",
@@ -157,7 +161,7 @@ class XMRigAPI:
         return data
     
     def _fallback_to_db(self, db_url, table_name, selection) -> List[Dict[str, Any]]:
-        result = XMRigDatabase.retrieve_data_from_db(db_url, table_name, selection)
+        result = XMRigDatabase.retrieve_data_from_db(db_url, table_name, self._miner_name, selection)
         return result[0].get(selection, "N/A")
     
     def set_auth_header(self) -> bool:
@@ -211,7 +215,7 @@ class XMRigAPI:
                 self._update_cache(json_response, endpoint)
                 log.debug(f"{endpoint.capitalize()} endpoint successfully fetched.")
                 if self._db_url is not None:
-                    XMRigDatabase.insert_data_to_db(json_response, f"{self._miner_name}-{endpoint}", self._db_url)
+                    XMRigDatabase.insert_data_to_db(json_response, self._miner_name, endpoint, self._db_url)
                 return True
         except requests.exceptions.JSONDecodeError as e:
             # INFO: Due to a bug in XMRig, the first 15 minutes a miner is running/restarted its backends 
@@ -337,8 +341,6 @@ class XMRigAPI:
         Returns:
             Union[List[Dict[str, Any]], str]: Current backends response, or "N/A" if not available.
         """
-        # table name for this property shouldnt matter as long as it is a backend table because it is used 
-        # to get the miners name because it has its own special handling when it falls back to the db
         return self._get_data_from_cache(self._backends_cache, [], self._backends_table_name, "full_json")
 
     @property
@@ -414,7 +416,7 @@ class XMRigAPI:
         Returns:
             Union[Dict[str, Any], Any]: Resources information, or "N/A" if not available.
         """
-        return self._get_data_from_cache(self._summary_cache, ["resources"], self._summary_table_name, "resources")
+        return self._get_data_from_cache(self._summary_cache, ["resources"], self._summary_table_name, "full_json")
 
     @property
     def sum_memory_usage(self) -> Union[Dict[str, Any], Any]:
@@ -424,7 +426,7 @@ class XMRigAPI:
         Returns:
             Union[Dict[str, Any], Any]: Memory usage information, or "N/A" if not available.
         """
-        return self._get_data_from_cache(self._summary_cache, ["resources", "memory"], self._summary_table_name, "resources.memory")
+        return self._get_data_from_cache(self._summary_cache, ["resources", "memory"], self._summary_table_name, "resources_memory")
 
     @property
     def sum_free_memory(self) -> Union[int, Any]:
@@ -434,7 +436,7 @@ class XMRigAPI:
         Returns:
             Union[int, Any]: Free memory information, or "N/A" if not available.
         """
-        return self._get_data_from_cache(self._summary_cache, ["resources", "memory", "free"], self._summary_table_name, "resources.memory.free")
+        return self._get_data_from_cache(self._summary_cache, ["resources", "memory", "free"], self._summary_table_name, "resources_memory_free")
 
     @property
     def sum_total_memory(self) -> Union[int, Any]:
@@ -444,7 +446,7 @@ class XMRigAPI:
         Returns:
             Union[int, Any]: Total memory information, or "N/A" if not available.
         """
-        return self._get_data_from_cache(self._summary_cache, ["resources", "memory", "total"], self._summary_table_name, "resources.memory.total")
+        return self._get_data_from_cache(self._summary_cache, ["resources", "memory", "total"], self._summary_table_name, "resources_memory_total")
 
     @property
     def sum_resident_set_memory(self) -> Union[int, Any]:
@@ -454,7 +456,7 @@ class XMRigAPI:
         Returns:
             Union[int, Any]: Resident set memory information, or "N/A" if not available.
         """
-        return self._get_data_from_cache(self._summary_cache, ["resources", "memory", "resident_set_memory"], self._summary_table_name, "resources.memory.resident_set_memory")
+        return self._get_data_from_cache(self._summary_cache, ["resources", "memory", "resident_set_memory"], self._summary_table_name, "resources_memory_resident_set_memory")
 
     @property
     def sum_load_average(self) -> Union[List[float], Any]:
@@ -464,7 +466,7 @@ class XMRigAPI:
         Returns:
             Union[List[float], Any]: Load average information, or "N/A" if not available.
         """
-        return self._get_data_from_cache(self._summary_cache, ["resources", "load_average"], self._summary_table_name, "resources.load_average")
+        return self._get_data_from_cache(self._summary_cache, ["resources", "load_average"], self._summary_table_name, "resources_load_average")
 
     @property
     def sum_hardware_concurrency(self) -> Union[int, Any]:
@@ -474,7 +476,7 @@ class XMRigAPI:
         Returns:
             Union[int, Any]: Hardware concurrency information, or "N/A" if not available.
         """
-        return self._get_data_from_cache(self._summary_cache, ["resources", "hardware_concurrency"], self._summary_table_name, "resources.hardware_concurrency")
+        return self._get_data_from_cache(self._summary_cache, ["resources", "hardware_concurrency"], self._summary_table_name, "resources_hardware_concurrency")
 
     @property
     def sum_features(self) -> Union[List[str], Any]:
@@ -504,7 +506,7 @@ class XMRigAPI:
         Returns:
             Union[int, Any]: Current difficulty, or "N/A" if not available.
         """
-        return self._get_data_from_cache(self._summary_cache, ["results", "diff_current"], self._summary_table_name, "results.diff_current")
+        return self._get_data_from_cache(self._summary_cache, ["results", "diff_current"], self._summary_table_name, "results_diff_current")
 
     @property
     def sum_good_shares(self) -> Union[int, Any]:
@@ -514,7 +516,7 @@ class XMRigAPI:
         Returns:
             Union[int, Any]: Good shares, or "N/A" if not available.
         """
-        return self._get_data_from_cache(self._summary_cache, ["results", "shares_good"], self._summary_table_name, "results.shares_good")
+        return self._get_data_from_cache(self._summary_cache, ["results", "shares_good"], self._summary_table_name, "results_shares_good")
 
     @property
     def sum_total_shares(self) -> Union[int, Any]:
@@ -524,7 +526,7 @@ class XMRigAPI:
         Returns:
             Union[int, Any]: Total shares, or "N/A" if not available.
         """
-        return self._get_data_from_cache(self._summary_cache, ["results", "shares_total"], self._summary_table_name, "results.shares_total")
+        return self._get_data_from_cache(self._summary_cache, ["results", "shares_total"], self._summary_table_name, "results_shares_total")
 
     @property
     def sum_avg_time(self) -> Union[int, Any]:
@@ -534,7 +536,7 @@ class XMRigAPI:
         Returns:
             Union[int, Any]: Average time information, or "N/A" if not available.
         """
-        return self._get_data_from_cache(self._summary_cache, ["results", "avg_time"], self._summary_table_name, "results.avg_time")
+        return self._get_data_from_cache(self._summary_cache, ["results", "avg_time"], self._summary_table_name, "results_avg_time")
 
     @property
     def sum_avg_time_ms(self) -> Union[int, Any]:
@@ -544,7 +546,7 @@ class XMRigAPI:
         Returns:
             Union[int, Any]: Average time in `ms` information, or "N/A" if not available.
         """
-        return self._get_data_from_cache(self._summary_cache, ["results", "avg_time_ms"], self._summary_table_name, "results.avg_time_ms")
+        return self._get_data_from_cache(self._summary_cache, ["results", "avg_time_ms"], self._summary_table_name, "results_avg_time_ms")
 
     @property
     def sum_total_hashes(self) -> Union[int, Any]:
@@ -554,7 +556,7 @@ class XMRigAPI:
         Returns:
             Union[int, Any]: Total number of hashes, or "N/A" if not available.
         """
-        return self._get_data_from_cache(self._summary_cache, ["results", "hashes_total"], self._summary_table_name, "results.hashes_total")
+        return self._get_data_from_cache(self._summary_cache, ["results", "hashes_total"], self._summary_table_name, "results_hashes_total")
 
     @property
     def sum_best_results(self) -> Union[List[int], Any]:
@@ -564,7 +566,7 @@ class XMRigAPI:
         Returns:
             Union[List[int], Any]: Best results, or "N/A" if not available.
         """
-        return self._get_data_from_cache(self._summary_cache, ["results", "best"], self._summary_table_name, "results.best")
+        return self._get_data_from_cache(self._summary_cache, ["results", "best"], self._summary_table_name, "results_best")
 
     @property
     def sum_algorithm(self) -> Union[str, Any]:
@@ -594,7 +596,7 @@ class XMRigAPI:
         Returns:
             Union[str, Any]: Pool information, or "N/A" if not available.
         """
-        return self._get_data_from_cache(self._summary_cache, ["connection", "pool"], self._summary_table_name, "connection.pool")
+        return self._get_data_from_cache(self._summary_cache, ["connection", "pool"], self._summary_table_name, "connection_pool")
 
     @property
     def sum_pool_ip_address(self) -> Union[str, Any]:
@@ -604,7 +606,7 @@ class XMRigAPI:
         Returns:
             Union[str, Any]: IP address, or "N/A" if not available.
         """
-        return self._get_data_from_cache(self._summary_cache, ["connection", "ip"], self._summary_table_name, "connection.ip")
+        return self._get_data_from_cache(self._summary_cache, ["connection", "ip"], self._summary_table_name, "connection_ip")
 
     @property
     def sum_pool_uptime(self) -> Union[int, Any]:
@@ -614,7 +616,7 @@ class XMRigAPI:
         Returns:
             Union[int, Any]: Pool uptime information, or "N/A" if not available.
         """
-        return self._get_data_from_cache(self._summary_cache, ["connection", "uptime"], self._summary_table_name, "connection.uptime")
+        return self._get_data_from_cache(self._summary_cache, ["connection", "uptime"], self._summary_table_name, "connection_uptime")
 
     @property
     def sum_pool_uptime_ms(self) -> Union[int, Any]:
@@ -624,7 +626,7 @@ class XMRigAPI:
         Returns:
             Union[int, Any]: Pool uptime in ms, or "N/A" if not available.
         """
-        return self._get_data_from_cache(self._summary_cache, ["connection", "uptime_ms"], self._summary_table_name, "connection.uptime_ms")
+        return self._get_data_from_cache(self._summary_cache, ["connection", "uptime_ms"], self._summary_table_name, "connection_uptime_ms")
 
     @property
     def sum_pool_ping(self) -> Union[int, Any]:
@@ -634,7 +636,7 @@ class XMRigAPI:
         Returns:
             Union[int, Any]: Pool ping information, or "N/A" if not available.
         """
-        return self._get_data_from_cache(self._summary_cache, ["connection", "ping"], self._summary_table_name, "connection.ping")
+        return self._get_data_from_cache(self._summary_cache, ["connection", "ping"], self._summary_table_name, "connection_ping")
 
     @property
     def sum_pool_failures(self) -> Union[int, Any]:
@@ -644,7 +646,7 @@ class XMRigAPI:
         Returns:
             Union[int, Any]: Pool failures information, or "N/A" if not available.
         """
-        return self._get_data_from_cache(self._summary_cache, ["connection", "failures"], self._summary_table_name, "connection.failures")
+        return self._get_data_from_cache(self._summary_cache, ["connection", "failures"], self._summary_table_name, "connection_failures")
 
     @property
     def sum_pool_tls(self) -> Union[bool, Any]:
@@ -654,7 +656,7 @@ class XMRigAPI:
         Returns:
             Union[bool, Any]: Pool tls status, or "N/A" if not available.
         """
-        return self._get_data_from_cache(self._summary_cache, ["connection", "tls"], self._summary_table_name, "connection.tls")
+        return self._get_data_from_cache(self._summary_cache, ["connection", "tls"], self._summary_table_name, "connection_tls")
 
     @property
     def sum_pool_tls_fingerprint(self) -> Union[str, Any]:
@@ -664,7 +666,7 @@ class XMRigAPI:
         Returns:
             Union[str, Any]: Pool tls fingerprint information, or "N/A" if not available.
         """
-        return self._get_data_from_cache(self._summary_cache, ["connection", "tls-fingerprint"], self._summary_table_name, "connection.tls-fingerprint")
+        return self._get_data_from_cache(self._summary_cache, ["connection", "tls-fingerprint"], self._summary_table_name, "connection_tls_fingerprint")
 
     @property
     def sum_pool_algo(self) -> Union[str, Any]:
@@ -674,7 +676,7 @@ class XMRigAPI:
         Returns:
             Union[str, Any]: Pool algorithm information, or "N/A" if not available.
         """
-        return self._get_data_from_cache(self._summary_cache, ["connection", "algo"], self._summary_table_name, "connection.algo")
+        return self._get_data_from_cache(self._summary_cache, ["connection", "algo"], self._summary_table_name, "connection_algo")
 
     @property
     def sum_pool_diff(self) -> Union[int, Any]:
@@ -684,7 +686,7 @@ class XMRigAPI:
         Returns:
             Union[int, Any]: Pool difficulty information, or "N/A" if not available.
         """
-        return self._get_data_from_cache(self._summary_cache, ["connection", "diff"], self._summary_table_name, "connection.diff")
+        return self._get_data_from_cache(self._summary_cache, ["connection", "diff"], self._summary_table_name, "connection_diff")
 
     @property
     def sum_pool_accepted_jobs(self) -> Union[int, Any]:
@@ -694,7 +696,7 @@ class XMRigAPI:
         Returns:
             Union[int, Any]: Number of accepted jobs, or "N/A" if not available.
         """
-        return self._get_data_from_cache(self._summary_cache, ["connection", "accepted"], self._summary_table_name, "connection.accepted")
+        return self._get_data_from_cache(self._summary_cache, ["connection", "accepted"], self._summary_table_name, "connection_accepted")
 
     @property
     def sum_pool_rejected_jobs(self) -> Union[int, Any]:
@@ -704,7 +706,7 @@ class XMRigAPI:
         Returns:
             Union[int, Any]: Number of rejected jobs, or "N/A" if not available.
         """
-        return self._get_data_from_cache(self._summary_cache,  ["connection", "rejected"], self._summary_table_name, "connection.rejected")
+        return self._get_data_from_cache(self._summary_cache,  ["connection", "rejected"], self._summary_table_name, "connection_rejected")
 
     @property
     def sum_pool_average_time(self) -> Union[int, Any]:
@@ -714,7 +716,7 @@ class XMRigAPI:
         Returns:
             Union[int, Any]: Pool average time information, or "N/A" if not available.
         """
-        return self._get_data_from_cache(self._summary_cache, ["connection", "avg_time"], self._summary_table_name, "connection.avg_time")
+        return self._get_data_from_cache(self._summary_cache, ["connection", "avg_time"], self._summary_table_name, "connection_avg_time")
 
     @property
     def sum_pool_average_time_ms(self) -> Union[int, Any]:
@@ -724,7 +726,7 @@ class XMRigAPI:
         Returns:
             Union[int, Any]: Pool average time in ms, or "N/A" if not available.
         """
-        return self._get_data_from_cache(self._summary_cache, ["connection", "avg_time_ms"], self._summary_table_name, "connection.avg_time_ms")
+        return self._get_data_from_cache(self._summary_cache, ["connection", "avg_time_ms"], self._summary_table_name, "connection_avg_time_ms")
 
     @property
     def sum_pool_total_hashes(self) -> Union[int, Any]:
@@ -734,7 +736,7 @@ class XMRigAPI:
         Returns:
             Union[int, Any]: Pool total hashes information, or "N/A" if not available.
         """
-        return self._get_data_from_cache(self._summary_cache, ["connection", "hashes_total"], self._summary_table_name, "connection.hashes_total")
+        return self._get_data_from_cache(self._summary_cache, ["connection", "hashes_total"], self._summary_table_name, "connection_hashes_total")
 
     @property
     def sum_version(self) -> Union[str, Any]:
@@ -784,7 +786,7 @@ class XMRigAPI:
         Returns:
             Union[str, Any]: CPU brand information, or "N/A" if not available.
         """
-        return self._get_data_from_cache(self._summary_cache, ["cpu", "brand"], self._summary_table_name, "cpu.brand")
+        return self._get_data_from_cache(self._summary_cache, ["cpu", "brand"], self._summary_table_name, "cpu_brand")
 
     @property
     def sum_cpu_family(self) -> Union[int, Any]:
@@ -794,7 +796,7 @@ class XMRigAPI:
         Returns:
             Union[int, Any]: CPU family information, or "N/A" if not available.
         """
-        return self._get_data_from_cache(self._summary_cache, ["cpu", "family"], self._summary_table_name, "cpu.family")
+        return self._get_data_from_cache(self._summary_cache, ["cpu", "family"], self._summary_table_name, "cpu_family")
 
     @property
     def sum_cpu_model(self) -> Union[int, Any]:
@@ -804,7 +806,7 @@ class XMRigAPI:
         Returns:
             Union[int, Any]: CPU model information, or "N/A" if not available.
         """
-        return self._get_data_from_cache(self._summary_cache, ["cpu", "model"], self._summary_table_name, "cpu.model")
+        return self._get_data_from_cache(self._summary_cache, ["cpu", "model"], self._summary_table_name, "cpu_model")
 
     @property
     def sum_cpu_stepping(self) -> Union[int, Any]:
@@ -814,7 +816,7 @@ class XMRigAPI:
         Returns:
             Union[int, Any]: CPU stepping information, or "N/A" if not available.
         """
-        return self._get_data_from_cache(self._summary_cache,  ["cpu", "stepping"], self._summary_table_name, "cpu.stepping")
+        return self._get_data_from_cache(self._summary_cache,  ["cpu", "stepping"], self._summary_table_name, "cpu_stepping")
 
     @property
     def sum_cpu_proc_info(self) -> Union[int, Any]:
@@ -824,7 +826,7 @@ class XMRigAPI:
         Returns:
             Union[int, Any]: CPU frequency information, or "N/A" if not available.
         """
-        return self._get_data_from_cache(self._summary_cache, ["cpu", "proc_info"], self._summary_table_name, "cpu.proc_info")
+        return self._get_data_from_cache(self._summary_cache, ["cpu", "proc_info"], self._summary_table_name, "cpu_proc_info")
 
     @property
     def sum_cpu_aes(self) -> Union[bool, Any]:
@@ -834,7 +836,7 @@ class XMRigAPI:
         Returns:
             Union[bool, Any]: CPU AES support status, or "N/A" if not available.
         """
-        return self._get_data_from_cache(self._summary_cache, ["cpu", "aes"], self._summary_table_name, "cpu.aes")
+        return self._get_data_from_cache(self._summary_cache, ["cpu", "aes"], self._summary_table_name, "cpu_aes")
 
     @property
     def sum_cpu_avx2(self) -> Union[bool, Any]:
@@ -844,7 +846,7 @@ class XMRigAPI:
         Returns:
             Union[bool, Any]: CPU AVX2 support status, or "N/A" if not available.
         """
-        return self._get_data_from_cache(self._summary_cache, ["cpu", "avx2"], self._summary_table_name, "cpu.avx2")
+        return self._get_data_from_cache(self._summary_cache, ["cpu", "avx2"], self._summary_table_name, "cpu_avx2")
 
     @property
     def sum_cpu_x64(self) -> Union[bool, Any]:
@@ -854,7 +856,7 @@ class XMRigAPI:
         Returns:
             Union[bool, Any]: CPU x64 support status, or "N/A" if not available.
         """
-        return self._get_data_from_cache(self._summary_cache, ["cpu", "x64"], self._summary_table_name, "cpu.x64")
+        return self._get_data_from_cache(self._summary_cache, ["cpu", "x64"], self._summary_table_name, "cpu_x64")
 
     @property
     def sum_cpu_64_bit(self) -> Union[bool, Any]:
@@ -864,7 +866,7 @@ class XMRigAPI:
         Returns:
             Union[bool, Any]: CPU 64-bit support status, or "N/A" if not available.
         """
-        return self._get_data_from_cache(self._summary_cache, ["cpu", "64_bit"], self._summary_table_name, "cpu.64_bit")
+        return self._get_data_from_cache(self._summary_cache, ["cpu", "64_bit"], self._summary_table_name, "cpu_64_bit")
 
     @property
     def sum_cpu_l2(self) -> Union[int, Any]:
@@ -874,7 +876,7 @@ class XMRigAPI:
         Returns:
             Union[int, Any]: CPU L2 cache size, or "N/A" if not available.
         """
-        return self._get_data_from_cache(self._summary_cache, ["cpu", "l2"], self._summary_table_name, "cpu.l2")
+        return self._get_data_from_cache(self._summary_cache, ["cpu", "l2"], self._summary_table_name, "cpu_l2")
 
     @property
     def sum_cpu_l3(self) -> Union[int, Any]:
@@ -884,7 +886,7 @@ class XMRigAPI:
         Returns:
             Union[int, Any]: CPU L3 cache size, or "N/A" if not available.
         """
-        return self._get_data_from_cache(self._summary_cache, ["cpu", "l3"], self._summary_table_name, "cpu.l3")
+        return self._get_data_from_cache(self._summary_cache, ["cpu", "l3"], self._summary_table_name, "cpu_l3")
 
     @property
     def sum_cpu_cores(self) -> Union[int, Any]:
@@ -894,7 +896,7 @@ class XMRigAPI:
         Returns:
             Union[int, Any]: CPU cores count, or "N/A" if not available.
         """
-        return self._get_data_from_cache(self._summary_cache, ["cpu", "cores"], self._summary_table_name, "cpu.cores")
+        return self._get_data_from_cache(self._summary_cache, ["cpu", "cores"], self._summary_table_name, "cpu_cores")
 
     @property
     def sum_cpu_threads(self) -> Union[int, Any]:
@@ -904,7 +906,7 @@ class XMRigAPI:
         Returns:
             Union[int, Any]: CPU threads count, or "N/A" if not available.
         """
-        return self._get_data_from_cache(self._summary_cache, ["cpu", "threads"], self._summary_table_name, "cpu.threads")
+        return self._get_data_from_cache(self._summary_cache, ["cpu", "threads"], self._summary_table_name, "cpu_threads")
 
     @property
     def sum_cpu_packages(self) -> Union[int, Any]:
@@ -914,7 +916,7 @@ class XMRigAPI:
         Returns:
             Union[int, Any]: CPU packages count, or "N/A" if not available.
         """
-        return self._get_data_from_cache(self._summary_cache, ["cpu", "packages"], self._summary_table_name, "cpu.packages")
+        return self._get_data_from_cache(self._summary_cache, ["cpu", "packages"], self._summary_table_name, "cpu_packages")
 
     @property
     def sum_cpu_nodes(self) -> Union[int, Any]:
@@ -924,7 +926,7 @@ class XMRigAPI:
         Returns:
             Union[int, Any]: CPU nodes count, or "N/A" if not available.
         """
-        return self._get_data_from_cache(self._summary_cache, ["cpu", "nodes"], self._summary_table_name, "cpu.nodes")
+        return self._get_data_from_cache(self._summary_cache, ["cpu", "nodes"], self._summary_table_name, "cpu_nodes")
 
     @property
     def sum_cpu_backend(self) -> Union[str, Any]:
@@ -934,7 +936,7 @@ class XMRigAPI:
         Returns:
             Union[str, Any]: CPU backend information, or "N/A" if not available.
         """
-        return self._get_data_from_cache(self._summary_cache,  ["cpu", "backend"], self._summary_table_name, "cpu.backend")
+        return self._get_data_from_cache(self._summary_cache,  ["cpu", "backend"], self._summary_table_name, "cpu_backend")
 
     @property
     def sum_cpu_msr(self) -> Union[str, Any]:
@@ -944,7 +946,7 @@ class XMRigAPI:
         Returns:
             Union[str, Any]: CPU MSR information, or "N/A" if not available.
         """
-        return self._get_data_from_cache(self._summary_cache, ["cpu", "msr"], self._summary_table_name, "cpu.msr")
+        return self._get_data_from_cache(self._summary_cache, ["cpu", "msr"], self._summary_table_name, "cpu_msr")
 
     @property
     def sum_cpu_assembly(self) -> Union[str, Any]:
@@ -954,7 +956,7 @@ class XMRigAPI:
         Returns:
             Union[str, Any]: CPU assembly information, or "N/A" if not available.
         """
-        return self._get_data_from_cache(self._summary_cache,  ["cpu", "assembly"], self._summary_table_name, "cpu.assembly")
+        return self._get_data_from_cache(self._summary_cache,  ["cpu", "assembly"], self._summary_table_name, "cpu_assembly")
 
     @property
     def sum_cpu_arch(self) -> Union[str, Any]:
@@ -964,7 +966,7 @@ class XMRigAPI:
         Returns:
             Union[str, Any]: CPU architecture information, or "N/A" if not available.
         """
-        return self._get_data_from_cache(self._summary_cache, ["cpu", "arch"], self._summary_table_name, "cpu.arch")
+        return self._get_data_from_cache(self._summary_cache, ["cpu", "arch"], self._summary_table_name, "cpu_arch")
 
     @property
     def sum_cpu_flags(self) -> Union[List[str], Any]:
@@ -974,7 +976,7 @@ class XMRigAPI:
         Returns:
             Union[List[str], Any]: CPU flags information, or "N/A" if not available.
         """
-        return self._get_data_from_cache(self._summary_cache, ["cpu", "flags"], self._summary_table_name, "cpu.flags")
+        return self._get_data_from_cache(self._summary_cache, ["cpu", "flags"], self._summary_table_name, "cpu_flags")
 
     @property
     def sum_donate_level(self) -> Union[int, Any]:
@@ -1007,7 +1009,7 @@ class XMRigAPI:
         return self._get_data_from_cache(self._summary_cache, ["algorithms"], self._summary_table_name, "algorithms")
 
     @property
-    def sum_hashrates(self) -> Union[Dict[str, Any], Any]:
+    def sum_hashrate(self) -> Union[Dict[str, Any], Any]:
         """
         Retrieves the cached hashrate information from the summary data.
 
@@ -1015,6 +1017,16 @@ class XMRigAPI:
             Union[Dict[str, Any], Any]: Hashrate information, or "N/A" if not available.
         """
         return self._get_data_from_cache(self._summary_cache, ["hashrate"], self._summary_table_name, "hashrate")
+    
+    @property
+    def sum_hashrate_total(self) -> Union[List[float], Any]:
+        """
+        Retrieves the cached hashrate toal information from the summary data.
+
+        Returns:
+            Union[List[float], Any]: Hashrate total information, or "N/A" if not available.
+        """
+        return self._get_data_from_cache(self._summary_cache, ["hashrate"], self._summary_table_name, "hashrate_total")
 
     @property
     def sum_hashrate_10s(self) -> Union[float, Any]:
@@ -1024,7 +1036,8 @@ class XMRigAPI:
         Returns:
             Union[float, Any]: Hashrate for the last 10 seconds, or "N/A" if not available.
         """
-        return self._get_data_from_cache(self._summary_cache, ["hashrate", "total", 0], self._summary_table_name, "hashrate.total.0")
+        result = self._get_data_from_cache(self._summary_cache, ["hashrate", "total"], self._summary_table_name, "hashrate_total")
+        return result[0] if result != "N/A" else result
 
     @property
     def sum_hashrate_1m(self) -> Union[float, Any]:
@@ -1034,7 +1047,8 @@ class XMRigAPI:
         Returns:
             Union[float, Any]: Hashrate for the last 1 minute, or "N/A" if not available.
         """
-        return self._get_data_from_cache(self._summary_cache, ["hashrate", "total", 1], self._summary_table_name, "hashrate.total.1")
+        result = self._get_data_from_cache(self._summary_cache, ["hashrate", "total"], self._summary_table_name, "hashrate_total")
+        return result[1] if result != "N/A" else result
 
     @property
     def sum_hashrate_15m(self) -> Union[float, Any]:
@@ -1044,7 +1058,8 @@ class XMRigAPI:
         Returns:
             Union[float, Any]: Hashrate for the last 15 minutes, or "N/A" if not available.
         """
-        return self._get_data_from_cache(self._summary_cache, ["hashrate", "total", 2], self._summary_table_name, "hashrate.total.2")
+        result = self._get_data_from_cache(self._summary_cache, ["hashrate", "total"], self._summary_table_name, "hashrate_total")
+        return result[2] if result != "N/A" else result
 
     @property
     def sum_hashrate_highest(self) -> Union[float, Any]:
@@ -1054,7 +1069,7 @@ class XMRigAPI:
         Returns:
             Union[float, Any]: Highest hashrate, or "N/A" if not available.
         """
-        return self._get_data_from_cache(self._summary_cache, ["hashrate", "highest"], self._summary_table_name, "hashrate.highest")
+        return self._get_data_from_cache(self._summary_cache, ["hashrate", "highest"], self._summary_table_name, "hashrate_highest")
 
     @property
     def sum_hugepages(self) -> Union[List[Dict[str, Any]], Any]:
@@ -1079,12 +1094,14 @@ class XMRigAPI:
             Union[List[str], Any]: Enabled backends, or "N/A" if not available.
         """
         enabled_backends = []
-        # get the enabled backends from the backends data, the backends data is a list of variable length, use _get_data_from_cache to get the data
-        for i in range(3):
-            if self._get_data_from_cache(self._backends_cache, [i, "enabled"], self._backends_table_name, f"{i}.enabled"):
-                enabled_backends.append(self._get_data_from_cache(self._backends_cache, [i, "type"], self._backends_table_name, f"{i}.type"))
-        # remove any entries that match "N/A"
-        enabled_backends = [x for x in enabled_backends if x not in ["N/A", "0.type", "1.type", "2.type"]]
+        if len(self._backends_cache) >= 1:
+            if self._get_data_from_cache(self._backends_cache, [0, "enabled"], self._backends_table_name, "cpu_enabled"):
+                enabled_backends.append(self._get_data_from_cache(self._backends_cache, [0, "type"], self._backends_table_name, "cpu_type"))
+        if len(self._backends_cache) >= 2:
+            if self._get_data_from_cache(self._backends_cache, [1, "enabled"], self._backends_table_name, "opencl_enabled"):
+                enabled_backends.append(self._get_data_from_cache(self._backends_cache, [1, "type"], self._backends_table_name, "opencl_type"))
+            if self._get_data_from_cache(self._backends_cache, [2, "enabled"], self._backends_table_name, "cuda_enabled"):
+                enabled_backends.append(self._get_data_from_cache(self._backends_cache, [2, "type"], self._backends_table_name, "cuda_type"))
         return enabled_backends
 
     @property
@@ -1095,7 +1112,7 @@ class XMRigAPI:
         Returns:
             Union[str, Any]: CPU backend type, or "N/A" if not available.
         """
-        return self._get_data_from_cache(self._backends_cache, [0, "type"], self._backends_table_name, "0.type")
+        return self._get_data_from_cache(self._backends_cache, [0, "type"], self._backends_table_name, "cpu_type")
 
     @property
     def be_cpu_enabled(self) -> Union[bool, Any]:
@@ -1105,7 +1122,7 @@ class XMRigAPI:
         Returns:
             Union[bool, Any]: CPU backend enabled status, or "N/A" if not available.
         """
-        return self._get_data_from_cache(self._backends_cache, [0, "enabled"], self._backends_table_name, "0.enabled")
+        return self._get_data_from_cache(self._backends_cache, [0, "enabled"], self._backends_table_name, "cpu_enabled")
 
     @property
     def be_cpu_algo(self) -> Union[str, Any]:
@@ -1115,7 +1132,7 @@ class XMRigAPI:
         Returns:
             Union[str, Any]: CPU backend algorithm, or "N/A" if not available.
         """
-        return self._get_data_from_cache(self._backends_cache, [0, "algo"], self._backends_table_name, "0.algo")
+        return self._get_data_from_cache(self._backends_cache, [0, "algo"], self._backends_table_name, "cpu_algo")
 
     @property
     def be_cpu_profile(self) -> Union[str, Any]:
@@ -1125,7 +1142,7 @@ class XMRigAPI:
         Returns:
             Union[str, Any]: CPU backend profile, or "N/A" if not available.
         """
-        return self._get_data_from_cache(self._backends_cache, [0, "profile"], self._backends_table_name, "0.profile")
+        return self._get_data_from_cache(self._backends_cache, [0, "profile"], self._backends_table_name, "cpu_profile")
 
     @property
     def be_cpu_hw_aes(self) -> Union[bool, Any]:
@@ -1135,7 +1152,7 @@ class XMRigAPI:
         Returns:
             Union[bool, Any]: CPU backend hardware AES support status, or "N/A" if not available.
         """
-        return self._get_data_from_cache(self._backends_cache, [0, "hw-aes"], self._backends_table_name, "0.hw-aes")
+        return self._get_data_from_cache(self._backends_cache, [0, "hw-aes"], self._backends_table_name, "cpu_hw-aes")
 
     @property
     def be_cpu_priority(self) -> Union[int, Any]:
@@ -1145,7 +1162,7 @@ class XMRigAPI:
         Returns:
             Union[int, Any]: CPU backend priority, or "N/A" if not available.
         """
-        return self._get_data_from_cache(self._backends_cache, [0, "priority"], self._backends_table_name, "0.priority")
+        return self._get_data_from_cache(self._backends_cache, [0, "priority"], self._backends_table_name, "cpu_priority")
 
     @property
     def be_cpu_msr(self) -> Union[bool, Any]:
@@ -1155,7 +1172,7 @@ class XMRigAPI:
         Returns:
             Union[bool, Any]: CPU backend MSR support status, or "N/A" if not available.
         """
-        return self._get_data_from_cache(self._backends_cache, [0, "msr"], self._backends_table_name, "0.msr")
+        return self._get_data_from_cache(self._backends_cache, [0, "msr"], self._backends_table_name, "cpu_msr")
 
     @property
     def be_cpu_asm(self) -> Union[str, Any]:
@@ -1165,7 +1182,7 @@ class XMRigAPI:
         Returns:
             Union[str, Any]: CPU backend assembly information, or "N/A" if not available.
         """
-        return self._get_data_from_cache(self._backends_cache, [0, "asm"], self._backends_table_name, "0.asm")
+        return self._get_data_from_cache(self._backends_cache, [0, "asm"], self._backends_table_name, "cpu_asm")
 
     @property
     def be_cpu_argon2_impl(self) -> Union[str, Any]:
@@ -1175,7 +1192,7 @@ class XMRigAPI:
         Returns:
             Union[str, Any]: CPU backend Argon2 implementation, or "N/A" if not available.
         """
-        return self._get_data_from_cache(self._backends_cache, [0, "argon2-impl"], self._backends_table_name, "0.argon2-impl")
+        return self._get_data_from_cache(self._backends_cache, [0, "argon2-impl"], self._backends_table_name, "cpu_argon2_impl")
 
     @property
     def be_cpu_hugepages(self) -> Union[List[Dict[str, Any]], Any]:
@@ -1185,7 +1202,7 @@ class XMRigAPI:
         Returns:
             Union[List[Dict[str, Any]], Any]: CPU backend hugepages information, or "N/A" if not available.
         """
-        return self._get_data_from_cache(self._backends_cache, [0, "hugepages"], self._backends_table_name, "0.hugepages")
+        return self._get_data_from_cache(self._backends_cache, [0, "hugepages"], self._backends_table_name, "cpu_hugepages")
 
     @property
     def be_cpu_memory(self) -> Union[int, Any]:
@@ -1195,7 +1212,7 @@ class XMRigAPI:
         Returns:
             Union[int, Any]: CPU backend memory information, or "N/A" if not available.
         """
-        return self._get_data_from_cache(self._backends_cache, [0, "memory"], self._backends_table_name, "0.memory")
+        return self._get_data_from_cache(self._backends_cache, [0, "memory"], self._backends_table_name, "cpu_memory")
 
     @property
     def be_cpu_hashrates(self) -> Union[List[float], Any]:
@@ -1205,7 +1222,7 @@ class XMRigAPI:
         Returns:
             Union[List[float], Any]: CPU backend hashrates, or "N/A" if not available.
         """
-        return self._get_data_from_cache(self._backends_cache, [0, "hashrate"], self._backends_table_name, "0.hashrate")
+        return self._get_data_from_cache(self._backends_cache, [0, "hashrate"], self._backends_table_name, "cpu_hashrate")
 
     @property
     def be_cpu_hashrate_10s(self) -> Union[float, Any]:
@@ -1215,7 +1232,8 @@ class XMRigAPI:
         Returns:
             Union[float, Any]: CPU backend hashrate for the last 10 seconds, or "N/A" if not available.
         """
-        return self._get_data_from_cache(self._backends_cache, [0, "hashrate", 0], self._backends_table_name, "0.hashrate.0")
+        result = self._get_data_from_cache(self._backends_cache, [0, "hashrate"], self._backends_table_name, "cpu_hashrate")
+        return result[0] if result != "N/A" else result
 
     @property
     def be_cpu_hashrate_1m(self) -> Union[float, Any]:
@@ -1225,7 +1243,8 @@ class XMRigAPI:
         Returns:
             Union[float, Any]: CPU backend hashrate for the last 1 minute, or "N/A" if not available.
         """
-        return self._get_data_from_cache(self._backends_cache, [0, "hashrate", 1], self._backends_table_name, "0.hashrate.1")
+        result = self._get_data_from_cache(self._backends_cache, [0, "hashrate"], self._backends_table_name, "cpu_hashrate")
+        return result[1] if result != "N/A" else result
 
     @property
     def be_cpu_hashrate_15m(self) -> Union[float, Any]:
@@ -1235,7 +1254,8 @@ class XMRigAPI:
         Returns:
             Union[float, Any]: CPU backend hashrate for the last 15 minutes, or "N/A" if not available.
         """
-        return self._get_data_from_cache(self._backends_cache, [0, "hashrate", 2], self._backends_table_name, "0.hashrate.2")
+        result = self._get_data_from_cache(self._backends_cache, [0, "hashrate"], self._backends_table_name, "cpu_hashrate")
+        return result[2] if result != "N/A" else result
     
     @property
     def be_cpu_threads(self) -> Union[List[Dict[str, Any]], Any]:
@@ -1245,7 +1265,7 @@ class XMRigAPI:
         Returns:
             Union[List[Dict[str, Any]], Any]: CPU backend threads information, or "N/A" if not available.
         """
-        return self._get_data_from_cache(self._backends_cache, [0, "threads"], self._backends_table_name, "0.threads")
+        return self._get_data_from_cache(self._backends_cache, [0, "threads"], self._backends_table_name, "cpu_threads")
 
     @property
     def be_cpu_threads_intensity(self) -> Union[List[int], Any]:
@@ -1257,7 +1277,7 @@ class XMRigAPI:
         """
         intensities = []
         try:
-            threads = self._get_data_from_cache(self._backends_cache, [0, "threads"], self._backends_table_name, "0.threads")
+            threads = self._get_data_from_cache(self._backends_cache, [0, "threads"], self._backends_table_name, "cpu_threads")
             for i in threads:
                 intensities.append(i["intensity"])
         except TypeError as e:
@@ -1274,7 +1294,7 @@ class XMRigAPI:
         """
         affinities = []
         try:
-            for i in self._get_data_from_cache(self._backends_cache, [0, "threads"], self._backends_table_name, "0.threads"):
+            for i in self._get_data_from_cache(self._backends_cache, [0, "threads"], self._backends_table_name, "cpu_threads"):
                     affinities.append(i["affinity"])
         except TypeError as e:
             return "N/A"
@@ -1290,11 +1310,27 @@ class XMRigAPI:
         """
         avs = []
         try:
-            for i in self._get_data_from_cache(self._backends_cache, [0, "threads"], self._backends_table_name, "0.threads"):
+            for i in self._get_data_from_cache(self._backends_cache, [0, "threads"], self._backends_table_name, "cpu_threads"):
                     avs.append(i["av"])
         except TypeError as e:
             return "N/A"
         return avs
+
+    @property
+    def be_cpu_threads_hashrates(self) -> Union[List[List[float]], Any]:
+        """
+        Retrieves the CPU backend threads hashrates information from the backends data.
+
+        Returns:
+            Union[List[List[float]], Any]: CPU backend threads hashrates information, or "N/A" if not available.
+        """
+        hashrates = []
+        try:
+            for i in self._get_data_from_cache(self._backends_cache, [0, "threads"], self._backends_table_name, "cpu_threads"):
+                    hashrates.append(i["hashrate"])
+        except TypeError as e:
+            return "N/A"
+        return hashrates
 
     @property
     def be_cpu_threads_hashrates_10s(self) -> Union[List[float], Any]:
@@ -1306,7 +1342,7 @@ class XMRigAPI:
         """
         hashrates_10s = []
         try:
-            for i in self._get_data_from_cache(self._backends_cache, [0, "threads"], self._backends_table_name, "0.threads"):
+            for i in self._get_data_from_cache(self._backends_cache, [0, "threads"], self._backends_table_name, "cpu_threads"):
                     hashrates_10s.append(i["hashrate"][0])
         except TypeError as e:
             return "N/A"
@@ -1322,7 +1358,7 @@ class XMRigAPI:
         """
         hashrates_1m = []
         try:
-           for i in self._get_data_from_cache(self._backends_cache, [0, "threads"], self._backends_table_name, "0.threads"):
+           for i in self._get_data_from_cache(self._backends_cache, [0, "threads"], self._backends_table_name, "cpu_threads"):
                     hashrates_1m.append(i["hashrate"][1])
         except TypeError as e:
             return "N/A"
@@ -1338,7 +1374,7 @@ class XMRigAPI:
         """
         hashrates_15m = []
         try:
-            for i in self._get_data_from_cache(self._backends_cache, [0, "threads"], self._backends_table_name, "0.threads"):
+            for i in self._get_data_from_cache(self._backends_cache, [0, "threads"], self._backends_table_name, "cpu_threads"):
                     hashrates_15m.append(i["hashrate"][2])
         except TypeError as e:
             return "N/A"
@@ -1352,7 +1388,7 @@ class XMRigAPI:
         Returns:
             Union[str, Any]: OpenCL backend type, or "N/A" if not available.
         """
-        return self._get_data_from_cache(self._backends_cache, [1, "type"], self._backends_table_name, "1.type")
+        return self._get_data_from_cache(self._backends_cache, [1, "type"], self._backends_table_name, "opencl_type")
 
     @property
     def be_opencl_enabled(self) -> Union[bool, Any]:
@@ -1362,7 +1398,7 @@ class XMRigAPI:
         Returns:
             Union[bool, Any]: OpenCL backend enabled status, or "N/A" if not available.
         """
-        return self._get_data_from_cache(self._backends_cache, [1, "enabled"], self._backends_table_name, "1.enabled")
+        return self._get_data_from_cache(self._backends_cache, [1, "enabled"], self._backends_table_name, "opencl_enabled")
 
     @property
     def be_opencl_algo(self) -> Union[str, Any]:
@@ -1372,7 +1408,7 @@ class XMRigAPI:
         Returns:
             Union[str, Any]: OpenCL backend algorithm, or "N/A" if not available.
         """
-        return self._get_data_from_cache(self._backends_cache, [1, "algo"], self._backends_table_name, "1.algo")
+        return self._get_data_from_cache(self._backends_cache, [1, "algo"], self._backends_table_name, "opencl_algo")
 
     @property
     def be_opencl_profile(self) -> Union[str, Any]:
@@ -1382,7 +1418,7 @@ class XMRigAPI:
         Returns:
             Union[str, Any]: OpenCL backend profile, or "N/A" if not available.
         """
-        return self._get_data_from_cache(self._backends_cache, [1, "profile"], self._backends_table_name, "1.profile")
+        return self._get_data_from_cache(self._backends_cache, [1, "profile"], self._backends_table_name, "opencl_profile")
 
     @property
     def be_opencl_platform(self) -> Union[Dict[str, Any], Any]:
@@ -1392,7 +1428,7 @@ class XMRigAPI:
         Returns:
             Union[Dict[str, Any], Any]: OpenCL backend platform information, or "N/A" if not available.
         """
-        return self._get_data_from_cache(self._backends_cache, [1, "platform"], self._backends_table_name, "1.platform")
+        return self._get_data_from_cache(self._backends_cache, [1, "platform"], self._backends_table_name, "opencl_platform")
 
     @property
     def be_opencl_platform_index(self) -> Union[int, Any]:
@@ -1402,7 +1438,7 @@ class XMRigAPI:
         Returns:
             Union[int, Any]: OpenCL backend platform index, or "N/A" if not available.
         """
-        return self._get_data_from_cache(self._backends_cache, [1, "platform", "index"], self._backends_table_name, "1.platform.index")
+        return self._get_data_from_cache(self._backends_cache, [1, "platform", "index"], self._backends_table_name, "opencl_platform_index")
 
     @property
     def be_opencl_platform_profile(self) -> Union[str, Any]:
@@ -1412,7 +1448,7 @@ class XMRigAPI:
         Returns:
             Union[str, Any]: OpenCL backend platform profile, or "N/A" if not available.
         """
-        return self._get_data_from_cache(self._backends_cache, [1, "platform", "profile"], self._backends_table_name, "1.platform.profile")
+        return self._get_data_from_cache(self._backends_cache, [1, "platform", "profile"], self._backends_table_name, "opencl_platform_profile")
 
     @property
     def be_opencl_platform_version(self) -> Union[str, Any]:
@@ -1422,7 +1458,7 @@ class XMRigAPI:
         Returns:
             Union[str, Any]: OpenCL backend platform version, or "N/A" if not available.
         """
-        return self._get_data_from_cache(self._backends_cache, [1, "platform", "version"], self._backends_table_name, "1.platform.version")
+        return self._get_data_from_cache(self._backends_cache, [1, "platform", "version"], self._backends_table_name, "opencl_platform_version")
 
     @property
     def be_opencl_platform_name(self) -> Union[str, Any]:
@@ -1432,7 +1468,7 @@ class XMRigAPI:
         Returns:
             Union[str, Any]: OpenCL backend platform name, or "N/A" if not available.
         """
-        return self._get_data_from_cache(self._backends_cache, [1, "platform", "name"], self._backends_table_name, "1.platform.name")
+        return self._get_data_from_cache(self._backends_cache, [1, "platform", "name"], self._backends_table_name, "opencl_platform_name")
 
     @property
     def be_opencl_platform_vendor(self) -> Union[str, Any]:
@@ -1442,7 +1478,7 @@ class XMRigAPI:
         Returns:
             Union[str, Any]: OpenCL backend platform vendor, or "N/A" if not available.
         """
-        return self._get_data_from_cache(self._backends_cache, [1, "platform", "vendor"], self._backends_table_name, "1.platform.vendor")
+        return self._get_data_from_cache(self._backends_cache, [1, "platform", "vendor"], self._backends_table_name, "opencl_platform_vendor")
 
     @property
     def be_opencl_platform_extensions(self) -> Union[str, Any]:
@@ -1452,7 +1488,7 @@ class XMRigAPI:
         Returns:
             Union[str, Any]: OpenCL backend platform extensions, or "N/A" if not available.
         """
-        return self._get_data_from_cache(self._backends_cache, [1, "platform", "extensions"], self._backends_table_name, "1.platform.extensions")
+        return self._get_data_from_cache(self._backends_cache, [1, "platform", "extensions"], self._backends_table_name, "opencl_platform_extensions")
 
     @property
     def be_opencl_hashrates(self) -> Union[List[float], Any]:
@@ -1462,7 +1498,7 @@ class XMRigAPI:
         Returns:
             Union[List[float], Any]: OpenCL backend hashrates, or "N/A" if not available.
         """
-        return self._get_data_from_cache(self._backends_cache, [1, "hashrate"], self._backends_table_name, "1.hashrate")
+        return self._get_data_from_cache(self._backends_cache, [1, "hashrate"], self._backends_table_name, "opencl_hashrate")
 
     @property
     def be_opencl_hashrate_10s(self) -> Union[float, Any]:
@@ -1472,7 +1508,8 @@ class XMRigAPI:
         Returns:
             Union[float, Any]: OpenCL backend hashrate for the last 10 seconds, or "N/A" if not available.
         """
-        return self._get_data_from_cache(self._backends_cache, [1, "hashrate", 0], self._backends_table_name, "1.hashrate.0")
+        result = self._get_data_from_cache(self._backends_cache, [1, "hashrate", 0], self._backends_table_name, "opencl_hashrate")
+        return result[0] if result != "N/A" else result
 
     @property
     def be_opencl_hashrate_1m(self) -> Union[float, Any]:
@@ -1482,7 +1519,8 @@ class XMRigAPI:
         Returns:
             Union[float, Any]: OpenCL backend hashrate for the last 1 minute, or "N/A" if not available.
         """
-        return self._get_data_from_cache(self._backends_cache, [1, "hashrate", 1], self._backends_table_name, "1.hashrate.1")
+        result = self._get_data_from_cache(self._backends_cache, [1, "hashrate", 1], self._backends_table_name, "opencl_hashrate")
+        return result[1] if result != "N/A" else result
 
     @property
     def be_opencl_hashrate_15m(self) -> Union[float, Any]:
@@ -1492,47 +1530,66 @@ class XMRigAPI:
         Returns:
             Union[float, Any]: OpenCL backend hashrate for the last 15 minutes, or "N/A" if not available.
         """
-        return self._get_data_from_cache(self._backends_cache, [1, "hashrate", 2], self._backends_table_name, "1.hashrate.2")
+        result = self._get_data_from_cache(self._backends_cache, [1, "hashrate", 2], self._backends_table_name, "opencl_hashrate")
+        return result[2] if result != "N/A" else result
 
     @property
-    def be_opencl_threads(self) -> Union[Dict[str, Any], Any]:
+    def be_opencl_threads(self) -> Union[List[Dict[str, Any]], Any]:
         """
         Retrieves the OpenCL backend threads information from the backends data.
 
         Returns:
-            Union[Dict[str, Any], Any]: OpenCL backend threads information, or "N/A" if not available.
+            Union[List[Dict[str, Any]], Any]: OpenCL backend threads information, or "N/A" if not available.
         """
-        return self._get_data_from_cache(self._backends_cache, [1, "threads", 0], self._backends_table_name, "1.threads.0")
+        return self._get_data_from_cache(self._backends_cache, [1, "threads"], self._backends_table_name, "opencl_threads")
 
     @property
-    def be_opencl_threads_index(self) -> Union[int, Any]:
+    def be_opencl_threads_index(self) -> Union[List[int], Any]:
         """
         Retrieves the OpenCL backend threads index from the backends data.
 
         Returns:
-            Union[int, Any]: OpenCL backend threads index, or "N/A" if not available.
+            Union[List[int], Any]: OpenCL backend threads index, or "N/A" if not available.
         """
-        return self._get_data_from_cache(self._backends_cache, [1, "threads", 0, "index"], self._backends_table_name, "1.threads.0.index")
+        indexes = []
+        try:
+            for i in self._get_data_from_cache(self._backends_cache, [1, "threads"], self._backends_table_name, "opencl_threads"):
+                    indexes.append(i["index"])
+        except TypeError as e:
+            return "N/A"
+        return indexes
 
     @property
-    def be_opencl_threads_intensity(self) -> Union[int, Any]:
+    def be_opencl_threads_intensity(self) -> Union[List[int], Any]:
         """
         Retrieves the OpenCL backend threads intensity from the backends data.
 
         Returns:
-            Union[int, Any]: OpenCL backend threads intensity, or "N/A" if not available.
+            Union[List[int], Any]: OpenCL backend threads intensity, or "N/A" if not available.
         """
-        return self._get_data_from_cache(self._backends_cache, [1, "threads", 0, "intensity"], self._backends_table_name, "1.threads.0.intensity")
+        intensities = []
+        try:
+            for i in self._get_data_from_cache(self._backends_cache, [1, "threads"], self._backends_table_name, "opencl_threads"):
+                intensities.append(i["intensity"])
+        except TypeError as e:
+            return "N/A"
+        return intensities
 
     @property
-    def be_opencl_threads_worksize(self) -> Union[int, Any]:
+    def be_opencl_threads_worksize(self) -> Union[List[int], Any]:
         """
         Retrieves the OpenCL backend threads worksize from the backends data.
 
         Returns:
-            Union[int, Any]: OpenCL backend threads worksize, or "N/A" if not available.
+            Union[List[int], Any]: OpenCL backend threads worksize, or "N/A" if not available.
         """
-        return self._get_data_from_cache(self._backends_cache, [1, "threads", 0, "worksize"], self._backends_table_name, "1.threads.0.worksize")
+        worksizes = []
+        try:
+            for i in self._get_data_from_cache(self._backends_cache, [1, "threads"], self._backends_table_name, "opencl_threads"):
+                worksizes.append(i["worksize"])
+        except TypeError as e:
+            return "N/A"
+        return worksizes
 
     @property
     def be_opencl_threads_amount(self) -> Union[List[int], Any]:
@@ -1542,178 +1599,285 @@ class XMRigAPI:
         Returns:
             Union[List[int], Any]: OpenCL backend threads amount, or "N/A" if not available.
         """
-        return self._get_data_from_cache(self._backends_cache, [1, "threads", 0, "threads"], self._backends_table_name, "1.threads.0.threads")
+        amounts = []
+        try:
+            for i in self._get_data_from_cache(self._backends_cache, [1, "threads"], self._backends_table_name, "opencl_threads"):
+                amounts.append(i["threads"])
+        except TypeError as e:
+            return "N/A"
+        return amounts
 
     @property
-    def be_opencl_threads_unroll(self) -> Union[int, Any]:
+    def be_opencl_threads_unroll(self) -> Union[List[int], Any]:
         """
         Retrieves the OpenCL backend threads unroll from the backends data.
 
         Returns:
-            Union[int, Any]: OpenCL backend threads unroll, or "N/A" if not available.
+            Union[List[int], Any]: OpenCL backend threads unroll, or "N/A" if not available.
         """
-        return self._get_data_from_cache(self._backends_cache, [1, "threads", 0, "unroll"], self._backends_table_name, "1.threads.0.unroll")
+        unrolls = []
+        try:
+            for i in self._get_data_from_cache(self._backends_cache, [1, "threads"], self._backends_table_name, "opencl_threads"):
+                unrolls.append(i["unroll"])
+        except TypeError as e:
+            return "N/A"
+        return unrolls
 
     @property
-    def be_opencl_threads_affinity(self) -> Union[int, Any]:
+    def be_opencl_threads_affinity(self) -> Union[List[int], Any]:
         """
         Retrieves the OpenCL backend threads affinity from the backends data.
 
         Returns:
-            Union[int, Any]: OpenCL backend threads affinity, or "N/A" if not available.
+            Union[List[int], Any]: OpenCL backend threads affinity, or "N/A" if not available.
         """
-        
-        return self._get_data_from_cache(self._backends_cache, [1, "threads", 0, "affinity"], self._backends_table_name, "1.threads.0.affinity")
+        affinities = []
+        try:
+            for i in self._get_data_from_cache(self._backends_cache, [1, "threads"], self._backends_table_name, "opencl_threads"):
+                affinities.append(i["affinity"])
+        except TypeError as e:
+            return "N/A"
+        return affinities
 
     @property
-    def be_opencl_threads_hashrates(self) -> Union[List[float], Any]:
+    def be_opencl_threads_hashrates(self) -> Union[List[List[float]], Any]:
         """
         Retrieves the OpenCL backend threads hashrates from the backends data.
 
         Returns:
-            Union[List[float], Any]: OpenCL backend threads hashrates, or "N/A" if not available.
+            Union[List[List[float]], Any]: OpenCL backend threads hashrates, or "N/A" if not available.
         """
-        return self._get_data_from_cache(self._backends_cache, [1, "threads", 0, "hashrate"], self._backends_table_name, "1.threads.0.hashrate")
+        hashrates = []
+        try:
+            for i in self._get_data_from_cache(self._backends_cache, [1, "threads"], self._backends_table_name, "opencl_threads"):
+                hashrates.append(i["hashrate"])
+        except TypeError as e:
+            return "N/A"
+        return hashrates
 
     @property
-    def be_opencl_threads_hashrate_10s(self) -> Union[float, Any]:
+    def be_opencl_threads_hashrate_10s(self) -> Union[List[float], str]:
         """
         Retrieves the OpenCL backend threads hashrate for the last 10 seconds from the backends data.
 
         Returns:
-            Union[float, Any]: OpenCL backend threads hashrate for the last 10 seconds, or "N/A" if not available.
+            Union[List[float], str]: OpenCL backend threads hashrate for the last 10 seconds, or "N/A" if not available.
         """
-        return self._get_data_from_cache(self._backends_cache, [1, "threads", 0, "hashrate", 0], self._backends_table_name, "1.threads.0.hashrate.0")
+        hashrates_10s = []
+        try:
+            for i in self._get_data_from_cache(self._backends_cache, [1, "threads"], self._backends_table_name, "opencl_threads"):
+                hashrates_10s.append(i["hashrate"][0])
+        except TypeError:
+            return "N/A"
+        return hashrates_10s
 
     @property
-    def be_opencl_threads_hashrate_1m(self) -> Union[float, Any]:
+    def be_opencl_threads_hashrate_1m(self) -> Union[List[float], str]:
         """
         Retrieves the OpenCL backend threads hashrate for the last 1 minute from the backends data.
 
         Returns:
-            Union[float, Any]: OpenCL backend threads hashrate for the last 1 minute, or "N/A" if not available.
+            Union[List[float], str]: OpenCL backend threads hashrate for the last 1 minute, or "N/A" if not available.
         """
-        return self._get_data_from_cache(self._backends_cache, [1, "threads", 0, "hashrate", 1], self._backends_table_name, "1.threads.0.hashrate.1")
+        hashrates_1m = []
+        try:
+            for i in self._get_data_from_cache(self._backends_cache, [1, "threads"], self._backends_table_name, "opencl_threads"):
+                hashrates_1m.append(i["hashrate"][1])
+        except TypeError:
+            return "N/A"
+        return hashrates_1m
 
     @property
-    def be_opencl_threads_hashrate_15m(self) -> Union[float, Any]:
+    def be_opencl_threads_hashrate_15m(self) -> Union[List[float], str]:
         """
         Retrieves the OpenCL backend threads hashrate for the last 15 minutes from the backends data.
 
         Returns:
-            Union[float, Any]: OpenCL backend threads hashrate for the last 15 minutes, or "N/A" if not available.
+            Union[List[float], str]: OpenCL backend threads hashrate for the last 15 minutes, or "N/A" if not available.
         """
-        return self._get_data_from_cache(self._backends_cache, [1, "threads", 0, "hashrate", 2], self._backends_table_name, "1.threads.0.hashrate.2")
+        hashrates_15m = []
+        try:
+            for i in self._get_data_from_cache(self._backends_cache, [1, "threads"], self._backends_table_name, "opencl_threads"):
+                hashrates_15m.append(i["hashrate"][2])
+        except TypeError:
+            return "N/A"
+        return hashrates_15m
 
     @property
-    def be_opencl_threads_board(self) -> Union[str, Any]:
+    def be_opencl_threads_board(self) -> Union[List[str], str]:
         """
         Retrieves the OpenCL backend threads board information from the backends data.
 
         Returns:
-            Union[str, Any]: OpenCL backend threads board information, or "N/A" if not available.
+            Union[List[str], str]: OpenCL backend threads board information, or "N/A" if not available.
         """
-        return self._get_data_from_cache(self._backends_cache, [1, "threads", 0, "board"], self._backends_table_name, "1.threads.0.board")
+        boards = []
+        try:
+            for i in self._get_data_from_cache(self._backends_cache, [1, "threads"], self._backends_table_name, "opencl_threads"):
+                boards.append(i["board"])
+        except TypeError:
+            return "N/A"
+        return boards
 
     @property
-    def be_opencl_threads_name(self) -> Union[str, Any]:
+    def be_opencl_threads_name(self) -> Union[List[str], str]:
         """
         Retrieves the OpenCL backend threads name from the backends data.
 
         Returns:
-            Union[str, Any]: OpenCL backend threads name, or "N/A" if not available.
+            Union[List[str], str]: OpenCL backend threads name, or "N/A" if not available.
         """
-        return self._get_data_from_cache(self._backends_cache, [1, "threads", 0, "name"], self._backends_table_name, "1.threads.0.name")
+        names = []
+        try:
+            for i in self._get_data_from_cache(self._backends_cache, [1, "threads"], self._backends_table_name, "opencl_threads"):
+                names.append(i["name"])
+        except TypeError:
+            return "N/A"
+        return names
 
     @property
-    def be_opencl_threads_bus_id(self) -> Union[str, Any]:
+    def be_opencl_threads_bus_id(self) -> Union[List[str], str]:
         """
         Retrieves the OpenCL backend threads bus ID from the backends data.
 
         Returns:
-            Union[str, Any]: OpenCL backend threads bus ID, or "N/A" if not available.
+            Union[List[str], str]: OpenCL backend threads bus ID, or "N/A" if not available.
         """
-        return self._get_data_from_cache(self._backends_cache, [1, "threads", 0, "bus_id"], self._backends_table_name, "1.threads.0.bus_id")
+        bus_ids = []
+        try:
+            for i in self._get_data_from_cache(self._backends_cache, [1, "threads"], self._backends_table_name, "opencl_threads"):
+                bus_ids.append(i["bus_id"])
+        except TypeError:
+            return "N/A"
+        return bus_ids
 
     @property
-    def be_opencl_threads_cu(self) -> Union[int, Any]:
+    def be_opencl_threads_cu(self) -> Union[List[int], str]:
         """
         Retrieves the OpenCL backend threads compute units from the backends data.
 
         Returns:
-            Union[int, Any]: OpenCL backend threads compute units, or "N/A" if not available.
+            Union[List[int], str]: OpenCL backend threads compute units, or "N/A" if not available.
         """
-        return self._get_data_from_cache(self._backends_cache, [1, "threads", 0, "cu"], self._backends_table_name, "1.threads.0.cu")
+        cus = []
+        try:
+            for i in self._get_data_from_cache(self._backends_cache, [1, "threads"], self._backends_table_name, "opencl_threads"):
+                cus.append(i["cu"])
+        except TypeError:
+            return "N/A"
+        return cus
 
     @property
-    def be_opencl_threads_global_mem(self) -> Union[int, Any]:
+    def be_opencl_threads_global_mem(self) -> Union[List[int], str]:
         """
         Retrieves the OpenCL backend threads global memory from the backends data.
 
         Returns:
-            Union[int, Any]: OpenCL backend threads global memory, or "N/A" if not available.
+            Union[List[int], str]: OpenCL backend threads global memory, or "N/A" if not available.
         """
-        return self._get_data_from_cache(self._backends_cache, [1, "threads", 0, "global_mem"], self._backends_table_name, "1.threads.0.global_mem")
+        global_mems = []
+        try:
+            for i in self._get_data_from_cache(self._backends_cache, [1, "threads"], self._backends_table_name, "opencl_threads"):
+                global_mems.append(i["global_mem"])
+        except TypeError:
+            return "N/A"
+        return global_mems
 
     @property
-    def be_opencl_threads_health(self) -> Union[Dict[str, Any], Any]:
+    def be_opencl_threads_health(self) -> Union[List[Dict[str, Any]], str]:
         """
         Retrieves the OpenCL backend threads health information from the backends data.
 
         Returns:
-            Union[Dict[str, Any], Any]: OpenCL backend threads health information, or "N/A" if not available.
+            Union[List[Dict[str, Any]], str]: OpenCL backend threads health information, or "N/A" if not available.
         """
-        return self._get_data_from_cache(self._backends_cache, [1, "threads", 0, "health"], self._backends_table_name, "1.threads.0.health")
+        healths = []
+        try:
+            for i in self._get_data_from_cache(self._backends_cache, [1, "threads"], self._backends_table_name, "opencl_threads"):
+                healths.append(i["health"])
+        except TypeError:
+            return "N/A"
+        return healths
 
     @property
-    def be_opencl_threads_health_temp(self) -> Union[int, Any]:
+    def be_opencl_threads_health_temp(self) -> Union[List[int], str]:
         """
         Retrieves the OpenCL backend threads health temperature from the backends data.
 
         Returns:
-            Union[int, Any]: OpenCL backend threads health temperature, or "N/A" if not available.
+            Union[List[int], str]: OpenCL backend threads health temperature, or "N/A" if not available.
         """
-        return self._get_data_from_cache(self._backends_cache, [1, "threads", 0, "health", "temperature"], self._backends_table_name, "1.threads.0.health.temperature")
+        temps = []
+        try:
+            for i in self._get_data_from_cache(self._backends_cache, [1, "threads"], self._backends_table_name, "opencl_threads"):
+                temps.append(i["health"]["temperature"])
+        except TypeError:
+            return "N/A"
+        return temps
 
     @property
-    def be_opencl_threads_health_power(self) -> Union[int, Any]:
+    def be_opencl_threads_health_power(self) -> Union[List[int], str]:
         """
         Retrieves the OpenCL backend threads health power from the backends data.
 
         Returns:
-            Union[int, Any]: OpenCL backend threads health power, or "N/A" if not available.
+            Union[List[int], str]: OpenCL backend threads health power, or "N/A" if not available.
         """
-        return self._get_data_from_cache(self._backends_cache, [1, "threads", 0, "health", "power"], self._backends_table_name, "1.threads.0.health.power")
+        powers = []
+        try:
+            for i in self._get_data_from_cache(self._backends_cache, [1, "threads"], self._backends_table_name, "opencl_threads"):
+                powers.append(i["health"]["power"])
+        except TypeError:
+            return "N/A"
+        return powers
 
     @property
-    def be_opencl_threads_health_clock(self) -> Union[int, Any]:
+    def be_opencl_threads_health_clock(self) -> Union[List[int], str]:
         """
         Retrieves the OpenCL backend threads health clock from the backends data.
 
         Returns:
-            Union[int, Any]: OpenCL backend threads health clock, or "N/A" if not available.
+            Union[List[int], str]: OpenCL backend threads health clock, or "N/A" if not available.
         """
-        return self._get_data_from_cache(self._backends_cache, [1, "threads", 0, "health", "clock"], self._backends_table_name, "1.threads.0.health.clock")
+        clocks = []
+        try:
+            for i in self._get_data_from_cache(self._backends_cache, [1, "threads"], self._backends_table_name, "opencl_threads"):
+                clocks.append(i["health"]["clock"])
+        except TypeError:
+            return "N/A"
+        return clocks
 
     @property
-    def be_opencl_threads_health_mem_clock(self) -> Union[int, Any]:
+    def be_opencl_threads_health_mem_clock(self) -> Union[List[int], str]:
         """
         Retrieves the OpenCL backend threads health memory clock from the backends data.
 
         Returns:
-            Union[int, Any]: OpenCL backend threads health memory clock, or "N/A" if not available.
+            Union[List[int], str]: OpenCL backend threads health memory clock, or "N/A" if not available.
         """
-        return self._get_data_from_cache(self._backends_cache, [1, "threads", 0, "health", "mem_clock"], self._backends_table_name, "1.threads.0.health.mem_clock")
+        mem_clocks = []
+        try:
+            for i in self._get_data_from_cache(self._backends_cache, [1, "threads"], self._backends_table_name, "opencl_threads"):
+                mem_clocks.append(i["health"]["mem_clock"])
+        except TypeError:
+            return "N/A"
+        return mem_clocks
 
     @property
-    def be_opencl_threads_health_rpm(self) -> Union[int, Any]:
+    def be_opencl_threads_health_rpm(self) -> Union[List[int], str]:
         """
         Retrieves the OpenCL backend threads health RPM from the backends data.
 
         Returns:
-            Union[int, Any]: OpenCL backend threads health RPM, or "N/A" if not available.
+            Union[List[int], str]: OpenCL backend threads health RPM, or "N/A" if not available.
         """
-        return self._get_data_from_cache(self._backends_cache, [1, "threads", 0, "health", "rpm"], self._backends_table_name, "1.threads.0.health.rpm")
+        rpms = []
+        try:
+            for i in self._get_data_from_cache(self._backends_cache, [1, "threads"], self._backends_table_name, "opencl_threads"):
+                rpms.append(i["health"]["rpm"])
+        except TypeError:
+            return "N/A"
+        return rpms
 
     @property
     def be_cuda_type(self) -> Union[str, Any]:
@@ -1723,7 +1887,7 @@ class XMRigAPI:
         Returns:
             Union[str, Any]: CUDA backend type, or "N/A" if not available.
         """
-        return self._get_data_from_cache(self._backends_cache, [2, "type"], self._backends_table_name, "2.type")
+        return self._get_data_from_cache(self._backends_cache, [2, "type"], self._backends_table_name, "cuda_type")
 
     @property
     def be_cuda_enabled(self) -> Union[bool, Any]:
@@ -1733,7 +1897,7 @@ class XMRigAPI:
         Returns:
             Union[bool, Any]: CUDA backend enabled status, or "N/A" if not available.
         """
-        return self._get_data_from_cache(self._backends_cache, [2, "enabled"], self._backends_table_name, "2.enabled")
+        return self._get_data_from_cache(self._backends_cache, [2, "enabled"], self._backends_table_name, "cuda_enabled")
 
     @property
     def be_cuda_algo(self) -> Union[str, Any]:
@@ -1743,7 +1907,7 @@ class XMRigAPI:
         Returns:
             Union[str, Any]: CUDA backend algorithm, or "N/A" if not available.
         """
-        return self._get_data_from_cache(self._backends_cache, [2, "algo"], self._backends_table_name, "2.algo")
+        return self._get_data_from_cache(self._backends_cache, [2, "algo"], self._backends_table_name, "cuda_algo")
 
     @property
     def be_cuda_profile(self) -> Union[str, Any]:
@@ -1753,7 +1917,7 @@ class XMRigAPI:
         Returns:
             Union[str, Any]: CUDA backend profile, or "N/A" if not available.
         """
-        return self._get_data_from_cache(self._backends_cache, [2, "profile"], self._backends_table_name, "2.profile")
+        return self._get_data_from_cache(self._backends_cache, [2, "profile"], self._backends_table_name, "cuda_profile")
 
     @property
     def be_cuda_versions(self) -> Union[Dict[str, Any], Any]:
@@ -1763,7 +1927,7 @@ class XMRigAPI:
         Returns:
             Union[Dict[str, Any], Any]: CUDA backend versions information, or "N/A" if not available.
         """
-        return self._get_data_from_cache(self._backends_cache, [2, "versions"], self._backends_table_name, "2.versions")
+        return self._get_data_from_cache(self._backends_cache, [2, "versions"], self._backends_table_name, "cuda_versions")
 
     @property
     def be_cuda_runtime(self) -> Union[str, Any]:
@@ -1773,7 +1937,7 @@ class XMRigAPI:
         Returns:
             Union[str, Any]: CUDA backend runtime version, or "N/A" if not available.
         """
-        return self._get_data_from_cache(self._backends_cache, [2, "versions", "cuda-runtime"], self._backends_table_name, "2.versions.cuda-runtime")
+        return self._get_data_from_cache(self._backends_cache, [2, "versions", "cuda-runtime"], self._backends_table_name, "cuda_versions_cuda_runtime")
 
     @property
     def be_cuda_driver(self) -> Union[str, Any]:
@@ -1783,7 +1947,7 @@ class XMRigAPI:
         Returns:
             Union[str, Any]: CUDA backend driver version, or "N/A" if not available.
         """
-        return self._get_data_from_cache(self._backends_cache, [2, "versions", "cuda-driver"], self._backends_table_name, "2.versions.cuda-driver")
+        return self._get_data_from_cache(self._backends_cache, [2, "versions", "cuda-driver"], self._backends_table_name, "cuda_versions_cuda_driver")
 
     @property
     def be_cuda_plugin(self) -> Union[str, Any]:
@@ -1793,7 +1957,7 @@ class XMRigAPI:
         Returns:
             Union[str, Any]: CUDA backend plugin version, or "N/A" if not available.
         """
-        return self._get_data_from_cache(self._backends_cache, [2, "versions", "plugin"], self._backends_table_name, "2.versions.plugin")
+        return self._get_data_from_cache(self._backends_cache, [2, "versions", "plugin"], self._backends_table_name, "cuda_versions_plugin")
 
     @property
     def be_cuda_hashrates(self) -> Union[List[float], Any]:
@@ -1803,7 +1967,7 @@ class XMRigAPI:
         Returns:
             Union[List[float], Any]: CUDA backend hashrates, or "N/A" if not available.
         """
-        return self._get_data_from_cache(self._backends_cache, [2, "hashrate"], self._backends_table_name, "2.hashrate")
+        return self._get_data_from_cache(self._backends_cache, [2, "hashrate"], self._backends_table_name, "cuda_hashrate")
 
     @property
     def be_cuda_hashrate_10s(self) -> Union[float, Any]:
@@ -1813,7 +1977,8 @@ class XMRigAPI:
         Returns:
             Union[float, Any]: CUDA backend hashrate for the last 10 seconds, or "N/A" if not available.
         """
-        return self._get_data_from_cache(self._backends_cache, [2, "hashrate", 0], self._backends_table_name, "2.hashrate.0")
+        result = self._get_data_from_cache(self._backends_cache, [2, "hashrate"], self._backends_table_name, "cuda_hashrate")
+        return result[0] if result != "N/A" else result
 
     @property
     def be_cuda_hashrate_1m(self) -> Union[float, Any]:
@@ -1823,7 +1988,8 @@ class XMRigAPI:
         Returns:
             Union[float, Any]: CUDA backend hashrate for the last 1 minute, or "N/A" if not available.
         """
-        return self._get_data_from_cache(self._backends_cache, [2, "hashrate", 1], self._backends_table_name, "2.hashrate.1")
+        result = self._get_data_from_cache(self._backends_cache, [2, "hashrate"], self._backends_table_name, "cuda_hashrate")
+        return result[1] if result != "N/A" else result
 
     @property
     def be_cuda_hashrate_15m(self) -> Union[float, Any]:
@@ -1833,197 +1999,306 @@ class XMRigAPI:
         Returns:
             Union[float, Any]: CUDA backend hashrate for the last 15 minutes, or "N/A" if not available.
         """
-        return self._get_data_from_cache(self._backends_cache, [2, "hashrate", 2], self._backends_table_name, "2.hashrate.2")
+        result = self._get_data_from_cache(self._backends_cache, [2, "hashrate"], self._backends_table_name, "cuda_hashrate")
+        return result[2] if result != "N/A" else result
 
     @property
-    def be_cuda_threads(self) -> Union[Dict[str, Any], Any]:
+    def be_cuda_threads(self) -> Union[List[Dict[str, Any]], Any]:
         """
         Retrieves the CUDA backend threads information from the backends data.
 
         Returns:
-            Union[Dict[str, Any], Any]: CUDA backend threads information, or "N/A" if not available.
+            Union[List[Dict[str, Any]], Any]: CUDA backend threads information, or "N/A" if not available.
         """
-        return self._get_data_from_cache(self._backends_cache, [2, "threads", 0], self._backends_table_name, "2.threads.0")
+        return self._get_data_from_cache(self._backends_cache, [2, "threads"], self._backends_table_name, "cuda_threads")
 
     @property
-    def be_cuda_threads_index(self) -> Union[int, Any]:
+    def be_cuda_threads_index(self) -> Union[List[int], Any]:
         """
         Retrieves the CUDA backend threads index from the backends data.
 
         Returns:
-            Union[int, Any]: CUDA backend threads index, or "N/A" if not available.
+            Union[List[int], Any]: CUDA backend threads index, or "N/A" if not available.
         """
-        return self._get_data_from_cache(self._backends_cache, [2, "threads", 0, "index"], self._backends_table_name, "2.threads.0.index")
+        indexes = []
+        try:
+            for i in self._get_data_from_cache(self._backends_cache, [2, "threads"], self._backends_table_name, "cuda_threads"):
+                indexes.append(i["index"])
+        except TypeError:
+            return "N/A"
+        return indexes
 
     @property
-    def be_cuda_threads_amount(self) -> Union[int, Any]:
+    def be_cuda_threads_amount(self) -> Union[List[int], Any]:
         """
         Retrieves the CUDA backend threads amount from the backends data.
 
         Returns:
-            Union[int, Any]: CUDA backend threads amount, or "N/A" if not available.
+            Union[List[int], Any]: CUDA backend threads amount, or "N/A" if not available.
         """
-        return self._get_data_from_cache(self._backends_cache, [2, "threads", 0, "threads"], self._backends_table_name, "2.threads.0.threads")
+        amounts = []
+        try:
+            for i in self._get_data_from_cache(self._backends_cache, [2, "threads"], self._backends_table_name, "cuda_threads"):
+                amounts.append(i["threads"])
+        except TypeError:
+            return "N/A"
+        return amounts
 
     @property
-    def be_cuda_threads_blocks(self) -> Union[int, Any]:
+    def be_cuda_threads_blocks(self) -> Union[List[int], Any]:
         """
         Retrieves the CUDA backend threads blocks from the backends data.
 
         Returns:
-            Union[int, Any]: CUDA backend threads blocks, or "N/A" if not available.
+            Union[List[int], Any]: CUDA backend threads blocks, or "N/A" if not available.
         """
-        return self._get_data_from_cache(self._backends_cache, [2, "threads", 0, "blocks"], self._backends_table_name, "2.threads.0.blocks")
+        blocks = []
+        try:
+            for i in self._get_data_from_cache(self._backends_cache, [2, "threads"], self._backends_table_name, "cuda_threads"):
+                blocks.append(i["blocks"])
+        except TypeError:
+            return "N/A"
+        return blocks
 
     @property
-    def be_cuda_threads_bfactor(self) -> Union[int, Any]:
+    def be_cuda_threads_bfactor(self) -> Union[List[int], Any]:
         """
         Retrieves the CUDA backend threads bfactor from the backends data.
 
         Returns:
-            Union[int, Any]: CUDA backend threads bfactor, or "N/A" if not available.
+            Union[List[int], Any]: CUDA backend threads bfactor, or "N/A" if not available.
         """
-        return self._get_data_from_cache(self._backends_cache, [2, "threads", 0, "bfactor"], self._backends_table_name, "2.threads.0.bfactor")
+        bfactors = []
+        try:
+            for i in self._get_data_from_cache(self._backends_cache, [2, "threads"], self._backends_table_name, "cuda_threads"):
+                bfactors.append(i["bfactor"])
+        except TypeError:
+            return "N/A"
+        return bfactors
 
     @property
-    def be_cuda_threads_bsleep(self) -> Union[int, Any]:
+    def be_cuda_threads_bsleep(self) -> Union[List[int], Any]:
         """
         Retrieves the CUDA backend threads bsleep from the backends data.
 
         Returns:
-            Union[int, Any]: CUDA backend threads bsleep, or "N/A" if not available.
+            Union[List[int], Any]: CUDA backend threads bsleep, or "N/A" if not available.
         """
-        return self._get_data_from_cache(self._backends_cache, [2, "threads", 0, "bsleep"], self._backends_table_name, "2.threads.0.bsleep")
+        bsleeps = []
+        try:
+            for i in self._get_data_from_cache(self._backends_cache, [2, "threads"], self._backends_table_name, "cuda_threads"):
+                bsleeps.append(i["bsleep"])
+        except TypeError:
+            return "N/A"
+        return bsleeps
 
     @property
-    def be_cuda_threads_affinity(self) -> Union[int, Any]:
+    def be_cuda_threads_affinity(self) -> Union[List[int], Any]:
         """
         Retrieves the CUDA backend threads affinity from the backends data.
 
         Returns:
-            Union[int, Any]: CUDA backend threads affinity, or "N/A" if not available.
+            Union[List[int], Any]: CUDA backend threads affinity, or "N/A" if not available.
         """
-        return self._get_data_from_cache(self._backends_cache, [2, "threads", 0, "affinity"], self._backends_table_name, "2.threads.0.affinity")
+        affinities = []
+        try:
+            for i in self._get_data_from_cache(self._backends_cache, [2, "threads"], self._backends_table_name, "cuda_threads"):
+                affinities.append(i["affinity"])
+        except TypeError:
+            return "N/A"
+        return affinities
 
     @property
-    def be_cuda_threads_dataset_host(self) -> Union[bool, Any]:
+    def be_cuda_threads_dataset_host(self) -> Union[List[bool], Any]:
         """
         Retrieves the CUDA backend threads dataset host status from the backends data.
 
         Returns:
-            Union[bool, Any]: CUDA backend threads dataset host status, or "N/A" if not available.
+            Union[List[bool], Any]: CUDA backend threads dataset host status, or "N/A" if not available.
         """
-        return self._get_data_from_cache(self._backends_cache, [2, "threads", 0, "dataset_host"], self._backends_table_name, "2.threads.0.dataset_host")
+        dataset_hosts = []
+        try:
+            for i in self._get_data_from_cache(self._backends_cache, [2, "threads"], self._backends_table_name, "cuda_threads"):
+                dataset_hosts.append(i["dataset_host"])
+        except TypeError:
+            return "N/A"
+        return dataset_hosts
 
     @property
-    def be_cuda_threads_hashrates(self) -> Union[List[float], Any]:
+    def be_cuda_threads_hashrates(self) -> Union[List[List[float]], Any]:
         """
         Retrieves the CUDA backend threads hashrates from the backends data.
 
         Returns:
-            Union[List[float], Any]: CUDA backend threads hashrates, or "N/A" if not available.
+            Union[List[List[float]], Any]: CUDA backend threads hashrates, or "N/A" if not available.
         """
-        return self._get_data_from_cache(self._backends_cache, [2, "threads", 0, "hashrate"], self._backends_table_name, "2.threads.0.hashrate")
+        hashrates = []
+        try:
+            for i in self._get_data_from_cache(self._backends_cache, [2, "threads"], self._backends_table_name, "cuda_threads"):
+                hashrates.append(i["hashrate"])
+        except TypeError:
+            return "N/A"
+        return hashrates
 
     @property
-    def be_cuda_threads_hashrate_10s(self) -> Union[float, Any]:
+    def be_cuda_threads_hashrate_10s(self) -> Union[List[float], Any]:
         """
         Retrieves the CUDA backend threads hashrate for the last 10 seconds from the backends data.
 
         Returns:
-            Union[float, Any]: CUDA backend threads hashrate for the last 10 seconds, or "N/A" if not available.
+            Union[List[float], Any]: CUDA backend threads hashrate for the last 10 seconds, or "N/A" if not available.
         """
-        return self._get_data_from_cache(self._backends_cache, [2, "threads", 0, "hashrate", 0], self._backends_table_name, "2.threads.0.hashrate.0")
+        hashrates_10s = []
+        try:
+            for i in self._get_data_from_cache(self._backends_cache, [2, "threads"], self._backends_table_name, "cuda_threads"):
+                hashrates_10s.append(i["hashrate"][0])
+        except TypeError:
+            return "N/A"
+        return hashrates_10s
 
     @property
-    def be_cuda_threads_hashrate_1m(self) -> Union[float, Any]:
+    def be_cuda_threads_hashrate_1m(self) -> Union[List[float], Any]:
         """
         Retrieves the CUDA backend threads hashrate for the last 1 minute from the backends data.
 
         Returns:
-            Union[float, Any]: CUDA backend threads hashrate for the last 1 minute, or "N/A" if not available.
+            Union[List[float], Any]: CUDA backend threads hashrate for the last 1 minute, or "N/A" if not available.
         """
-        return self._get_data_from_cache(self._backends_cache, [2, "threads", 0, "hashrate", 1], self._backends_table_name, "2.threads.0.hashrate.1")
+        hashrates_1m = []
+        try:
+            for i in self._get_data_from_cache(self._backends_cache, [2, "threads"], self._backends_table_name, "cuda_threads"):
+                hashrates_1m.append(i["hashrate"][1])
+        except TypeError:
+            return "N/A"
+        return hashrates_1m
 
     @property
-    def be_cuda_threads_hashrate_15m(self) -> Union[float, Any]:
+    def be_cuda_threads_hashrate_15m(self) -> Union[List[float], Any]:
         """
         Retrieves the CUDA backend threads hashrate for the last 15 minutes from the backends data.
 
         Returns:
-            Union[float, Any]: CUDA backend threads hashrate for the last 15 minutes, or "N/A" if not available.
+            Union[List[float], Any]: CUDA backend threads hashrate for the last 15 minutes, or "N/A" if not available.
         """
-        return self._get_data_from_cache(self._backends_cache, [2, "threads", 0, "hashrate", 2], self._backends_table_name, "2.threads.0.hashrate.2")
+        hashrates_15m = []
+        try:
+            for i in self._get_data_from_cache(self._backends_cache, [2, "threads"], self._backends_table_name, "cuda_threads"):
+                hashrates_15m.append(i["hashrate"][2])
+        except TypeError:
+            return "N/A"
+        return hashrates_15m
 
     @property
-    def be_cuda_threads_name(self) -> Union[str, Any]:
+    def be_cuda_threads_name(self) -> Union[List[str], Any]:
         """
         Retrieves the CUDA backend threads name from the backends data.
 
         Returns:
-            Union[str, Any]: CUDA backend threads name, or "N/A" if not available.
+            Union[List[str], Any]: CUDA backend threads name, or "N/A" if not available.
         """
-        return self._get_data_from_cache(self._backends_cache, [2, "threads", 0, "name"], self._backends_table_name, "2.threads.0.name")
+        names = []
+        try:
+            for i in self._get_data_from_cache(self._backends_cache, [2, "threads"], self._backends_table_name, "cuda_threads"):
+                names.append(i["name"])
+        except TypeError:
+            return "N/A"
+        return names
 
     @property
-    def be_cuda_threads_bus_id(self) -> Union[str, Any]:
+    def be_cuda_threads_bus_id(self) -> Union[List[str], Any]:
         """
         Retrieves the CUDA backend threads bus ID from the backends data.
 
         Returns:
-            Union[str, Any]: CUDA backend threads bus ID, or "N/A" if not available.
+            Union[List[str], Any]: CUDA backend threads bus ID, or "N/A" if not available.
         """
-        return self._get_data_from_cache(self._backends_cache, [2, "threads", 0, "bus_id"], self._backends_table_name, "2.threads.0.bus_id")
+        bus_ids = []
+        try:
+            for i in self._get_data_from_cache(self._backends_cache, [2, "threads"], self._backends_table_name, "cuda_threads"):
+                bus_ids.append(i["bus_id"])
+        except TypeError:
+            return "N/A"
+        return bus_ids
 
     @property
-    def be_cuda_threads_smx(self) -> Union[int, Any]:
+    def be_cuda_threads_smx(self) -> Union[List[int], Any]:
         """
         Retrieves the CUDA backend threads SMX count from the backends data.
 
         Returns:
-            Union[int, Any]: CUDA backend threads SMX count, or "N/A" if not available.
+            Union[List[int], Any]: CUDA backend threads SMX count, or "N/A" if not available.
         """
-        return self._get_data_from_cache(self._backends_cache, [2, "threads", 0, "smx"], self._backends_table_name, "2.threads.0.smx")
+        smxs = []
+        try:
+            for i in self._get_data_from_cache(self._backends_cache, [2, "threads"], self._backends_table_name, "cuda_threads"):
+                smxs.append(i["smx"])
+        except TypeError:
+            return "N/A"
+        return smxs
 
     @property
-    def be_cuda_threads_arch(self) -> Union[int, Any]:
+    def be_cuda_threads_arch(self) -> Union[List[int], Any]:
         """
         Retrieves the CUDA backend threads architecture from the backends data.
 
         Returns:
-            Union[int, Any]: CUDA backend threads architecture, or "N/A" if not available.
+            Union[List[int], Any]: CUDA backend threads architecture, or "N/A" if not available.
         """
-        return self._get_data_from_cache(self._backends_cache, [2, "threads", 0, "arch"], self._backends_table_name, "2.threads.0.arch")
+        archs = []
+        try:
+            for i in self._get_data_from_cache(self._backends_cache, [2, "threads"], self._backends_table_name, "cuda_threads"):
+                archs.append(i["arch"])
+        except TypeError:
+            return "N/A"
+        return archs
 
     @property
-    def be_cuda_threads_global_mem(self) -> Union[int, Any]:
+    def be_cuda_threads_global_mem(self) -> Union[List[int], Any]:
         """
         Retrieves the CUDA backend threads global memory from the backends data.
 
         Returns:
-            Union[int, Any]: CUDA backend threads global memory, or "N/A" if not available.
+            Union[List[int], Any]: CUDA backend threads global memory, or "N/A" if not available.
         """
-        return self._get_data_from_cache(self._backends_cache, [2, "threads", 0, "global_mem"], self._backends_table_name, "2.threads.0.global_mem")
+        global_mems = []
+        try:
+            for i in self._get_data_from_cache(self._backends_cache, [2, "threads"], self._backends_table_name, "cuda_threads"):
+                global_mems.append(i["global_mem"])
+        except TypeError:
+            return "N/A"
+        return global_mems
 
     @property
-    def be_cuda_threads_clock(self) -> Union[int, Any]:
+    def be_cuda_threads_clock(self) -> Union[List[int], Any]:
         """
         Retrieves the CUDA backend threads clock from the backends data.
 
         Returns:
-            Union[int, Any]: CUDA backend threads clock, or "N/A" if not available.
+            Union[List[int], Any]: CUDA backend threads clock, or "N/A" if not available.
         """
-        return self._get_data_from_cache(self._backends_cache, [2, "threads", 0, "clock"], self._backends_table_name, "2.threads.0.clock")
+        clocks = []
+        try:
+            for i in self._get_data_from_cache(self._backends_cache, [2, "threads"], self._backends_table_name, "cuda_threads"):
+                clocks.append(i["clock"])
+        except TypeError:
+            return "N/A"
+        return clocks
 
     @property
-    def be_cuda_threads_memory_clock(self) -> Union[int, Any]:
+    def be_cuda_threads_memory_clock(self) -> Union[List[int], Any]:
         """
         Retrieves the CUDA backend threads memory clock from the backends data.
 
         Returns:
-            Union[int, Any]: CUDA backend threads memory clock, or "N/A" if not available.
+            Union[List[int], Any]: CUDA backend threads memory clock, or "N/A" if not available.
         """
-        return self._get_data_from_cache(self._backends_cache, [2, "threads", 0, "memory_clock"], self._backends_table_name, "2.threads.0.memory_clock")
+        memory_clocks = []
+        try:
+            for i in self._get_data_from_cache(self._backends_cache, [2, "threads"], self._backends_table_name, "cuda_threads"):
+                memory_clocks.append(i["memory_clock"])
+        except TypeError:
+            return "N/A"
+        return memory_clocks
 
     #############################
     # Data from config endpoint #
@@ -2047,7 +2322,7 @@ class XMRigAPI:
         Returns:
             Optional[str]: API ID property, or "N/A" if not available.
         """
-        return self._get_data_from_cache(self._config_cache, ["api", "id"], self._config_table_name, "api.id")
+        return self._get_data_from_cache(self._config_cache, ["api", "id"], self._config_table_name, "api_id")
 
     @property
     def conf_api_worker_id_property(self) -> str:
@@ -2057,7 +2332,7 @@ class XMRigAPI:
         Returns:
             str: API worker ID property, or "N/A" if not available.
         """
-        return self._get_data_from_cache(self._config_cache, ["api", "worker-id"], self._config_table_name, "api.worker-id")
+        return self._get_data_from_cache(self._config_cache, ["api", "worker-id"], self._config_table_name, "api_worker_id")
 
     @property
     def conf_http_property(self) -> Dict[str, Union[str, int, bool]]:
@@ -2077,7 +2352,7 @@ class XMRigAPI:
         Returns:
             bool: HTTP enabled property, or "N/A" if not available.
         """
-        return self._get_data_from_cache(self._config_cache, ["http", "enabled"], self._config_table_name, "http.enabled")
+        return self._get_data_from_cache(self._config_cache, ["http", "enabled"], self._config_table_name, "http_enabled")
 
     @property
     def conf_http_host_property(self) -> str:
@@ -2087,7 +2362,7 @@ class XMRigAPI:
         Returns:
             str: HTTP host property, or "N/A" if not available.
         """
-        return self._get_data_from_cache(self._config_cache, ["http", "host"], self._config_table_name, "http.host")
+        return self._get_data_from_cache(self._config_cache, ["http", "host"], self._config_table_name, "http_host")
 
     @property
     def conf_http_port_property(self) -> int:
@@ -2097,7 +2372,7 @@ class XMRigAPI:
         Returns:
             int: HTTP port property, or "N/A" if not available.
         """
-        return self._get_data_from_cache(self._config_cache, ["http", "port"], self._config_table_name, "http.port")
+        return self._get_data_from_cache(self._config_cache, ["http", "port"], self._config_table_name, "http_port")
 
     @property
     def conf_http_access_token_property(self) -> str:
@@ -2107,7 +2382,7 @@ class XMRigAPI:
         Returns:
             str: HTTP access token property, or "N/A" if not available.
         """
-        return self._get_data_from_cache(self._config_cache, ["http", "access-token"], self._config_table_name, "http.access-token")
+        return self._get_data_from_cache(self._config_cache, ["http", "access-token"], self._config_table_name, "http_access_token")
 
     @property
     def conf_http_restricted_property(self) -> bool:
@@ -2117,7 +2392,7 @@ class XMRigAPI:
         Returns:
             bool: HTTP restricted property, or "N/A" if not available.
         """
-        return self._get_data_from_cache(self._config_cache, ["http", "restricted"], self._config_table_name, "http.restricted")
+        return self._get_data_from_cache(self._config_cache, ["http", "restricted"], self._config_table_name, "http_restricted")
 
     @property
     def conf_autosave_property(self) -> bool:
@@ -2177,7 +2452,7 @@ class XMRigAPI:
         Returns:
             int: RandomX init property, or "N/A" if not available.
         """
-        return self._get_data_from_cache(self._config_cache, ["randomx", "init"], self._config_table_name, "randomx.init")
+        return self._get_data_from_cache(self._config_cache, ["randomx", "init"], self._config_table_name, "randomx_init")
 
     @property
     def conf_randomx_init_avx2_property(self) -> int:
@@ -2187,7 +2462,7 @@ class XMRigAPI:
         Returns:
             int: RandomX init AVX2 property, or "N/A" if not available.
         """
-        return self._get_data_from_cache(self._config_cache, ["randomx", "init-avx2"], self._config_table_name, "randomx.init-avx2")
+        return self._get_data_from_cache(self._config_cache, ["randomx", "init-avx2"], self._config_table_name, "randomx_init_avx2")
 
     @property
     def conf_randomx_mode_property(self) -> str:
@@ -2197,7 +2472,7 @@ class XMRigAPI:
         Returns:
             str: RandomX mode property, or "N/A" if not available.
         """
-        return self._get_data_from_cache(self._config_cache, ["randomx", "mode"], self._config_table_name, "randomx.mode")
+        return self._get_data_from_cache(self._config_cache, ["randomx", "mode"], self._config_table_name, "randomx_mode")
 
     @property
     def conf_randomx_1gb_pages_property(self) -> bool:
@@ -2207,7 +2482,7 @@ class XMRigAPI:
         Returns:
             bool: RandomX 1GB pages property, or "N/A" if not available.
         """
-        return self._get_data_from_cache(self._config_cache, ["randomx", "1gb-pages"], self._config_table_name, "randomx.1gb-pages")
+        return self._get_data_from_cache(self._config_cache, ["randomx", "1gb-pages"], self._config_table_name, "randomx_1gb_pages")
 
     @property
     def conf_randomx_rdmsr_property(self) -> bool:
@@ -2217,7 +2492,7 @@ class XMRigAPI:
         Returns:
             bool: RandomX RDMSR property, or "N/A" if not available.
         """
-        return self._get_data_from_cache(self._config_cache, ["randomx", "rdmsr"], self._config_table_name, "randomx.rdmsr")
+        return self._get_data_from_cache(self._config_cache, ["randomx", "rdmsr"], self._config_table_name, "randomx_rdmsr")
 
     @property
     def conf_randomx_wrmsr_property(self) -> bool:
@@ -2227,7 +2502,7 @@ class XMRigAPI:
         Returns:
             bool: RandomX WRMSR property, or "N/A" if not available.
         """
-        return self._get_data_from_cache(self._config_cache, ["randomx", "wrmsr"], self._config_table_name, "randomx.wrmsr")
+        return self._get_data_from_cache(self._config_cache, ["randomx", "wrmsr"], self._config_table_name, "randomx_wrmsr")
 
     @property
     def conf_randomx_cache_qos_property(self) -> bool:
@@ -2237,7 +2512,7 @@ class XMRigAPI:
         Returns:
             bool: RandomX cache QoS property, or "N/A" if not available.
         """
-        return self._get_data_from_cache(self._config_cache, ["randomx", "cache_qos"], self._config_table_name, "randomx.cache_qos")
+        return self._get_data_from_cache(self._config_cache, ["randomx", "cache_qos"], self._config_table_name, "randomx_cache_qos")
 
     @property
     def conf_randomx_numa_property(self) -> bool:
@@ -2247,7 +2522,7 @@ class XMRigAPI:
         Returns:
             bool: RandomX NUMA property, or "N/A" if not available.
         """
-        return self._get_data_from_cache(self._config_cache, ["randomx", "numa"], self._config_table_name, "randomx.numa")
+        return self._get_data_from_cache(self._config_cache, ["randomx", "numa"], self._config_table_name, "randomx_numa")
 
     @property
     def conf_randomx_scratchpad_prefetch_mode_property(self) -> int:
@@ -2257,7 +2532,7 @@ class XMRigAPI:
         Returns:
             int: RandomX scratchpad prefetch mode property, or "N/A" if not available.
         """
-        return self._get_data_from_cache(self._config_cache, ["randomx", "scratchpad_prefetch_mode"], self._config_table_name, "randomx.scratchpad_prefetch_mode")
+        return self._get_data_from_cache(self._config_cache, ["randomx", "scratchpad_prefetch_mode"], self._config_table_name, "randomx_scratchpad_prefetch_mode")
 
     @property
     def conf_cpu_property(self) -> Dict[str, Union[str, int, bool, None]]:
@@ -2277,7 +2552,7 @@ class XMRigAPI:
         Returns:
             bool: CPU enabled property, or "N/A" if not available.
         """
-        return self._get_data_from_cache(self._config_cache, ["cpu", "enabled"], self._config_table_name, "cpu.enabled")
+        return self._get_data_from_cache(self._config_cache, ["cpu", "enabled"], self._config_table_name, "cpu_enabled")
 
     @property
     def conf_cpu_huge_pages_property(self) -> bool:
@@ -2287,7 +2562,7 @@ class XMRigAPI:
         Returns:
             bool: CPU huge pages property, or "N/A" if not available.
         """
-        return self._get_data_from_cache(self._config_cache, ["cpu", "huge-pages"], self._config_table_name, "cpu.huge-pages")
+        return self._get_data_from_cache(self._config_cache, ["cpu", "huge-pages"], self._config_table_name, "cpu_huge_pages")
 
     @property
     def conf_cpu_huge_pages_jit_property(self) -> bool:
@@ -2297,7 +2572,7 @@ class XMRigAPI:
         Returns:
             bool: CPU huge pages JIT property, or "N/A" if not available.
         """
-        return self._get_data_from_cache(self._config_cache, ["cpu", "huge-pages-jit"], self._config_table_name, "cpu.huge-pages-jit")
+        return self._get_data_from_cache(self._config_cache, ["cpu", "huge-pages-jit"], self._config_table_name, "cpu_huge_pages_jit")
 
     @property
     def conf_cpu_hw_aes_property(self) -> Optional[bool]:
@@ -2307,7 +2582,7 @@ class XMRigAPI:
         Returns:
             Optional[bool]: CPU hardware AES property, or "N/A" if not available.
         """
-        return self._get_data_from_cache(self._config_cache, ["cpu", "hw-aes"], self._config_table_name, "cpu.hw-aes")
+        return self._get_data_from_cache(self._config_cache, ["cpu", "hw-aes"], self._config_table_name, "cpu_hw_aes")
 
     @property
     def conf_cpu_priority_property(self) -> Optional[int]:
@@ -2317,7 +2592,7 @@ class XMRigAPI:
         Returns:
             Optional[int]: CPU priority property, or "N/A" if not available.
         """
-        return self._get_data_from_cache(self._config_cache, ["cpu", "priority"], self._config_table_name, "cpu.priority")
+        return self._get_data_from_cache(self._config_cache, ["cpu", "priority"], self._config_table_name, "cpu_priority")
 
     @property
     def conf_cpu_memory_pool_property(self) -> bool:
@@ -2327,7 +2602,7 @@ class XMRigAPI:
         Returns:
             bool: CPU memory pool property, or "N/A" if not available.
         """
-        return self._get_data_from_cache(self._config_cache, ["cpu", "memory-pool"], self._config_table_name, "cpu.memory-pool")
+        return self._get_data_from_cache(self._config_cache, ["cpu", "memory-pool"], self._config_table_name, "cpu_memory_pool")
 
     @property
     def conf_cpu_yield_property(self) -> bool:
@@ -2337,7 +2612,7 @@ class XMRigAPI:
         Returns:
             bool: CPU yield property, or "N/A" if not available.
         """
-        return self._get_data_from_cache(self._config_cache, ["cpu", "yield"], self._config_table_name, "cpu.yield")
+        return self._get_data_from_cache(self._config_cache, ["cpu", "yield"], self._config_table_name, "cpu_yield")
 
     @property
     def conf_cpu_max_threads_hint_property(self) -> int:
@@ -2347,7 +2622,7 @@ class XMRigAPI:
         Returns:
             int: CPU max threads hint property, or "N/A" if not available.
         """
-        return self._get_data_from_cache(self._config_cache, ["cpu", "max-threads-hint"], self._config_table_name, "cpu.max-threads-hint")
+        return self._get_data_from_cache(self._config_cache, ["cpu", "max-threads-hint"], self._config_table_name, "cpu_max_threads_hint")
 
     @property
     def conf_cpu_asm_property(self) -> bool:
@@ -2357,7 +2632,7 @@ class XMRigAPI:
         Returns:
             bool: CPU ASM property, or "N/A" if not available.
         """
-        return self._get_data_from_cache(self._config_cache, ["cpu", "asm"], self._config_table_name, "cpu.asm")
+        return self._get_data_from_cache(self._config_cache, ["cpu", "asm"], self._config_table_name, "cpu_asm")
 
     @property
     def conf_cpu_argon2_impl_property(self) -> Optional[str]:
@@ -2367,27 +2642,7 @@ class XMRigAPI:
         Returns:
             Optional[str]: CPU Argon2 implementation property, or "N/A" if not available.
         """
-        return self._get_data_from_cache(self._config_cache, ["cpu", "argon2-impl"], self._config_table_name, "cpu.argon2-impl")
-
-    @property
-    def conf_cpu_cn_lite_0_property(self) -> bool:
-        """
-        Retrieves the CPU CN Lite 0 property from the config data.
-
-        Returns:
-            bool: CPU CN Lite 0 property, or "N/A" if not available.
-        """
-        return self._get_data_from_cache(self._config_cache, ["cpu", "cn-lite/0"], self._config_table_name, "cpu.cn-lite/0")
-
-    @property
-    def conf_cpu_cn_0_property(self) -> bool:
-        """
-        Retrieves the CPU CN 0 property from the config data.
-
-        Returns:
-            bool: CPU CN 0 property, or "N/A" if not available.
-        """
-        return self._get_data_from_cache(self._config_cache, ["cpu", "cn/0"], self._config_table_name, "cpu.cn/0")
+        return self._get_data_from_cache(self._config_cache, ["cpu", "argon2-impl"], self._config_table_name, "cpu_argon2_impl")
 
     @property
     def conf_opencl_property(self) -> Dict[str, Union[str, int, bool, List[Dict[str, Union[int, List[int], bool]]]]]:
@@ -2407,7 +2662,7 @@ class XMRigAPI:
         Returns:
             bool: OpenCL enabled property, or "N/A" if not available.
         """
-        return self._get_data_from_cache(self._config_cache, ["opencl", "enabled"], self._config_table_name, "opencl.enabled")
+        return self._get_data_from_cache(self._config_cache, ["opencl", "enabled"], self._config_table_name, "opencl_enabled")
 
     @property
     def conf_opencl_cache_property(self) -> bool:
@@ -2417,7 +2672,7 @@ class XMRigAPI:
         Returns:
             bool: OpenCL cache property, or "N/A" if not available.
         """
-        return self._get_data_from_cache(self._config_cache, ["opencl", "cache"], self._config_table_name, "opencl.cache")
+        return self._get_data_from_cache(self._config_cache, ["opencl", "cache"], self._config_table_name, "opencl_cache")
 
     @property
     def conf_opencl_loader_property(self) -> Optional[str]:
@@ -2427,7 +2682,7 @@ class XMRigAPI:
         Returns:
             Optional[str]: OpenCL loader property, or "N/A" if not available.
         """
-        return self._get_data_from_cache(self._config_cache, ["opencl", "loader"], self._config_table_name, "opencl.loader")
+        return self._get_data_from_cache(self._config_cache, ["opencl", "loader"], self._config_table_name, "opencl_loader")
 
     @property
     def conf_opencl_platform_property(self) -> str:
@@ -2437,7 +2692,7 @@ class XMRigAPI:
         Returns:
             str: OpenCL platform property, or "N/A" if not available.
         """
-        return self._get_data_from_cache(self._config_cache, ["opencl", "platform"], self._config_table_name, "opencl.platform")
+        return self._get_data_from_cache(self._config_cache, ["opencl", "platform"], self._config_table_name, "opencl_platform")
 
     @property
     def conf_opencl_adl_property(self) -> bool:
@@ -2447,37 +2702,7 @@ class XMRigAPI:
         Returns:
             bool: OpenCL ADL property, or "N/A" if not available.
         """
-        return self._get_data_from_cache(self._config_cache, ["opencl", "adl"], self._config_table_name, "opencl.adl")
-
-    @property
-    def conf_opencl_cn_lite_0_property(self) -> bool:
-        """
-        Retrieves the OpenCL CN Lite 0 from the config data.
-
-        Returns:
-            bool: OpenCL CN Lite 0, or "N/A" if not available.
-        """
-        return self._get_data_from_cache(self._config_cache, ["opencl", "cn-lite/0"], self._config_table_name, "opencl.cn-lite/0")
-
-    @property
-    def conf_opencl_cn_0_property(self) -> bool:
-        """
-        Retrieves the OpenCL CN 0 from the config data.
-
-        Returns:
-            bool: OpenCL CN 0, or "N/A" if not available.
-        """
-        return self._get_data_from_cache(self._config_cache, ["opencl", "cn/0"], self._config_table_name, "opencl.cn/0")
-
-    @property
-    def conf_opencl_panthera_property(self) -> bool:
-        """
-        Retrieves the OpenCL Panthera from the config data.
-
-        Returns:
-            bool: OpenCL Panthera, or "N/A" if not available.
-        """
-        return self._get_data_from_cache(self._config_cache, ["opencl", "panthera"], self._config_table_name, "opencl.panthera")
+        return self._get_data_from_cache(self._config_cache, ["opencl", "adl"], self._config_table_name, "opencl_adl")
 
     @property
     def conf_cuda_property(self) -> Dict[str, Union[str, bool, None]]:
@@ -2497,7 +2722,7 @@ class XMRigAPI:
         Returns:
             bool: CUDA enabled status, or "N/A" if not available.
         """
-        return self._get_data_from_cache(self._config_cache, ["cuda", "enabled"], self._config_table_name, "cuda.enabled")
+        return self._get_data_from_cache(self._config_cache, ["cuda", "enabled"], self._config_table_name, "cuda_enabled")
 
     @property
     def conf_cuda_loader_property(self) -> Optional[str]:
@@ -2507,7 +2732,7 @@ class XMRigAPI:
         Returns:
             Optional[str]: CUDA loader, or "N/A" if not available.
         """
-        return self._get_data_from_cache(self._config_cache, ["cuda", "loader"], self._config_table_name, "cuda.loader")
+        return self._get_data_from_cache(self._config_cache, ["cuda", "loader"], self._config_table_name, "cuda_loader")
 
     @property
     def conf_cuda_nvml_property(self) -> bool:
@@ -2517,47 +2742,7 @@ class XMRigAPI:
         Returns:
             bool: CUDA NVML, or "N/A" if not available.
         """
-        return self._get_data_from_cache(self._config_cache, ["cuda", "nvml"], self._config_table_name, "cuda.nvml")
-
-    @property
-    def conf_cuda_cn_lite_0_property(self) -> bool:
-        """
-        Retrieves the CUDA CN Lite 0 from the config data.
-
-        Returns:
-            bool: CUDA CN Lite 0, or "N/A" if not available.
-        """
-        return self._get_data_from_cache(self._config_cache, ["cuda", "cn-lite/0"], self._config_table_name, "cuda.cn-lite/0")
-
-    @property
-    def conf_cuda_cn_0_property(self) -> bool:
-        """
-        Retrieves the CUDA CN 0 from the config data.
-
-        Returns:
-            bool: CUDA CN 0, or "N/A" if not available.
-        """
-        return self._get_data_from_cache(self._config_cache, ["cuda", "cn/0"], self._config_table_name, "cuda.cn/0")
-
-    @property
-    def conf_cuda_panthera_property(self) -> bool:
-        """
-        Retrieves the CUDA Panthera from the config data.
-
-        Returns:
-            bool: CUDA Panthera, or "N/A" if not available.
-        """
-        return self._get_data_from_cache(self._config_cache, ["cuda", "panthera"], self._config_table_name, "cuda.panthera")
-    
-    @property
-    def conf_cuda_astrobwt_property(self) -> bool:
-        """
-        Retrieves the CUDA Astrobwt from the config data.
-
-        Returns:
-            bool: CUDA Astrobwt, or "N/A" if not available.
-        """
-        return self._get_data_from_cache(self._config_cache, ["cuda", "astrobwt"], self._config_table_name, "cuda.astrobwt")
+        return self._get_data_from_cache(self._config_cache, ["cuda", "nvml"], self._config_table_name, "cuda_nvml")
 
     @property
     def conf_log_file_property(self) -> Optional[str]:
@@ -2567,7 +2752,7 @@ class XMRigAPI:
         Returns:
             Optional[str]: Log file, or "N/A" if not available.
         """
-        return self._get_data_from_cache(self._config_cache, ["log-file"], self._config_table_name, "log-file")
+        return self._get_data_from_cache(self._config_cache, ["log-file"], self._config_table_name, "log_file")
 
     @property
     def conf_donate_level_property(self) -> int:
@@ -2577,7 +2762,7 @@ class XMRigAPI:
         Returns:
             int: Donate level, or "N/A" if not available.
         """
-        return self._get_data_from_cache(self._config_cache, ["donate-level"], self._config_table_name, "donate-level")
+        return self._get_data_from_cache(self._config_cache, ["donate-level"], self._config_table_name, "donate_level")
 
     @property
     def conf_donate_over_proxy_property(self) -> int:
@@ -2587,7 +2772,7 @@ class XMRigAPI:
         Returns:
             int: Donate over proxy, or "N/A" if not available.
         """
-        return self._get_data_from_cache(self._config_cache, ["donate-over-proxy"], self._config_table_name, "donate-over-proxy")
+        return self._get_data_from_cache(self._config_cache, ["donate-over-proxy"], self._config_table_name, "donate_over_proxy")
 
     @property
     def conf_pools_property(self) -> List[Dict[str, Union[str, int, bool, None]]]:
@@ -2600,204 +2785,324 @@ class XMRigAPI:
         return self._get_data_from_cache(self._config_cache, ["pools"], self._config_table_name, "pools")
 
     @property
-    def conf_pools_algo_property(self) -> str:
+    def conf_pools_algo_property(self) -> Union[List[str], str]:
         """
         Retrieves the pools algorithm from the config data.
 
         Returns:
-            str: Pools algorithm, or "N/A" if not available.
+            Union[List[str], str]: Pools algorithm, or "N/A" if not available.
         """
-        return self._get_data_from_cache(self._config_cache, ["pools", 0, "algo"], self._config_table_name, "pools.0.algo")
+        algos = []
+        try:
+            for i in self._get_data_from_cache(self._config_cache, ["pools"], self._config_table_name, "pools"):
+                algos.append(i["algo"])
+        except TypeError:
+            return "N/A"
+        return algos
 
     @property
-    def conf_pools_coin_property(self) -> str:
+    def conf_pools_coin_property(self) -> Union[List[str], str]:
         """
         Retrieves the pools coin from the config data.
 
         Returns:
-            str: Pools coin, or "N/A" if not available.
+            Union[List[str], str]: Pools coin, or "N/A" if not available.
         """
-        return self._get_data_from_cache(self._config_cache, ["pools", 0, "coin"], self._config_table_name, "pools.0.coin")
+        coins = []
+        try:
+            for i in self._get_data_from_cache(self._config_cache, ["pools"], self._config_table_name, "pools"):
+                coins.append(i["coin"])
+        except TypeError:
+            return "N/A"
+        return coins
 
     @property
-    def conf_pools_url_property(self) -> str:
+    def conf_pools_url_property(self) -> Union[List[str], str]:
         """
         Retrieves the pools URL from the config data.
 
         Returns:
-            str: Pools URL, or "N/A" if not available.
+            Union[List[str], str]: Pools URL, or "N/A" if not available.
         """
-        return self._get_data_from_cache(self._config_cache, ["pools", 0, "url"], self._config_table_name, "pools.0.url")
+        urls = []
+        try:
+            for i in self._get_data_from_cache(self._config_cache, ["pools"], self._config_table_name, "pools"):
+                urls.append(i["url"])
+        except TypeError:
+            return "N/A"
+        return urls
 
     @property
-    def conf_pools_user_property(self) -> str:
+    def conf_pools_user_property(self) -> Union[List[str], str]:
         """
         Retrieves the pools user from the config data.
 
         Returns:
-            str: Pools user, or "N/A" if not available.
+            Union[List[str], str]: Pools user, or "N/A" if not available.
         """
-        return self._get_data_from_cache(self._config_cache, ["pools", 0, "user"], self._config_table_name, "pools.0.user")
+        users = []
+        try:
+            for i in self._get_data_from_cache(self._config_cache, ["pools"], self._config_table_name, "pools"):
+                users.append(i["user"])
+        except TypeError:
+            return "N/A"
+        return users
 
     @property
-    def conf_pools_pass_property(self) -> str:
+    def conf_pools_pass_property(self) -> Union[List[str], str]:
         """
         Retrieves the pools password from the config data.
 
         Returns:
-            str: Pools password, or "N/A" if not available.
+            Union[List[str], str]: Pools password, or "N/A" if not available.
         """
-        return self._get_data_from_cache(self._config_cache, ["pools", 0, "pass"], self._config_table_name, "pools.0.pass")
+        passwords = []
+        try:
+            for i in self._get_data_from_cache(self._config_cache, ["pools"], self._config_table_name, "pools"):
+                passwords.append(i["pass"])
+        except TypeError:
+            return "N/A"
+        return passwords
 
     @property
-    def conf_pools_rig_id_property(self) -> str:
+    def conf_pools_rig_id_property(self) -> Union[List[str], str]:
         """
         Retrieves the pools rig ID from the config data.
 
         Returns:
-            str: Pools rig ID, or "N/A" if not available.
+            Union[List[str], str]: Pools rig ID, or "N/A" if not available.
         """
-        return self._get_data_from_cache(self._config_cache, ["pools", 0, "rig-id"], self._config_table_name, "pools.0.rig-id")
+        rig_ids = []
+        try:
+            for i in self._get_data_from_cache(self._config_cache, ["pools"], self._config_table_name, "pools"):
+                rig_ids.append(i["rig-id"])
+        except TypeError:
+            return "N/A"
+        return rig_ids
 
     @property
-    def conf_pools_nicehash_property(self) -> bool:
+    def conf_pools_nicehash_property(self) -> Union[List[bool], str]:
         """
         Retrieves the pools NiceHash status from the config data.
 
         Returns:
-            bool: Pools NiceHash status, or "N/A" if not available.
+            Union[List[bool], str]: Pools NiceHash status, or "N/A" if not available.
         """
-        return self._get_data_from_cache(self._config_cache, ["pools", 0, "nicehash"], self._config_table_name, "pools.0.nicehash")
+        nicehash_statuses = []
+        try:
+            for i in self._get_data_from_cache(self._config_cache, ["pools"], self._config_table_name, "pools"):
+                nicehash_statuses.append(i["nicehash"])
+        except TypeError:
+            return "N/A"
+        return nicehash_statuses
 
     @property
-    def conf_pools_keepalive_property(self) -> bool:
+    def conf_pools_keepalive_property(self) -> Union[List[bool], str]:
         """
         Retrieves the pools keepalive status from the config data.
 
         Returns:
-            bool: Pools keepalive status, or "N/A" if not available.
+            Union[List[bool], str]: Pools keepalive status, or "N/A" if not available.
         """
-        return self._get_data_from_cache(self._config_cache, ["pools", 0, "keepalive"], self._config_table_name, "pools.0.keepalive")
+        keepalive_statuses = []
+        try:
+            for i in self._get_data_from_cache(self._config_cache, ["pools"], self._config_table_name, "pools"):
+                keepalive_statuses.append(i["keepalive"])
+        except TypeError:
+            return "N/A"
+        return keepalive_statuses
 
     @property
-    def conf_pools_enabled_property(self) -> bool:
+    def conf_pools_enabled_property(self) -> Union[List[bool], str]:
         """
         Retrieves the pools enabled status from the config data.
 
         Returns:
-            bool: Pools enabled status, or "N/A" if not available.
+            Union[List[bool], str]: Pools enabled status, or "N/A" if not available.
         """
-        return self._get_data_from_cache(self._config_cache, ["pools", 0, "enabled"], self._config_table_name, "pools.0.enabled")
+        enabled_statuses = []
+        try:
+            for i in self._get_data_from_cache(self._config_cache, ["pools"], self._config_table_name, "pools"):
+                enabled_statuses.append(i["enabled"])
+        except TypeError:
+            return "N/A"
+        return enabled_statuses
 
     @property
-    def conf_pools_tls_property(self) -> bool:
+    def conf_pools_tls_property(self) -> Union[List[bool], str]:
         """
         Retrieves the pools TLS status from the config data.
 
         Returns:
-            bool: Pools TLS status, or "N/A" if not available.
+            Union[List[bool], str]: Pools TLS status, or "N/A" if not available.
         """
-        return self._get_data_from_cache(self._config_cache, ["pools", 0, "tls"], self._config_table_name, "pools.0.tls")
+        tls_statuses = []
+        try:
+            for i in self._get_data_from_cache(self._config_cache, ["pools"], self._config_table_name, "pools"):
+                tls_statuses.append(i["tls"])
+        except TypeError:
+            return "N/A"
+        return tls_statuses
 
     @property
-    def conf_pools_sni_property(self) -> bool:
+    def conf_pools_sni_property(self) -> Union[List[bool], str]:
         """
         Retrieves the pools SNI status from the config data.
 
         Returns:
-            bool: Pools SNI status, or "N/A" if not available.
+            Union[List[bool], str]: Pools SNI status, or "N/A" if not available.
         """
-        return self._get_data_from_cache(self._config_cache, ["pools", 0, "sni"], self._config_table_name, "pools.0.sni")
+        sni_statuses = []
+        try:
+            for i in self._get_data_from_cache(self._config_cache, ["pools"], self._config_table_name, "pools"):
+                sni_statuses.append(i["sni"])
+        except TypeError:
+            return "N/A"
+        return sni_statuses
 
     @property
-    def conf_pools_spend_secret_key_property(self) -> bool:
+    def conf_pools_spend_secret_key_property(self) -> Union[List[bool], str]:
         """
         Retrieves the pools spend secret key status from the config data.
 
         Returns:
-            bool: Pools SNI status, or "N/A" if not available.
+            Union[List[bool], str]: Pools spend secret key status, or "N/A" if not available.
         """
-        return self._get_data_from_cache(self._config_cache, ["pools", 0, "sni"], self._config_table_name, "pools.0.sni")
+        spend_secret_key_statuses = []
+        try:
+            for i in self._get_data_from_cache(self._config_cache, ["pools"], self._config_table_name, "pools"):
+                spend_secret_key_statuses.append(i["spend-secret-key"])
+        except TypeError:
+            return "N/A"
+        return spend_secret_key_statuses
 
     @property
-    def conf_pools_tls_fingerprint_property(self) -> Optional[str]:
+    def conf_pools_tls_fingerprint_property(self) -> Union[List[Optional[str]], str]:
         """
         Retrieves the pools TLS fingerprint from the config data.
 
         Returns:
-            Optional[str]: Pools TLS fingerprint, or "N/A" if not available.
+            Union[List[Optional[str]], str]: Pools TLS fingerprint, or "N/A" if not available.
         """
-        return self._get_data_from_cache(self._config_cache, ["pools", 0, "tls-fingerprint"], self._config_table_name, "pools.0.tls-fingerprint")
+        tls_fingerprints = []
+        try:
+            for i in self._get_data_from_cache(self._config_cache, ["pools"], self._config_table_name, "pools"):
+                tls_fingerprints.append(i["tls-fingerprint"])
+        except TypeError:
+            return "N/A"
+        return tls_fingerprints
 
     @property
-    def conf_pools_daemon_property(self) -> bool:
+    def conf_pools_daemon_property(self) -> Union[List[bool], str]:
         """
         Retrieves the pools daemon status from the config data.
 
         Returns:
-            bool: Pools daemon status, or "N/A" if not available.
+            Union[List[bool], str]: Pools daemon status, or "N/A" if not available.
         """
-        return self._get_data_from_cache(self._config_cache, ["pools", 0, "daemon"], self._config_table_name, "pools.0.daemon")
+        daemon_statuses = []
+        try:
+            for i in self._get_data_from_cache(self._config_cache, ["pools"], self._config_table_name, "pools"):
+                daemon_statuses.append(i["daemon"])
+        except TypeError:
+            return "N/A"
+        return daemon_statuses
 
     @property
-    def conf_pools_daemon_poll_interval_property(self) -> bool:
+    def conf_pools_daemon_poll_interval_property(self) -> Union[List[int], str]:
         """
         Retrieves the pools daemon poll interval from the config data.
 
         Returns:
-            bool: Pools daemon poll interval, or "N/A" if not available.
+            Union[List[int], str]: Pools daemon poll interval, or "N/A" if not available.
         """
-        return self._get_data_from_cache(self._config_cache, ["pools", 0, "daemon-poll-interval"], self._config_table_name, "pools.0.daemon-poll-interval")
+        daemon_poll_intervals = []
+        try:
+            for i in self._get_data_from_cache(self._config_cache, ["pools"], self._config_table_name, "pools"):
+                daemon_poll_intervals.append(i["daemon-poll-interval"])
+        except TypeError:
+            return "N/A"
+        return daemon_poll_intervals
 
     @property
-    def conf_pools_daemon_job_timeout_property(self) -> bool:
+    def conf_pools_daemon_job_timeout_property(self) -> Union[List[int], str]:
         """
         Retrieves the pools daemon job timeout from the config data.
 
         Returns:
-            bool: Pools daemon job timeout, or "N/A" if not available.
+            Union[List[int], str]: Pools daemon job timeout, or "N/A" if not available.
         """
-        return self._get_data_from_cache(self._config_cache, ["pools", 0, "daemon-job-timeout"], self._config_table_name, "pools.0.daemon-job-timeout")
-    
+        daemon_job_timeouts = []
+        try:
+            for i in self._get_data_from_cache(self._config_cache, ["pools"], self._config_table_name, "pools"):
+                daemon_job_timeouts.append(i["daemon-job-timeout"])
+        except TypeError:
+            return "N/A"
+        return daemon_job_timeouts
+
     @property
-    def conf_pools_daemon_zmq_port_property(self) -> bool:
+    def conf_pools_daemon_zmq_port_property(self) -> Union[List[int], str]:
         """
         Retrieves the pools daemon ZMQ port from the config data.
 
         Returns:
-            bool: Pools daemon ZMQ port, or "N/A" if not available.
+            Union[List[int], str]: Pools daemon ZMQ port, or "N/A" if not available.
         """
-        return self._get_data_from_cache(self._config_cache, ["pools", 0, "daemon-zmq-port"], self._config_table_name, "pools.0.daemon-zmq-port")
+        daemon_zmq_ports = []
+        try:
+            for i in self._get_data_from_cache(self._config_cache, ["pools"], self._config_table_name, "pools"):
+                daemon_zmq_ports.append(i["daemon-zmq-port"])
+        except TypeError:
+            return "N/A"
+        return daemon_zmq_ports
 
     @property
-    def conf_pools_socks5_property(self) -> Optional[str]:
+    def conf_pools_socks5_property(self) -> Union[List[Optional[str]], str]:
         """
         Retrieves the pools SOCKS5 from the config data.
 
         Returns:
-            Optional[str]: Pools SOCKS5, or "N/A" if not available.
+            Union[List[Optional[str]], str]: Pools SOCKS5, or "N/A" if not available.
         """
-        return self._get_data_from_cache(self._config_cache, ["pools", 0, "socks5"], self._config_table_name, "pools.0.socks5")
+        socks5_values = []
+        try:
+            for i in self._get_data_from_cache(self._config_cache, ["pools"], self._config_table_name, "pools"):
+                socks5_values.append(i["socks5"])
+        except TypeError:
+            return "N/A"
+        return socks5_values
 
     @property
-    def conf_pools_self_select_property(self) -> Optional[str]:
+    def conf_pools_self_select_property(self) -> Union[List[Optional[str]], str]:
         """
         Retrieves the pools self-select from the config data.
 
         Returns:
-            Optional[str]: Pools self-select, or "N/A" if not available.
+            Union[List[Optional[str]], str]: Pools self-select, or "N/A" if not available.
         """
-        return self._get_data_from_cache(self._config_cache, ["pools", 0, "self-select"], self._config_table_name, "pools.0.self-select")
+        self_selects = []
+        try:
+            for i in self._get_data_from_cache(self._config_cache, ["pools"], self._config_table_name, "pools"):
+                self_selects.append(i["self-select"])
+        except TypeError:
+            return "N/A"
+        return self_selects
 
     @property
-    def conf_pools_submit_to_origin_property(self) -> bool:
+    def conf_pools_submit_to_origin_property(self) -> Union[List[bool], str]:
         """
         Retrieves the pools submit to origin status from the config data.
 
         Returns:
-            bool: Pools submit to origin status, or "N/A" if not available.
+            Union[List[bool], str]: Pools submit to origin status, or "N/A" if not available.
         """
-        return self._get_data_from_cache(self._config_cache, ["pools", 0, "submit-to-origin"], self._config_table_name, "pools.0.submit-to-origin")
+        submit_to_origins = []
+        try:
+            for i in self._get_data_from_cache(self._config_cache, ["pools"], self._config_table_name, "pools"):
+                submit_to_origins.append(i["submit-to-origin"])
+        except TypeError:
+            return "N/A"
+        return submit_to_origins
 
     @property
     def conf_retries_property(self) -> int:
@@ -2817,7 +3122,7 @@ class XMRigAPI:
         Returns:
             int: Retry pause, or "N/A" if not available.
         """
-        return self._get_data_from_cache(self._config_cache, ["retry-pause"], self._config_table_name, "retry-pause")
+        return self._get_data_from_cache(self._config_cache, ["retry-pause"], self._config_table_name, "retry_pause")
 
     @property
     def conf_print_time_property(self) -> int:
@@ -2827,7 +3132,7 @@ class XMRigAPI:
         Returns:
             int: Print time, or "N/A" if not available.
         """
-        return self._get_data_from_cache(self._config_cache, ["print-time"], self._config_table_name, "print-time")
+        return self._get_data_from_cache(self._config_cache, ["print-time"], self._config_table_name, "print_time")
 
     @property
     def conf_health_print_time_property(self) -> int:
@@ -2837,7 +3142,7 @@ class XMRigAPI:
         Returns:
             int: Health print time, or "N/A" if not available.
         """
-        return self._get_data_from_cache(self._config_cache, ["health-print-time"], self._config_table_name, "health-print-time")
+        return self._get_data_from_cache(self._config_cache, ["health-print-time"], self._config_table_name, "health_print_time")
 
     @property
     def conf_dmi_property(self) -> bool:
@@ -2877,7 +3182,7 @@ class XMRigAPI:
         Returns:
             bool: TLS enabled status, or "N/A" if not available.
         """
-        return self._get_data_from_cache(self._config_cache, ["tls", "enabled"], self._config_table_name, "tls.enabled")
+        return self._get_data_from_cache(self._config_cache, ["tls", "enabled"], self._config_table_name, "tls_enabled")
 
     @property
     def conf_tls_protocols_property(self) -> Optional[str]:
@@ -2887,7 +3192,7 @@ class XMRigAPI:
         Returns:
             Optional[str]: TLS protocols, or "N/A" if not available.
         """
-        return self._get_data_from_cache(self._config_cache, ["tls", "protocols"], self._config_table_name, "tls.protocols")
+        return self._get_data_from_cache(self._config_cache, ["tls", "protocols"], self._config_table_name, "tls_protocols")
 
     @property
     def conf_tls_cert_property(self) -> Optional[str]:
@@ -2897,7 +3202,7 @@ class XMRigAPI:
         Returns:
             Optional[str]: TLS certificate, or "N/A" if not available.
         """
-        return self._get_data_from_cache(self._config_cache, ["tls", "cert"], self._config_table_name, "tls.cert")
+        return self._get_data_from_cache(self._config_cache, ["tls", "cert"], self._config_table_name, "tls_cert")
 
     @property
     def conf_tls_cert_key_property(self) -> Optional[str]:
@@ -2907,7 +3212,7 @@ class XMRigAPI:
         Returns:
             Optional[str]: TLS certificate key, or "N/A" if not available.
         """
-        return self._get_data_from_cache(self._config_cache, ["tls", "cert_key"], self._config_table_name, "tls.cert_key")
+        return self._get_data_from_cache(self._config_cache, ["tls", "cert_key"], self._config_table_name, "tls_cert_key")
 
     @property
     def conf_tls_ciphers_property(self) -> Optional[str]:
@@ -2917,7 +3222,7 @@ class XMRigAPI:
         Returns:
             Optional[str]: TLS ciphers, or "N/A" if not available.
         """
-        return self._get_data_from_cache(self._config_cache, ["tls", "ciphers"], self._config_table_name, "tls.ciphers")
+        return self._get_data_from_cache(self._config_cache, ["tls", "ciphers"], self._config_table_name, "tls_ciphers")
 
     @property
     def conf_tls_ciphersuites_property(self) -> Optional[str]:
@@ -2927,7 +3232,7 @@ class XMRigAPI:
         Returns:
             Optional[str]: TLS ciphersuites, or "N/A" if not available.
         """
-        return self._get_data_from_cache(self._config_cache, ["tls", "ciphersuites"], self._config_table_name, "tls.ciphersuites")
+        return self._get_data_from_cache(self._config_cache, ["tls", "ciphersuites"], self._config_table_name, "tls_ciphersuites")
 
     @property
     def conf_tls_dhparam_property(self) -> Optional[str]:
@@ -2937,7 +3242,7 @@ class XMRigAPI:
         Returns:
             Optional[str]: TLS DH parameter, or "N/A" if not available.
         """
-        return self._get_data_from_cache(self._config_cache, ["tls", "dhparam"], self._config_table_name, "tls.dhparam")
+        return self._get_data_from_cache(self._config_cache, ["tls", "dhparam"], self._config_table_name, "tls_dhparam")
 
     @property
     def conf_dns_property(self) -> Dict[str, Union[bool, int]]:
@@ -2957,7 +3262,7 @@ class XMRigAPI:
         Returns:
             bool: DNS IPv6 status, or "N/A" if not available.
         """
-        return self._get_data_from_cache(self._config_cache, ["dns", "ipv6"], self._config_table_name, "dns.ipv6")
+        return self._get_data_from_cache(self._config_cache, ["dns", "ipv6"], self._config_table_name, "dns_ipv6")
 
     @property
     def conf_dns_ttl_property(self) -> int:
@@ -2967,7 +3272,7 @@ class XMRigAPI:
         Returns:
             int: DNS TTL, or "N/A" if not available.
         """
-        return self._get_data_from_cache(self._config_cache, ["dns", "ttl"], self._config_table_name, "dns.ttl")
+        return self._get_data_from_cache(self._config_cache, ["dns", "ttl"], self._config_table_name, "dns_ttl")
 
     @property
     def conf_user_agent_property(self) -> Optional[str]:
@@ -2977,7 +3282,7 @@ class XMRigAPI:
         Returns:
             Optional[str]: User agent, or "N/A" if not available.
         """
-        return self._get_data_from_cache(self._config_cache, ["user-agent"], self._config_table_name, "user-agent")
+        return self._get_data_from_cache(self._config_cache, ["user-agent"], self._config_table_name, "user_agent")
 
     @property
     def conf_verbose_property(self) -> int:
@@ -3007,7 +3312,7 @@ class XMRigAPI:
         Returns:
             bool: Rebench algorithm status, or "N/A" if not available.
         """
-        return self._get_data_from_cache(self._config_cache, ["rebench-algo"], self._config_table_name, "rebench-algo")
+        return self._get_data_from_cache(self._config_cache, ["rebench-algo"], self._config_table_name, "rebench_algo")
 
     @property
     def conf_bench_algo_time_property(self) -> int:
@@ -3017,7 +3322,7 @@ class XMRigAPI:
         Returns:
             int: Bench algorithm time, or "N/A" if not available.
         """
-        return self._get_data_from_cache(self._config_cache, ["bench-algo-time"], self._config_table_name, "bench-algo-time")
+        return self._get_data_from_cache(self._config_cache, ["bench-algo-time"], self._config_table_name, "bench_algo_time")
 
     @property
     def conf_pause_on_battery_property(self) -> bool:
@@ -3027,7 +3332,7 @@ class XMRigAPI:
         Returns:
             bool: Pause on battery status, or "N/A" if not available.
         """
-        return self._get_data_from_cache(self._config_cache, ["pause-on-battery"], self._config_table_name, "pause-on-battery")
+        return self._get_data_from_cache(self._config_cache, ["pause-on-battery"], self._config_table_name, "pause_on_battery")
 
     @property
     def conf_pause_on_active_property(self) -> bool:
@@ -3037,7 +3342,7 @@ class XMRigAPI:
         Returns:
             bool: Pause on active status, or "N/A" if not available.
         """
-        return self._get_data_from_cache(self._config_cache, ["pause-on-active"], self._config_table_name, "pause-on-active")
+        return self._get_data_from_cache(self._config_cache, ["pause-on-active"], self._config_table_name, "pause_on_active")
 
 # Define the public interface of the module
 __all__ = ["XMRigAPI"]
