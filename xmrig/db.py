@@ -381,17 +381,18 @@ class XMRigDatabase:
             session.close()
     
     @classmethod
-    def retrieve_data_from_db(cls, db_url: str, table_name: str, selection: Union[str, List[str]] = "*", start_time: datetime = None, end_time: datetime = None, limit: int = 1) -> Union[List[Dict[str, Any]], str]:
+    def retrieve_data_from_db(cls, db_url: str, table_name: str, miner_name: str, selection: Union[str, List[str]] = "*", start_time: datetime = None, end_time: datetime = None, limit: int = 1) -> Union[List[Dict[str, Any]], str]:
         """
         Retrieves data from the specified database table within the given timeframe.
 
         Args:
             db_url (str): Database URL for creating the engine.
             table_name (str): Name of the table to retrieve data from.
+            miner_name (str): Name of the miner to filter data by.
             selection (Union[str, List[str]], optional): Column(s) to select from the table. Defaults to "*".
             start_time (datetime, optional): Start time for the data retrieval. Defaults to None.
             end_time (datetime, optional): End time for the data retrieval. Defaults to None.
-            limit (int, optional): Limit the number of rows retrieved. Defaults to None.
+            limit (int, optional): Limit the number of rows retrieved. Defaults to 1.
 
         Returns:
             Union[List[Dict[str, Any]], str]: List of dictionaries containing the retrieved data or "N/A" if the table does not exist.
@@ -401,29 +402,48 @@ class XMRigDatabase:
         """
         data = "N/A"
         try:
-            if cls.check_table_exists(db_url, table_name) is True:
+            if cls.check_table_exists(db_url, table_name):
                 engine = cls.get_db(db_url)
-                if isinstance(selection, list):
-                    selection = ", ".join(selection)
-                # use single quotes for the f-string and double quotes for the selection and table name
-                query = f'SELECT "{selection}" FROM "{table_name}"'
-                conditions = []
-                params = {}
+                Session = sessionmaker(bind=engine)
+                session = Session()
+
+                # Map table names to ORM model classes
+                table_model_map = {
+                    "summary": Summary,
+                    "config": Config,
+                    "backends": Backends,
+                }
+
+                model_class = table_model_map.get(table_name)
+                if not model_class:
+                    raise ValueError(f"Table '{table_name}' does not have a corresponding ORM model class.")
+
+                # Build the query
+                query = session.query(model_class)
+
+                # Apply selection
+                if selection != "*":
+                    if isinstance(selection, list):
+                        query = query.with_entities(*[getattr(model_class, col) for col in selection])
+                    else:
+                        query = query.with_entities(getattr(model_class, selection))
+
+                # Apply miner_name filter
+                query = query.filter(model_class.miner_name == miner_name)
+
+                # Apply time filters
                 if start_time:
-                    conditions.append("timestamp >= :start_time")
-                    params["start_time"] = start_time
+                    query = query.filter(model_class.timestamp >= start_time)
                 if end_time:
-                    conditions.append("timestamp <= :end_time")
-                    params["end_time"] = end_time
-                if conditions:
-                    query += " WHERE " + " AND ".join(conditions)
-                query += " ORDER BY timestamp DESC"
-                if limit:
-                    query += " LIMIT :limit"
-                    params["limit"] = limit
-                df = pd.read_sql(query, engine, params=params)
-                if not df.empty:
-                    data = df.to_dict(orient='records')
+                    query = query.filter(model_class.timestamp <= end_time)
+
+                # Apply limit
+                query = query.order_by(model_class.timestamp.desc()).limit(limit)
+
+                # Execute the query and fetch results
+                results = query.all()
+                if results:
+                    data = [result._asdict() for result in results]
                 else:
                     data = "N/A"
             else:
@@ -431,8 +451,10 @@ class XMRigDatabase:
         except Exception as e:
             raise XMRigDatabaseError(e, traceback.format_exc(), f"An error occurred retrieving data from the database:") from e
         finally:
-            return data
+            session.close()
+        return data
 
+    # TODO: Refactor after database changes to remove all data related to a specific miner
     @classmethod
     def delete_all_miner_data_from_db(cls, miner_name: str, db_url: str) -> None:
         """
