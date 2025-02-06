@@ -8,10 +8,10 @@ class TestXMRigManager(unittest.TestCase):
     def setUp(self):
         self.manager = XMRigManager()
 
-    @patch('xmrig.manager.requests.get')
+    @patch('requests.get')
     @patch('xmrig.manager.XMRigAPI.get_endpoint', return_value=True)
     @patch('xmrig.manager.XMRigAPI.get_all_responses', return_value=True)
-    @patch('xmrig.manager.XMRigAPI')
+    @patch('xmrig.api.XMRigAPI')
     def test_add_miner(self, mock_api, mock_get_all_responses, mock_get_endpoint, mock_requests_get):
         mock_requests_get.return_value.status_code = 200
         mock_requests_get.return_value.json.return_value = {}
