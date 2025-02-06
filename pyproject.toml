@@ -15,7 +15,6 @@ classifiers = [
 dependencies = [
     "mkdocs-material",
     "mkdocstrings[python]",
-    "pandas",
     "requests",
     "SQLAlchemy",
 ]
