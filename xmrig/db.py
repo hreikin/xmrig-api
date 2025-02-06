@@ -55,21 +55,23 @@ class XMRigDatabase:
             raise XMRigDatabaseError(e, traceback.format_exc(), f"An error occurred initializing the database:") from e
     
     @classmethod
-    def get_db(cls, db_url: str) -> Engine:
+    def get_db_session(cls, db_url):
         """
-        Returns the database engine for the specified database URL.
+        Returns a new session for the specified database URL.
 
         Args:
-            db_url (str): Database URL for creating the engine.
+            db_url (str): Database URL for creating the session.
 
         Returns:
-            Engine: SQLAlchemy engine instance.
+            Session: SQLAlchemy session instance.
 
         Raises:
             XMRigDatabaseError: If the database engine does not exist.
         """
         try:
-            return cls._engines[db_url]
+            engine = cls._engines[db_url]
+            Session = sessionmaker(bind=engine)
+            return Session()
         except KeyError as e:
             raise XMRigDatabaseError(e, traceback.format_exc(), f"Database engine for '{db_url}' does not exist. Please initialize the database first.") from e
 
