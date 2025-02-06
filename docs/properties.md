@@ -4,7 +4,7 @@ Many properties have been created to enable you to access any data from any of t
 
 ## Availability
 
-There are currently 266 properties available, however not every property will be available depending on which fork of `xmrig` you are using. Here is a table that shows which properties are supported by which fork.
+There are currently 264 properties available, however not every property will be available depending on which fork of `xmrig` you are using. Here is a table that shows which properties are supported by which fork.
 
 | Property Name                                    | XMRig | XMRig-MO |
 |--------------------------------------------------|-------|----------|
@@ -126,7 +126,6 @@ There are currently 266 properties available, however not every property will be
 | `be_opencl_threads_index`                        | NO    | YES      |
 | `be_opencl_threads_intensity`                    | NO    | YES      |
 | `be_opencl_threads_worksize`                     | NO    | YES      |
-| `be_opencl_threads_amount`                       | NO    | YES      |
 | `be_opencl_threads_unroll`                       | NO    | YES      |
 | `be_opencl_threads_affinity`                     | NO    | YES      |
 | `be_opencl_threads_hashrates`                    | NO    | YES      |
@@ -158,7 +157,6 @@ There are currently 266 properties available, however not every property will be
 | `be_cuda_hashrate_15m`                           | NO    | YES      |
 | `be_cuda_threads`                                | NO    | YES      |
 | `be_cuda_threads_index`                          | NO    | YES      |
-| `be_cuda_threads_amount`                         | NO    | YES      |
 | `be_cuda_threads_blocks`                         | NO    | YES      |
 | `be_cuda_threads_bfactor`                        | NO    | YES      |
 | `be_cuda_threads_bsleep`                         | NO    | YES      |
