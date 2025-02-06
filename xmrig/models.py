@@ -1,20 +1,6 @@
-from sqlalchemy import Column, Integer, String, Boolean, Float, JSON, ForeignKey, DateTime
-from sqlalchemy.orm import relationship
+from sqlalchemy import Column, Integer, String, Boolean, Float, JSON, DateTime
 from sqlalchemy.ext.declarative import declarative_base
 from datetime import datetime
-
-# // TODO: Add Memory ORM model with relationship to Resources
-# // TODO: Add copy of data in JSON format to the sub-tables
-# // TODO: Finish models for, opencl, cuda, tls, and dns in config.json
-# // TODO: Fix models so all backends data is contained within the same table
-# // TODO: Double check all values from the json are included within the models
-# // TODO: Switch id/uid in models to be consistent with the JSON data
-# // TODO: Double check all values have correct types based on the XMRig documentation for config.json 
-# // TODO: and the JSON data for summary and backends
-# // TODO: Check if the types are correct for the marked columns in the models (those columns can hold 
-# // TODO: multiple types) - use JSON type for those columns ?
-# // TODO: Add a BenchmarkConfig model based on benchmark section of the documentation
-# // TODO: Remove relationships from the models, use JSON type for the copy of the dictionary and use dot notation for the names of the columns for the data items contained within the dictionaries
 
 Base = declarative_base()
 
@@ -177,7 +163,7 @@ class Config(Base):
     benchmark_submit = Column(Boolean)
     benchmark_verify = Column(String)
     benchmark_seed = Column(String)
-    benchmark_hash_num = Column(String)
+    benchmark_hash = Column(String)
 
 class Backends(Base):
     __tablename__ = "backends"
