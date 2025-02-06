@@ -11,8 +11,9 @@ It includes functionalities for:
 - Fallback to the database if the data is not available in the cached responses.
 """
 
-# TODO: Work through methods to make some "private" ?
+# // TODO: Add missing options from xmrig documentation for config.json, uncomment the commented out tests that are related
 # TODO: Update tests to reflect the recent changes
+# TODO: Work through methods to make some "private" ?
 # TODO: Update the docstrings to reflect the recent changes
 # TODO: PEP compliant docstrings
 
@@ -1026,7 +1027,7 @@ class XMRigAPI:
         Returns:
             list: Hashrate total information, or "N/A" if not available.
         """
-        return self._get_data_from_cache(self._summary_cache, ["hashrate"], self._summary_table_name, "hashrate_total")
+        return self._get_data_from_cache(self._summary_cache, ["hashrate", "total"], self._summary_table_name, "hashrate_total")
 
     @property
     def sum_hashrate_10s(self):
@@ -1508,7 +1509,7 @@ class XMRigAPI:
         Returns:
             float: OpenCL backend hashrate for the last 10 seconds, or "N/A" if not available.
         """
-        result = self._get_data_from_cache(self._backends_cache, [1, "hashrate", 0], self._backends_table_name, "opencl_hashrate")
+        result = self._get_data_from_cache(self._backends_cache, [1, "hashrate"], self._backends_table_name, "opencl_hashrate")
         return result[0] if result != "N/A" else result
 
     @property
@@ -1519,7 +1520,7 @@ class XMRigAPI:
         Returns:
             float: OpenCL backend hashrate for the last 1 minute, or "N/A" if not available.
         """
-        result = self._get_data_from_cache(self._backends_cache, [1, "hashrate", 1], self._backends_table_name, "opencl_hashrate")
+        result = self._get_data_from_cache(self._backends_cache, [1, "hashrate"], self._backends_table_name, "opencl_hashrate")
         return result[1] if result != "N/A" else result
 
     @property
@@ -1530,7 +1531,7 @@ class XMRigAPI:
         Returns:
             float: OpenCL backend hashrate for the last 15 minutes, or "N/A" if not available.
         """
-        result = self._get_data_from_cache(self._backends_cache, [1, "hashrate", 2], self._backends_table_name, "opencl_hashrate")
+        result = self._get_data_from_cache(self._backends_cache, [1, "hashrate"], self._backends_table_name, "opencl_hashrate")
         return result[2] if result != "N/A" else result
 
     @property
@@ -1590,22 +1591,6 @@ class XMRigAPI:
         except TypeError as e:
             return "N/A"
         return worksizes
-
-    @property
-    def be_opencl_threads_amount(self):
-        """
-        Retrieves the OpenCL backend threads amount from the backends data.
-
-        Returns:
-            list: OpenCL backend threads amount, or "N/A" if not available.
-        """
-        amounts = []
-        try:
-            for i in self._get_data_from_cache(self._backends_cache, [1, "threads"], self._backends_table_name, "opencl_threads"):
-                amounts.append(i["threads"])
-        except TypeError as e:
-            return "N/A"
-        return amounts
 
     @property
     def be_opencl_threads_unroll(self):
@@ -2027,22 +2012,6 @@ class XMRigAPI:
         except KeyError:
             return "N/A"
         return indexes
-
-    @property
-    def be_cuda_threads_amount(self):
-        """
-        Retrieves the CUDA backend threads amount from the backends data.
-
-        Returns:
-            list: CUDA backend threads amount, or "N/A" if not available.
-        """
-        amounts = []
-        try:
-            for i in self._get_data_from_cache(self._backends_cache, [2, "threads"], self._backends_table_name, "cuda_threads"):
-                amounts.append(i["threads"])
-        except KeyError:
-            return "N/A"
-        return amounts
 
     @property
     def be_cuda_threads_blocks(self):
