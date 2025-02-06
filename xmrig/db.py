@@ -24,6 +24,7 @@ class XMRigDatabase:
 
     Attributes:
         _engines (dict): A dictionary to store database engines.
+        _table_model_map (dict): A dictionary mapping table names to their corresponding ORM models.
     """
 
     _engines = {}
