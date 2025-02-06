@@ -381,7 +381,7 @@ class XMRigDatabase:
             session.close()
     
     @classmethod
-    def retrieve_data_from_db(cls, db_url: str, table_name: str, miner_name: str, selection: Union[str, List[str]] = "*", start_time: datetime = None, end_time: datetime = None, limit: int = 1) -> Union[List[Dict[str, Any]], str]:
+    def retrieve_data_from_db(cls, db_url, table_name, miner_name, selection = "*", start_time = None, end_time = None, limit = 1):
         """
         Retrieves data from the specified database table within the given timeframe.
 
@@ -389,65 +389,53 @@ class XMRigDatabase:
             db_url (str): Database URL for creating the engine.
             table_name (str): Name of the table to retrieve data from.
             miner_name (str): Name of the miner to filter data by.
-            selection (Union[str, List[str]], optional): Column(s) to select from the table. Defaults to "*".
+            selection (str, optional): Column(s) to select from the table. Defaults to "*".
             start_time (datetime, optional): Start time for the data retrieval. Defaults to None.
             end_time (datetime, optional): End time for the data retrieval. Defaults to None.
             limit (int, optional): Limit the number of rows retrieved. Defaults to 1.
 
         Returns:
-            Union[List[Dict[str, Any]], str]: List of dictionaries containing the retrieved data or "N/A" if the table does not exist.
+            list: List of dictionaries containing the retrieved data or "N/A" if the table does not exist.
 
         Raises:
             XMRigDatabaseError: If an error occurs while retrieving data from the database.
         """
         data = "N/A"
         try:
-            if cls.check_table_exists(db_url, table_name):
-                engine = cls.get_db(db_url)
-                Session = sessionmaker(bind=engine)
-                session = Session()
+            session = cls.get_db_session(db_url)
 
-                # Map table names to ORM model classes
-                table_model_map = {
-                    "summary": Summary,
-                    "config": Config,
-                    "backends": Backends,
-                }
+            model_class = cls._table_model_map.get(table_name)
+            if not model_class:
+                raise ValueError(f"Table '{table_name}' does not have a corresponding ORM model class.")
 
-                model_class = table_model_map.get(table_name)
-                if not model_class:
-                    raise ValueError(f"Table '{table_name}' does not have a corresponding ORM model class.")
+            # Build the query
+            query = session.query(model_class)
 
-                # Build the query
-                query = session.query(model_class)
-
-                # Apply selection
-                if selection != "*":
-                    if isinstance(selection, list):
-                        query = query.with_entities(*[getattr(model_class, col) for col in selection])
-                    else:
-                        query = query.with_entities(getattr(model_class, selection))
-
-                # Apply miner_name filter
-                query = query.filter(model_class.miner_name == miner_name)
-
-                # Apply time filters
-                if start_time:
-                    query = query.filter(model_class.timestamp >= start_time)
-                if end_time:
-                    query = query.filter(model_class.timestamp <= end_time)
-
-                # Apply limit
-                query = query.order_by(model_class.timestamp.desc()).limit(limit)
-
-                # Execute the query and fetch results
-                results = query.all()
-                if results:
-                    data = [result._asdict() for result in results]
+            # Apply selection
+            if selection != "*":
+                if isinstance(selection, list):
+                    query = query.with_entities(*[getattr(model_class, col) for col in selection])
                 else:
-                    data = "N/A"
+                    query = query.with_entities(getattr(model_class, selection))
+
+            # Apply miner_name filter
+            query = query.filter(model_class.miner_name == miner_name)
+
+            # Apply time filters
+            if start_time:
+                query = query.filter(model_class.timestamp >= start_time)
+            if end_time:
+                query = query.filter(model_class.timestamp <= end_time)
+
+            # Apply limit
+            query = query.order_by(model_class.timestamp.desc()).limit(limit)
+
+            # Execute the query and fetch results
+            results = query.all()
+            if results:
+                data = [result._asdict() for result in results]
             else:
-                log.error(f"Table '{table_name}' does not exist in the database")
+                data = "N/A"
         except Exception as e:
             raise XMRigDatabaseError(e, traceback.format_exc(), f"An error occurred retrieving data from the database:") from e
         finally:
