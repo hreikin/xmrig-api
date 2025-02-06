@@ -1,5 +1,5 @@
 """
-XMRig Helpers module.
+XMRig Logger module.
 
 This module provides logging configuration for the XMRig API interactions and operations.
 """
