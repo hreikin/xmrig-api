@@ -1114,10 +1114,10 @@ class XMRigAPI:
             list: Enabled backends, or "N/A" if not available.
         """
         enabled_backends = []
-        if len(self._backends_cache) >= 1:
+        if self._backends_cache and len(self._backends_cache) >= 1:
             if self._get_data_from_cache(self._backends_cache, [0, "enabled"], self._backends_table_name, "cpu_enabled"):
                 enabled_backends.append(self._get_data_from_cache(self._backends_cache, [0, "type"], self._backends_table_name, "cpu_type"))
-        if len(self._backends_cache) >= 2:
+        if self._backends_cache and len(self._backends_cache) >= 2:
             if self._get_data_from_cache(self._backends_cache, [1, "enabled"], self._backends_table_name, "opencl_enabled"):
                 enabled_backends.append(self._get_data_from_cache(self._backends_cache, [1, "type"], self._backends_table_name, "opencl_type"))
             if self._get_data_from_cache(self._backends_cache, [2, "enabled"], self._backends_table_name, "cuda_enabled"):
