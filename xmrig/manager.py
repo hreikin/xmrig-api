@@ -49,7 +49,7 @@ class XMRigManager:
         Args:
             miner_name (str): A unique name for the miner.
             ip (str): IP address or domain of the XMRig API.
-            port (str): Port of the XMRig API.
+            port (int): Port of the XMRig API.
             access_token (str, optional): Access token for authorization. Defaults to None.
             tls_enabled (bool, optional): TLS status of the miner/API. Defaults to False.
 
@@ -111,7 +111,7 @@ class XMRigManager:
 
         - miner_name (str): A unique name for the miner.
         - ip (str): IP address or domain of the XMRig API.
-        - port (str): Port of the XMRig API.
+        - port (int): Port of the XMRig API.
         - access_token (str): Access token for authorization.
         - tls_enabled (bool): TLS status of the miner/API.
 

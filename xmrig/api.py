@@ -11,24 +11,6 @@ It includes functionalities for:
 - Fallback to the database if the data is not available in the cached responses.
 """
 
-# // TODO: Remove quotes from table names in variables, add them to the query string instead, update check_table_exists, etc to reflect this change
-# // TODO: Merge properties.py into this class, remove the properties.py file
-# // TODO: Add the json flattened into the db as well as the raw json
-# // TODO: Create new method to retrieve data from the db and return a single item or multiple from a timerange, default to the last 1 result
-# // TODO: Update _get_data_from_cache method to use new method to retrieve data from the db, add a selection argument to the method to allow for selecting specific columns
-# // TODO: Update the property getters
-# // TODO: Update delete_all_miner_data_from_db method and related variables to reflect the new changes to table names stored within the db
-# // TODO: Create ORM models for the database tables
-# // TODO: Refactor the code to use the ORM models within insert_data_to_db 
-# // TODO: Refactor the retrieve_data_from_db method 
-# // TODO: Update property getters after database changes
-# // TODO: Refactor get_db to return a session instead of an engine
-# // TODO: Add table map to class variables and remove redundant table maps from methods
-# // TODO: Remove type hinting, too much clutter and no real value is added
-# // TODO: Fix returns section of docstrings
-# // TODO: General code cleanup
-# // TODO: Create properties relating to benchmark object in config file
-# // TODO: Test property getters against live data
 # TODO: Work through methods to make some "private" ?
 # TODO: Update tests to reflect the recent changes
 # TODO: Update the docstrings to reflect the recent changes
@@ -48,7 +30,7 @@ class XMRigAPI:
     Attributes:
         _miner_name (str): Unique name for the miner.
         _ip (str): IP address of the XMRig API.
-        _port (str): Port of the XMRig API.
+        _port (int): Port of the XMRig API.
         _access_token (Optional[str]): Access token for authorization.
         _base_url (str): Base URL for the XMRig API.
         _json_rpc_url (str): URL for the JSON RPC.
@@ -65,7 +47,7 @@ class XMRigAPI:
         _config_table_name (str): Table name for config data.
     """
 
-    def __init__(self, miner_name: str, ip: str, port: str, access_token = None, tls_enabled = False, db_url = None):
+    def __init__(self, miner_name, ip, port, access_token = None, tls_enabled = False, db_url = None):
         """
         Initializes the XMRig instance with the provided IP, port, and access token.
 
@@ -75,7 +57,7 @@ class XMRigAPI:
         Args:
             miner_name (str): A unique name for the miner.
             ip (str): IP address or domain of the XMRig API.
-            port (str): Port of the XMRig API.
+            port (int): Port of the XMRig API.
             access_token (str, optional): Access token for authorization. Defaults to None.
             tls_enabled (bool, optional): TLS status of the miner/API. Defaults to False.
             db_url (str, optional): Database URL for storing miner data. Defaults to None.
