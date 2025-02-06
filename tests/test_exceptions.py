@@ -1,5 +1,5 @@
 import unittest
-from xmrig.exceptions import XMRigAPIError, XMRigAuthorizationError, XMRigConnectionError, XMRigDatabaseError, XMRigManagerError, XMRigPropertiesError
+from xmrig.exceptions import XMRigAPIError, XMRigAuthorizationError, XMRigConnectionError, XMRigDatabaseError, XMRigManagerError
 
 class TestXMRigExceptions(unittest.TestCase):
 
@@ -22,10 +22,6 @@ class TestXMRigExceptions(unittest.TestCase):
     def test_XMRigManagerError(self):
         with self.assertRaises(XMRigManagerError):
             raise XMRigManagerError("Manager error occurred")
-
-    def test_XMRigPropertiesError(self):
-        with self.assertRaises(XMRigPropertiesError):
-            raise XMRigPropertiesError("Properties error occurred")
 
 if __name__ == '__main__':
     unittest.main()
