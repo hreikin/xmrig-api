@@ -30,6 +30,11 @@ class XMRigDatabase:
     """
 
     _engines = {}
+    _table_model_map = {
+        "summary": Summary,
+        "config": Config,
+        "backends": Backends,
+    }
 
     @classmethod
     def init_db(cls, db_url: str) -> Engine:
