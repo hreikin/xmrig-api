@@ -270,7 +270,7 @@ class XMRigDatabase:
                     benchmark_submit = benchmark_data.get("submit"),
                     benchmark_verify = benchmark_data.get("verify"),
                     benchmark_seed = benchmark_data.get("seed"),
-                    benchmark_hash_num = benchmark_data.get("hash-num"),
+                    benchmark_hash = benchmark_data.get("hash-num"),
                 )
                 # Add instance to the session
                 session.add(config)
