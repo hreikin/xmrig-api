@@ -67,6 +67,7 @@
             "coin": null,
             "url": "gulf.moneroocean.stream:10128",
             "user": "YOUR_WALLET_ADDRESS",
+            "spend-secret-key": null,
             "pass": "x",
             "rig-id": null,
             "nicehash": false,
@@ -74,7 +75,11 @@
             "enabled": true,
             "tls": false,
             "tls-fingerprint": null,
+            "sni": false,
             "daemon": false,
+            "daemon-poll-interval": 1000,
+            "daemon-job-timeout": 15000,
+            "daemon-zmq-port": null,
             "socks5": null,
             "self-select": null,
             "submit-to-origin": false
@@ -105,5 +110,13 @@
     "rebench-algo": false,
     "bench-algo-time": 20,
     "pause-on-battery": false,
-    "pause-on-active": false
+    "pause-on-active": false,
+    "benchmark": {
+        "size": null,
+        "algo": "rx/0",
+        "submit": false,
+        "verify": null,
+        "seed": null,
+        "hash": null
+    }
 }
