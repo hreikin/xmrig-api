@@ -128,7 +128,7 @@ XMRigProperties:
 - sum_donate_level: Retrieves the miner's donation level.
 - sum_paused: Retrieves the miner's paused status.
 - sum_algorithms: Retrieves the algorithms used by the miner.
-- sum_hashrates: Retrieves the miner's hashrates.
+- sum_hashrate: Retrieves the miner's hashrates.
 - sum_hashrate_10s: Retrieves the miner's hashrate over the last 10 seconds.
 - sum_hashrate_1m: Retrieves the miner's hashrate over the last 1 minute.
 - sum_hashrate_15m: Retrieves the miner's hashrate over the last 15 minutes.
@@ -225,7 +225,105 @@ XMRigProperties:
 - be_cuda_threads_global_mem: Retrieves the CUDA backend threads global memory.
 - be_cuda_threads_clock: Retrieves the CUDA backend threads clock speed.
 - be_cuda_threads_memory_clock: Retrieves the CUDA backend threads memory clock speed.
-# TODO :Add missing config properties
+- conf_api_property: Retrieves the API configuration.
+- conf_api_id_property: Retrieves the API ID.
+- conf_api_worker_id_property: Retrieves the API worker ID.
+- conf_http_property: Retrieves the HTTP configuration.
+- conf_http_enabled_property: Retrieves the HTTP enabled status.
+- conf_http_host_property: Retrieves the HTTP host.
+- conf_http_port_property: Retrieves the HTTP port.
+- conf_http_access_token_property: Retrieves the HTTP access token.
+- conf_http_restricted_property: Retrieves the HTTP restricted status.
+- conf_autosave_property: Retrieves the autosave property.
+- conf_background_property: Retrieves the background property.
+- conf_colors_property: Retrieves the colors property.
+- conf_title_property: Retrieves the title property.
+- conf_randomx_property: Retrieves the RandomX configuration.
+- conf_randomx_init_property: Retrieves the RandomX init property.
+- conf_randomx_init_avx2_property: Retrieves the RandomX AVX2 property.
+- conf_randomx_mode_property: Retrieves the RandomX mode property.
+- conf_randomx_1gb_pages_property: Retrieves the RandomX 1GB pages property.
+- conf_randomx_rdmsr_property: Retrieves the RandomX RDMSR property.
+- conf_randomx_wrmsr_property: Retrieves the RandomX WRMSR property.
+- conf_randomx_cache_qos_property: Retrieves the RandomX cache QoS property.
+- conf_randomx_numa_property: Retrieves the RandomX NUMA property.
+- conf_randomx_scratchpad_prefetch_mode_property: Retrieves the RandomX scratchpad prefetch mode property.
+- conf_cpu_property: Retrieves the CPU configuration.
+- conf_cpu_enabled_property: Retrieves the CPU enabled status.
+- conf_cpu_huge_pages_property: Retrieves the CPU huge pages property.
+- conf_cpu_huge_pages_jit_property: Retrieves the CPU huge pages JIT property.
+- conf_cpu_hw_aes_property: Retrieves the CPU HW AES property.
+- conf_cpu_priority_property: Retrieves the CPU priority property.
+- conf_cpu_memory_pool_property: Retrieves the CPU memory pool property.
+- conf_cpu_yield_property: Retrieves the CPU yield property.
+- conf_cpu_max_threads_hint_property: Retrieves the CPU max threads hint property.
+- conf_cpu_asm_property: Retrieves the CPU ASM property.
+- conf_cpu_argon2_impl_property: Retrieves the CPU Argon2 implementation property.
+- conf_opencl_property: Retrieves the OpenCL configuration.
+- conf_opencl_enabled_property: Retrieves the OpenCL enabled status.
+- conf_opencl_cache_property: Retrieves the OpenCL cache property.
+- conf_opencl_loader_property: Retrieves the OpenCL loader property.
+- conf_opencl_platform_property: Retrieves the OpenCL platform property.
+- conf_opencl_adl_property: Retrieves the OpenCL ADL property.
+- conf_cuda_property: Retrieves the CUDA configuration.
+- conf_cuda_enabled_property: Retrieves the CUDA enabled status.
+- conf_cuda_loader_property: Retrieves the CUDA loader property.
+- conf_cuda_nvml_property: Retrieves the CUDA NVML property.
+- conf_log_file_property: Retrieves the log file property.
+- conf_donate_level_property: Retrieves the donation level property.
+- conf_donate_over_proxy_property: Retrieves the donation over proxy property.
+- conf_pools_property: Retrieves the pools configuration.
+- conf_pools_algo_property: Retrieves the pools algorithm.
+- conf_pools_coin_property: Retrieves the pools coin.
+- conf_pools_url_property: Retrieves the pools URL.
+- conf_pools_user_property: Retrieves the pools user.
+- conf_pools_pass_property: Retrieves the pools pass.
+- conf_pools_rig_id_property: Retrieves the pools rig ID.
+- conf_pools_nicehash_property: Retrieves the pools NiceHash property.
+- conf_pools_keepalive_property: Retrieves the pools keepalive property.
+- conf_pools_enabled_property: Retrieves the pools enabled status.
+- conf_pools_tls_property: Retrieves the pools TLS property.
+- conf_pools_sni_property: Retrieves the pools SNI property.
+- conf_pools_spend_secret_key_property: Retrieves the pools spend secret key property.
+- conf_pools_tls_fingerprint_property: Retrieves the pools TLS fingerprint property.
+- conf_pools_daemon_property: Retrieves the pools daemon configuration.
+- conf_pools_daemon_poll_interval_property: Retrieves the pools daemon poll interval property.
+- conf_pools_daemon_job_timeout_property: Retrieves the pools daemon job timeout property.
+- conf_pools_daemon_zmq_port_property: Retrieves the pools daemon ZMQ port property.
+- conf_pools_socks5_property: Retrieves the pools SOCKS5 property.
+- conf_pools_self_select_property: Retrieves the pools self-select property.
+- conf_pools_submit_to_origin_property: Retrieves the pools submit to origin property.
+- conf_retries_property: Retrieves the retries property.
+- conf_retry_pause_property: Retrieves the retry pause property.
+- conf_print_time_property: Retrieves the print time property.
+- conf_health_print_time_property: Retrieves the health print time property.
+- conf_dmi_property: Retrieves the DMI property.
+- conf_syslog_property: Retrieves the syslog property.
+- conf_tls_property: Retrieves the TLS configuration.
+- conf_tls_enabled_property: Retrieves the TLS enabled status.
+- conf_tls_protocols_property: Retrieves the TLS protocols property.
+- conf_tls_cert_property: Retrieves the TLS cert property.
+- conf_tls_cert_key_property: Retrieves the TLS cert key property.
+- conf_tls_ciphers_property: Retrieves the TLS ciphers property.
+- conf_tls_ciphersuites_property: Retrieves the TLS ciphersuites property.
+- conf_tls_dhparam_property: Retrieves the TLS DH param property.
+- conf_dns_property: Retrieves the DNS configuration.
+- conf_dns_ipv6_property: Retrieves the DNS IPv6 property.
+- conf_dns_ttl_property: Retrieves the DNS TTL property.
+- conf_user_agent_property: Retrieves the user agent property.
+- conf_verbose_property: Retrieves the verbose property.
+- conf_watch_property: Retrieves the watch property.
+- conf_rebench_algo_property: Retrieves the Rebench Algo property.
+- conf_bench_algo_time_property: Retrieves the Benchmark Algorithm Time property.
+- conf_pause_on_battery_property: Retrieves the Pause On Battery property.
+- conf_pause_on_active_property: Retrieves the Pause On Active property.
+- conf_benchmark_property: Retrieves the Benchmark configuration.
+- conf_benchmark_size_property: Retrieves the Benchmark Size property.
+- conf_benchmark_algo_property: Retrieves the Benchmark Algorithm property.
+- conf_benchmark_submit_property: Retrieves the Benchmark Submit property.
+- conf_benchmark_verify_property: Retrieves the Benchmark Verify property.
+- conf_benchmark_seed_property: Retrieves the Benchmark Seed property.
+- conf_benchmark_hash_property: Retrieves the Benchmark Hash property.
 
 Private Functions:
 
