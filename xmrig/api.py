@@ -476,7 +476,7 @@ class XMRigAPI:
         Returns:
             int: Resident set memory information, or "N/A" if not available.
         """
-        return self._get_data_from_cache(self._summary_cache, ["resources", "memory", "resident_set_memory"], self._summary_table_name, "resources_memory_resident_set_memory")
+        return self._get_data_from_cache(self._summary_cache, ["resources", "memory", "resident_set_memory"], self._summary_table_name, "resources_memory_rsm")
 
     @property
     def sum_load_average(self):
@@ -1172,7 +1172,7 @@ class XMRigAPI:
         Returns:
             bool: CPU backend hardware AES support status, or "N/A" if not available.
         """
-        return self._get_data_from_cache(self._backends_cache, [0, "hw-aes"], self._backends_table_name, "cpu_hw-aes")
+        return self._get_data_from_cache(self._backends_cache, [0, "hw-aes"], self._backends_table_name, "cpu_hw_aes")
 
     @property
     def be_cpu_priority(self):
