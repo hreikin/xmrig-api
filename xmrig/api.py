@@ -1687,7 +1687,7 @@ class XMRigAPI:
         try:
             for i in self._get_data_from_cache(self._backends_cache, [1, "threads"], self._backends_table_name, "opencl_threads"):
                 hashrates_10s.append(i["hashrate"][0])
-        except TypeError:
+        except KeyError:
             return "N/A"
         return hashrates_10s
 
@@ -1703,7 +1703,7 @@ class XMRigAPI:
         try:
             for i in self._get_data_from_cache(self._backends_cache, [1, "threads"], self._backends_table_name, "opencl_threads"):
                 hashrates_1m.append(i["hashrate"][1])
-        except TypeError:
+        except KeyError:
             return "N/A"
         return hashrates_1m
 
@@ -1719,7 +1719,7 @@ class XMRigAPI:
         try:
             for i in self._get_data_from_cache(self._backends_cache, [1, "threads"], self._backends_table_name, "opencl_threads"):
                 hashrates_15m.append(i["hashrate"][2])
-        except TypeError:
+        except KeyError:
             return "N/A"
         return hashrates_15m
 
@@ -1735,7 +1735,7 @@ class XMRigAPI:
         try:
             for i in self._get_data_from_cache(self._backends_cache, [1, "threads"], self._backends_table_name, "opencl_threads"):
                 boards.append(i["board"])
-        except TypeError:
+        except KeyError:
             return "N/A"
         return boards
 
@@ -1751,7 +1751,7 @@ class XMRigAPI:
         try:
             for i in self._get_data_from_cache(self._backends_cache, [1, "threads"], self._backends_table_name, "opencl_threads"):
                 names.append(i["name"])
-        except TypeError:
+        except KeyError:
             return "N/A"
         return names
 
@@ -1767,7 +1767,7 @@ class XMRigAPI:
         try:
             for i in self._get_data_from_cache(self._backends_cache, [1, "threads"], self._backends_table_name, "opencl_threads"):
                 bus_ids.append(i["bus_id"])
-        except TypeError:
+        except KeyError:
             return "N/A"
         return bus_ids
 
@@ -1783,7 +1783,7 @@ class XMRigAPI:
         try:
             for i in self._get_data_from_cache(self._backends_cache, [1, "threads"], self._backends_table_name, "opencl_threads"):
                 cus.append(i["cu"])
-        except TypeError:
+        except KeyError:
             return "N/A"
         return cus
 
@@ -1799,7 +1799,7 @@ class XMRigAPI:
         try:
             for i in self._get_data_from_cache(self._backends_cache, [1, "threads"], self._backends_table_name, "opencl_threads"):
                 global_mems.append(i["global_mem"])
-        except TypeError:
+        except KeyError:
             return "N/A"
         return global_mems
 
@@ -1815,7 +1815,7 @@ class XMRigAPI:
         try:
             for i in self._get_data_from_cache(self._backends_cache, [1, "threads"], self._backends_table_name, "opencl_threads"):
                 healths.append(i["health"])
-        except TypeError:
+        except KeyError:
             return "N/A"
         return healths
 
@@ -1831,7 +1831,7 @@ class XMRigAPI:
         try:
             for i in self._get_data_from_cache(self._backends_cache, [1, "threads"], self._backends_table_name, "opencl_threads"):
                 temps.append(i["health"]["temperature"])
-        except TypeError:
+        except KeyError:
             return "N/A"
         return temps
 
@@ -1847,7 +1847,7 @@ class XMRigAPI:
         try:
             for i in self._get_data_from_cache(self._backends_cache, [1, "threads"], self._backends_table_name, "opencl_threads"):
                 powers.append(i["health"]["power"])
-        except TypeError:
+        except KeyError:
             return "N/A"
         return powers
 
@@ -1863,7 +1863,7 @@ class XMRigAPI:
         try:
             for i in self._get_data_from_cache(self._backends_cache, [1, "threads"], self._backends_table_name, "opencl_threads"):
                 clocks.append(i["health"]["clock"])
-        except TypeError:
+        except KeyError:
             return "N/A"
         return clocks
 
@@ -1879,7 +1879,7 @@ class XMRigAPI:
         try:
             for i in self._get_data_from_cache(self._backends_cache, [1, "threads"], self._backends_table_name, "opencl_threads"):
                 mem_clocks.append(i["health"]["mem_clock"])
-        except TypeError:
+        except KeyError:
             return "N/A"
         return mem_clocks
 
@@ -1895,7 +1895,7 @@ class XMRigAPI:
         try:
             for i in self._get_data_from_cache(self._backends_cache, [1, "threads"], self._backends_table_name, "opencl_threads"):
                 rpms.append(i["health"]["rpm"])
-        except TypeError:
+        except KeyError:
             return "N/A"
         return rpms
 
@@ -2044,7 +2044,7 @@ class XMRigAPI:
         try:
             for i in self._get_data_from_cache(self._backends_cache, [2, "threads"], self._backends_table_name, "cuda_threads"):
                 indexes.append(i["index"])
-        except TypeError:
+        except KeyError:
             return "N/A"
         return indexes
 
@@ -2060,7 +2060,7 @@ class XMRigAPI:
         try:
             for i in self._get_data_from_cache(self._backends_cache, [2, "threads"], self._backends_table_name, "cuda_threads"):
                 amounts.append(i["threads"])
-        except TypeError:
+        except KeyError:
             return "N/A"
         return amounts
 
@@ -2076,7 +2076,7 @@ class XMRigAPI:
         try:
             for i in self._get_data_from_cache(self._backends_cache, [2, "threads"], self._backends_table_name, "cuda_threads"):
                 blocks.append(i["blocks"])
-        except TypeError:
+        except KeyError:
             return "N/A"
         return blocks
 
@@ -2092,7 +2092,7 @@ class XMRigAPI:
         try:
             for i in self._get_data_from_cache(self._backends_cache, [2, "threads"], self._backends_table_name, "cuda_threads"):
                 bfactors.append(i["bfactor"])
-        except TypeError:
+        except KeyError:
             return "N/A"
         return bfactors
 
@@ -2108,7 +2108,7 @@ class XMRigAPI:
         try:
             for i in self._get_data_from_cache(self._backends_cache, [2, "threads"], self._backends_table_name, "cuda_threads"):
                 bsleeps.append(i["bsleep"])
-        except TypeError:
+        except KeyError:
             return "N/A"
         return bsleeps
 
@@ -2124,7 +2124,7 @@ class XMRigAPI:
         try:
             for i in self._get_data_from_cache(self._backends_cache, [2, "threads"], self._backends_table_name, "cuda_threads"):
                 affinities.append(i["affinity"])
-        except TypeError:
+        except KeyError:
             return "N/A"
         return affinities
 
@@ -2140,7 +2140,7 @@ class XMRigAPI:
         try:
             for i in self._get_data_from_cache(self._backends_cache, [2, "threads"], self._backends_table_name, "cuda_threads"):
                 dataset_hosts.append(i["dataset_host"])
-        except TypeError:
+        except KeyError:
             return "N/A"
         return dataset_hosts
 
@@ -2156,7 +2156,7 @@ class XMRigAPI:
         try:
             for i in self._get_data_from_cache(self._backends_cache, [2, "threads"], self._backends_table_name, "cuda_threads"):
                 hashrates.append(i["hashrate"])
-        except TypeError:
+        except KeyError:
             return "N/A"
         return hashrates
 
@@ -2172,7 +2172,7 @@ class XMRigAPI:
         try:
             for i in self._get_data_from_cache(self._backends_cache, [2, "threads"], self._backends_table_name, "cuda_threads"):
                 hashrates_10s.append(i["hashrate"][0])
-        except TypeError:
+        except KeyError:
             return "N/A"
         return hashrates_10s
 
@@ -2188,7 +2188,7 @@ class XMRigAPI:
         try:
             for i in self._get_data_from_cache(self._backends_cache, [2, "threads"], self._backends_table_name, "cuda_threads"):
                 hashrates_1m.append(i["hashrate"][1])
-        except TypeError:
+        except KeyError:
             return "N/A"
         return hashrates_1m
 
@@ -2204,7 +2204,7 @@ class XMRigAPI:
         try:
             for i in self._get_data_from_cache(self._backends_cache, [2, "threads"], self._backends_table_name, "cuda_threads"):
                 hashrates_15m.append(i["hashrate"][2])
-        except TypeError:
+        except KeyError:
             return "N/A"
         return hashrates_15m
 
@@ -2220,7 +2220,7 @@ class XMRigAPI:
         try:
             for i in self._get_data_from_cache(self._backends_cache, [2, "threads"], self._backends_table_name, "cuda_threads"):
                 names.append(i["name"])
-        except TypeError:
+        except KeyError:
             return "N/A"
         return names
 
@@ -2236,7 +2236,7 @@ class XMRigAPI:
         try:
             for i in self._get_data_from_cache(self._backends_cache, [2, "threads"], self._backends_table_name, "cuda_threads"):
                 bus_ids.append(i["bus_id"])
-        except TypeError:
+        except KeyError:
             return "N/A"
         return bus_ids
 
@@ -2252,7 +2252,7 @@ class XMRigAPI:
         try:
             for i in self._get_data_from_cache(self._backends_cache, [2, "threads"], self._backends_table_name, "cuda_threads"):
                 smxs.append(i["smx"])
-        except TypeError:
+        except KeyError:
             return "N/A"
         return smxs
 
@@ -2268,7 +2268,7 @@ class XMRigAPI:
         try:
             for i in self._get_data_from_cache(self._backends_cache, [2, "threads"], self._backends_table_name, "cuda_threads"):
                 archs.append(i["arch"])
-        except TypeError:
+        except KeyError:
             return "N/A"
         return archs
 
@@ -2284,7 +2284,7 @@ class XMRigAPI:
         try:
             for i in self._get_data_from_cache(self._backends_cache, [2, "threads"], self._backends_table_name, "cuda_threads"):
                 global_mems.append(i["global_mem"])
-        except TypeError:
+        except KeyError:
             return "N/A"
         return global_mems
 
@@ -2300,7 +2300,7 @@ class XMRigAPI:
         try:
             for i in self._get_data_from_cache(self._backends_cache, [2, "threads"], self._backends_table_name, "cuda_threads"):
                 clocks.append(i["clock"])
-        except TypeError:
+        except KeyError:
             return "N/A"
         return clocks
 
@@ -2316,7 +2316,7 @@ class XMRigAPI:
         try:
             for i in self._get_data_from_cache(self._backends_cache, [2, "threads"], self._backends_table_name, "cuda_threads"):
                 memory_clocks.append(i["memory_clock"])
-        except TypeError:
+        except KeyError:
             return "N/A"
         return memory_clocks
 
@@ -2816,7 +2816,7 @@ class XMRigAPI:
         try:
             for i in self._get_data_from_cache(self._config_cache, ["pools"], self._config_table_name, "pools"):
                 algos.append(i["algo"])
-        except TypeError:
+        except KeyError:
             return "N/A"
         return algos
 
@@ -2832,7 +2832,7 @@ class XMRigAPI:
         try:
             for i in self._get_data_from_cache(self._config_cache, ["pools"], self._config_table_name, "pools"):
                 coins.append(i["coin"])
-        except TypeError:
+        except KeyError:
             return "N/A"
         return coins
 
@@ -2848,7 +2848,7 @@ class XMRigAPI:
         try:
             for i in self._get_data_from_cache(self._config_cache, ["pools"], self._config_table_name, "pools"):
                 urls.append(i["url"])
-        except TypeError:
+        except KeyError:
             return "N/A"
         return urls
 
@@ -2864,7 +2864,7 @@ class XMRigAPI:
         try:
             for i in self._get_data_from_cache(self._config_cache, ["pools"], self._config_table_name, "pools"):
                 users.append(i["user"])
-        except TypeError:
+        except KeyError:
             return "N/A"
         return users
 
@@ -2880,7 +2880,7 @@ class XMRigAPI:
         try:
             for i in self._get_data_from_cache(self._config_cache, ["pools"], self._config_table_name, "pools"):
                 passwords.append(i["pass"])
-        except TypeError:
+        except KeyError:
             return "N/A"
         return passwords
 
@@ -2896,7 +2896,7 @@ class XMRigAPI:
         try:
             for i in self._get_data_from_cache(self._config_cache, ["pools"], self._config_table_name, "pools"):
                 rig_ids.append(i["rig-id"])
-        except TypeError:
+        except KeyError:
             return "N/A"
         return rig_ids
 
@@ -2912,7 +2912,7 @@ class XMRigAPI:
         try:
             for i in self._get_data_from_cache(self._config_cache, ["pools"], self._config_table_name, "pools"):
                 nicehash_statuses.append(i["nicehash"])
-        except TypeError:
+        except KeyError:
             return "N/A"
         return nicehash_statuses
 
@@ -2928,7 +2928,7 @@ class XMRigAPI:
         try:
             for i in self._get_data_from_cache(self._config_cache, ["pools"], self._config_table_name, "pools"):
                 keepalive_statuses.append(i["keepalive"])
-        except TypeError:
+        except KeyError:
             return "N/A"
         return keepalive_statuses
 
@@ -2944,7 +2944,7 @@ class XMRigAPI:
         try:
             for i in self._get_data_from_cache(self._config_cache, ["pools"], self._config_table_name, "pools"):
                 enabled_statuses.append(i["enabled"])
-        except TypeError:
+        except KeyError:
             return "N/A"
         return enabled_statuses
 
@@ -2960,7 +2960,7 @@ class XMRigAPI:
         try:
             for i in self._get_data_from_cache(self._config_cache, ["pools"], self._config_table_name, "pools"):
                 tls_statuses.append(i["tls"])
-        except TypeError:
+        except KeyError:
             return "N/A"
         return tls_statuses
 
@@ -2976,7 +2976,7 @@ class XMRigAPI:
         try:
             for i in self._get_data_from_cache(self._config_cache, ["pools"], self._config_table_name, "pools"):
                 sni_statuses.append(i["sni"])
-        except TypeError:
+        except KeyError:
             return "N/A"
         return sni_statuses
 
@@ -2992,7 +2992,7 @@ class XMRigAPI:
         try:
             for i in self._get_data_from_cache(self._config_cache, ["pools"], self._config_table_name, "pools"):
                 spend_secret_key_statuses.append(i["spend-secret-key"])
-        except TypeError:
+        except KeyError:
             return "N/A"
         return spend_secret_key_statuses
 
@@ -3008,7 +3008,7 @@ class XMRigAPI:
         try:
             for i in self._get_data_from_cache(self._config_cache, ["pools"], self._config_table_name, "pools"):
                 tls_fingerprints.append(i["tls-fingerprint"])
-        except TypeError:
+        except KeyError:
             return "N/A"
         return tls_fingerprints
 
@@ -3024,7 +3024,7 @@ class XMRigAPI:
         try:
             for i in self._get_data_from_cache(self._config_cache, ["pools"], self._config_table_name, "pools"):
                 daemon_statuses.append(i["daemon"])
-        except TypeError:
+        except KeyError:
             return "N/A"
         return daemon_statuses
 
@@ -3040,7 +3040,7 @@ class XMRigAPI:
         try:
             for i in self._get_data_from_cache(self._config_cache, ["pools"], self._config_table_name, "pools"):
                 daemon_poll_intervals.append(i["daemon-poll-interval"])
-        except TypeError:
+        except KeyError:
             return "N/A"
         return daemon_poll_intervals
 
@@ -3056,7 +3056,7 @@ class XMRigAPI:
         try:
             for i in self._get_data_from_cache(self._config_cache, ["pools"], self._config_table_name, "pools"):
                 daemon_job_timeouts.append(i["daemon-job-timeout"])
-        except TypeError:
+        except KeyError:
             return "N/A"
         return daemon_job_timeouts
 
@@ -3072,7 +3072,7 @@ class XMRigAPI:
         try:
             for i in self._get_data_from_cache(self._config_cache, ["pools"], self._config_table_name, "pools"):
                 daemon_zmq_ports.append(i["daemon-zmq-port"])
-        except TypeError:
+        except KeyError:
             return "N/A"
         return daemon_zmq_ports
 
@@ -3088,7 +3088,7 @@ class XMRigAPI:
         try:
             for i in self._get_data_from_cache(self._config_cache, ["pools"], self._config_table_name, "pools"):
                 socks5_values.append(i["socks5"])
-        except TypeError:
+        except KeyError:
             return "N/A"
         return socks5_values
 
@@ -3104,7 +3104,7 @@ class XMRigAPI:
         try:
             for i in self._get_data_from_cache(self._config_cache, ["pools"], self._config_table_name, "pools"):
                 self_selects.append(i["self-select"])
-        except TypeError:
+        except KeyError:
             return "N/A"
         return self_selects
 
@@ -3120,7 +3120,7 @@ class XMRigAPI:
         try:
             for i in self._get_data_from_cache(self._config_cache, ["pools"], self._config_table_name, "pools"):
                 submit_to_origins.append(i["submit-to-origin"])
-        except TypeError:
+        except KeyError:
             return "N/A"
         return submit_to_origins
 
