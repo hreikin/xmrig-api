@@ -27,11 +27,12 @@ It includes functionalities for:
 # // TODO: Remove type hinting, too much clutter and no real value is added
 # // TODO: Fix returns section of docstrings
 # // TODO: General code cleanup
+# // TODO: Create properties relating to benchmark object in config file
+# // TODO: Test property getters against live data
 # TODO: Work through methods to make some "private" ?
-# TODO: Test property getters against live data
+# TODO: Update tests to reflect the recent changes
 # TODO: Update the docstrings to reflect the recent changes
 # TODO: PEP compliant docstrings
-# TODO: Update tests to reflect the recent changes
 
 import requests, traceback
 from xmrig.logger import log
@@ -161,8 +162,7 @@ class XMRigAPI:
                 try:
                     return self._fallback_to_db(self._db_url, table_name, selection)
                 except XMRigDatabaseError as db_e:
-                    # TODO: Could this message be better ?
-                    log.error(f"An error occurred fetching the backends data from the database, has the miner just been added AND started/restarted within the last 15 minutes ? {db_e}")
+                    log.error(f"An error occurred fetching the backends data from the database: {db_e}")
                     data = "N/A"
         except KeyError as e:
             log.error(f"Key not found in the response data: {e}")
@@ -3364,7 +3364,6 @@ class XMRigAPI:
         """
         return self._get_data_from_cache(self._config_cache, ["pause-on-active"], self._config_table_name, "pause_on_active")
     
-    # TODO: Create properties relating to benchmark object in config file
     @property
     def conf_benchmark_property(self):
         """
