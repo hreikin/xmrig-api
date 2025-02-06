@@ -30,11 +30,12 @@ nav:
   - "Usage": "usage.md"
   - "Examples": "examples.md"
   - "Logging": "logger.md"
+  - "Properties": "properties.md"
   - "Reference":
     - "Classes":
-      - "XMRigManager": "reference/manager.md"
-      - "XMRigAPI": "reference/api.md"
-      - "XMRigDatabase": "reference/db.md"
+      - "XMRigManager": "reference/classes/manager.md"
+      - "XMRigAPI": "reference/classes/api.md"
+      - "XMRigDatabase": "reference/classes/db.md"
     - "Exceptions":
       - "XMRigAPIError": "reference/exceptions/xmrigapierror.md"
       - "XMRigAuthorizationError": "reference/exceptions/xmrigauthorizationerror.md"
