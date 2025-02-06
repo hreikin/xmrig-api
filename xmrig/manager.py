@@ -17,24 +17,23 @@ from xmrig.api import XMRigAPI
 from xmrig.logger import log
 from xmrig.exceptions import XMRigManagerError
 from xmrig.db import XMRigDatabase
-from typing import Callable, Optional, List
 
 class XMRigManager:
     """
     A class to manage multiple XMRig miners via their APIs.
 
     Attributes:
-        _miners (Dict[str, XMRigAPI]): A dictionary to store miner API instances.
-        _api_factory (Callable[..., XMRigAPI]): Factory for creating XMRigAPI instances.
+        _miners (dict): A dictionary to store miner API instances.
+        _api_factory (XMRigAPI): Factory for creating XMRigAPI instances.
         _db_url (str): Database URL for storing miner data.
     """
 
-    def __init__(self, api_factory: Callable[..., XMRigAPI] = XMRigAPI, db_url: str = "sqlite:///xmrig-api.db"):
+    def __init__(self, api_factory=XMRigAPI, db_url = "sqlite:///xmrig-api.db"):
         """
         Initializes the manager with an empty collection of miners.
 
         Args:
-            api_factory (Callable): Factory for creating XMRigAPI instances.
+            api_factory (XMRigAPI): Factory for creating XMRigAPI instances.
             db_url (str): Database URL for storing miner data.
         """
         self._miners = {}
@@ -43,15 +42,15 @@ class XMRigManager:
         if self._db_url is not None:
             XMRigDatabase.init_db(self._db_url)
 
-    def add_miner(self, miner_name: str, ip: str, port: int, access_token: Optional[str] = None, tls_enabled: bool = False) -> None:
+    def add_miner(self, miner_name, ip, port, access_token = None, tls_enabled = False):
         """
         Adds a new miner to the manager.
 
         Args:
             miner_name (str): A unique name for the miner.
             ip (str): IP address or domain of the XMRig API.
-            port (int): Port of the XMRig API.
-            access_token (Optional[str], optional): Access token for authorization. Defaults to None.
+            port (str): Port of the XMRig API.
+            access_token (str, optional): Access token for authorization. Defaults to None.
             tls_enabled (bool, optional): TLS status of the miner/API. Defaults to False.
 
         Raises:
@@ -66,7 +65,7 @@ class XMRigManager:
         except Exception as e:
             raise XMRigManagerError(e, traceback.format_exc(), f"An error occurred adding miner '{miner_name}':") from e
 
-    def remove_miner(self, miner_name: str) -> None:
+    def remove_miner(self, miner_name):
         """
         Removes a miner from the manager.
 
@@ -86,7 +85,7 @@ class XMRigManager:
         except Exception as e:
             raise XMRigManagerError(e, traceback.format_exc(), f"An error occurred removing miner '{miner_name}':") from e
 
-    def get_miner(self, miner_name: str) -> XMRigAPI:
+    def get_miner(self, miner_name):
         """
         Retrieves a specific miner's API instance.
 
@@ -106,14 +105,14 @@ class XMRigManager:
         except Exception as e:
             raise XMRigManagerError(e, traceback.format_exc(), f"An error occurred retrieving miner '{miner_name}':") from e
     
-    def edit_miner(self, miner_name: str, new_details: dict) -> None:
+    def edit_miner(self, miner_name, new_details):
         """
         Edits the details of a miner. The following details can be edited:
 
         - miner_name (str): A unique name for the miner.
         - ip (str): IP address or domain of the XMRig API.
         - port (str): Port of the XMRig API.
-        - access_token (Optional[str]): Access token for authorization.
+        - access_token (str): Access token for authorization.
         - tls_enabled (bool): TLS status of the miner/API.
 
         The dictionary can be in any order and can contain any number of the above keys. For example:
@@ -170,7 +169,7 @@ class XMRigManager:
         except Exception as e:
             raise XMRigManagerError(e, traceback.format_exc(), f"An error occurred editing miner '{miner_name}':") from e
 
-    def perform_action_on_all(self, action: str) -> None:
+    def perform_action_on_all(self, action):
         """
         Performs the specified action on all miners.
 
@@ -190,12 +189,12 @@ class XMRigManager:
         except Exception as e:
             raise XMRigManagerError(e, traceback.format_exc(), f"An error occurred performing action '{action}' on all miners:") from e
 
-    def update_miners(self, endpoint: Optional[str] = None) -> bool:
+    def update_miners(self, endpoint=None):
         """
         Updates all miners' cached data or calls a specific endpoint on all miners.
 
         Args:
-            endpoint (Optional[str], optional): The endpoint to call on each miner. If None, updates all cached data. Defaults to None.
+            endpoint (str, optional): The endpoint to call on each miner. If None, updates all cached data. Defaults to None.
 
         Returns:
             bool: True if successful, or False if an error occurred.
@@ -206,7 +205,7 @@ class XMRigManager:
         try:
             for miner_name, miner_api in self._miners.items():
                 if endpoint:
-                    response = miner_api.call_endpoint(endpoint)
+                    response = miner_api.get_endpoint(endpoint)
                     if response:
                         log.info(f"{endpoint.capitalize()} endpoint successfully called on '{miner_name}'.")
                     else:
@@ -221,12 +220,12 @@ class XMRigManager:
         except Exception as e:
             raise XMRigManagerError(e, traceback.format_exc(), f"An error occurred updating miners or calling endpoint '{endpoint}' on all miners:") from e
 
-    def list_miners(self) -> List[str]:
+    def list_miners(self):
         """
         Lists all managed miners.
 
         Returns:
-            List[str]: A list of miner names.
+            list: A list of miner names.
         """
         return list(self._miners.keys())
 

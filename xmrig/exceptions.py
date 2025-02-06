@@ -19,7 +19,7 @@ class XMRigAPIError(Exception):
         traceback (str): Traceback of the error.
         message (str): Error message explaining the API issue.
     """
-    def __init__(self, error: str = None, traceback: str = None, message: str = "An error occurred with the XMRig API:") -> None:
+    def __init__(self, error = None, traceback = None, message = "An error occurred with the XMRig API:"):
         """
         Initialize the API error.
 
@@ -37,28 +37,28 @@ class XMRigAuthorizationError(XMRigAPIError):
     """
     Exception raised when an authorization error occurs with the XMRig API.
     """
-    def __init__(self, error: str = None, traceback: str = None, message: str = "Access token is required but not provided. Please provide a valid access token.") -> None:
+    def __init__(self, error = None, traceback = None, message = "Access token is required but not provided. Please provide a valid access token."):
         super().__init__(error, traceback, message)
 
 class XMRigConnectionError(XMRigAPIError):
     """
     Exception raised when a connection error occurs with the XMRig API.
     """
-    def __init__(self, error: str = None, traceback: str = None, message: str = "Failed to connect to the XMRig API. Please check the IP, port, and network connection.") -> None:
+    def __init__(self, error = None, traceback = None, message = "Failed to connect to the XMRig API. Please check the IP, port, and network connection."):
         super().__init__(error, traceback, message)
 
 class XMRigDatabaseError(XMRigAPIError):
     """
     Exception raised when a database error occurs with the XMRig API.
     """
-    def __init__(self, error: str = None, traceback: str = None, message: str = "An error occurred with the XMRig database. Please check the database configuration.") -> None:
+    def __init__(self, error = None, traceback = None, message = "An error occurred with the XMRig database. Please check the database configuration."):
         super().__init__(error, traceback, message)
 
 class XMRigManagerError(XMRigAPIError):
     """
     Exception raised when a manager error occurs with the XMRig API.
     """
-    def __init__(self, error: str = None, traceback: str = None, message: str = "An error occurred with the XMRig manager.") -> None:
+    def __init__(self, error = None, traceback = None, message = "An error occurred with the XMRig manager."):
         super().__init__(error, traceback, message)
 
 # Define the public interface of the module
