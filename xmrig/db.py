@@ -454,33 +454,31 @@ class XMRigDatabase:
             session.close()
         return data
 
-    # TODO: Refactor after database changes to remove all data related to a specific miner
     @classmethod
-    def delete_all_miner_data_from_db(cls, miner_name: str, db_url: str) -> None:
+    def delete_all_miner_data_from_db(cls, miner_name, db_url):
         """
-        Deletes all tables related to a specific miner from the database.
+        Deletes all data related to a specific miner from all tables in the database.
 
         Args:
-            miner_name (str): The unique name of the miner.
-            db_url (str): Database URL for creating the engine.
+            miner_name: The unique name of the miner.
+            db_url: Database URL for creating the engine.
 
         Raises:
             XMRigDatabaseError: If an error occurs while deleting the miner data from the database.
         """
         try:
-            # Use quotes to avoid SQL syntax errors
-            backends_table = f"{miner_name}-backends"
-            config_table = f"{miner_name}-config"
-            summary_table = f"{miner_name}-summary"
-            engine = cls.get_db(db_url)
-            with engine.connect() as connection:
-                # Wrap the raw SQL strings in SQLAlchemy's `text` function so it isn't a raw string
-                connection.execute(text(f"DROP TABLE IF EXISTS '{backends_table}'"))
-                connection.execute(text(f"DROP TABLE IF EXISTS '{config_table}'"))
-                connection.execute(text(f"DROP TABLE IF EXISTS '{summary_table}'"))
-            log.debug(f"All tables for '{miner_name}' have been deleted from the database")
+            session = cls.get_db_session(db_url)
+
+            for table_name, model_class in cls._table_model_map.items():
+                session.query(model_class).filter(model_class.miner_name == miner_name).delete()
+
+            session.commit()
+            log.debug(f"All data for miner '{miner_name}' has been deleted from the database")
         except Exception as e:
-            raise XMRigDatabaseError(e, traceback.format_exc(), f"An error occurred deleting miner '{miner_name}' from the database:") from e
+            session.rollback()
+            raise XMRigDatabaseError(e, traceback.format_exc(), f"An error occurred deleting miner '{miner_name}' data from the database:") from e
+        finally:
+            session.close()
 
 # Define the public interface of the module
 __all__ = ["XMRigDatabase"]
