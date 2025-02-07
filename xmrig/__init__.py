@@ -357,7 +357,7 @@ from .db import XMRigDatabase
 from .exceptions import XMRigAPIError, XMRigAuthorizationError, XMRigConnectionError, XMRigDatabaseError, XMRigManagerError
 
 __name__ = "xmrig"
-__version__ = "0.2.3"
+__version__ = "0.2.4"
 __author__ = "hreikin"
 __email__ = "hreikin@gmail.com"
 __license__ = "MIT"
