@@ -21,11 +21,13 @@ For more examples, visit the [Examples](examples.md) page. Additionally, you can
 - **API Interaction**: Fetch status, manage configurations, and control the mining process.
 - **Data Caching**: Retrieve and cache various properties and statistics from the XMRig miner's API responses.
 - **Database Operations**: Insert and delete miner-related data in the database.
+- **Enhanced Data Persistence**: Improved database support with more detailed data storage and retrieval options.
+- **XMRig-MO API Coverage**: Support for additional XMRig API data and functionalities from the MoneroOcean fork of XMRig.
+- **Advanced Configuration Management**: More flexible and powerful configuration management capabilities.
+- **Test Coverage**: A basic test suite for enhanced reliability and easier development.
 
 ## Planned Features
 
-- **Enhanced Data Persistence**: Improved database support with more detailed data storage and retrieval options.
-- **Advanced Configuration Management**: More flexible and powerful configuration management capabilities.
 - **Extended API Coverage**: Support for additional XMRig API endpoints, data and functionalities from other forks, e.g. `xmrig-mo` and `xmrig-proxy`.
 - **Performance Optimization**: Enhancements to improve the performance and efficiency of the module.
 - **Improved Error Handling**: More robust error handling and recovery mechanisms.
