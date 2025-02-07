@@ -12,17 +12,20 @@ It includes functionalities for:
 """
 
 # // TODO: Add missing options from xmrig documentation for config.json, uncomment the commented out tests that are related
-# TODO: Update tests to reflect the recent changes
-# TODO: Work through methods to make some "private" ?
+# // TODO: Update tests to reflect the recent changes
+# // TODO: Change logging, e.g. log = logging.getLogger(__name__) or log = logging.getLogger(__file__) or log = logging.getLogger("xmrig.api")
+# // TODO: Work through methods to make some "private" ?
 # TODO: Update the docstrings to reflect the recent changes
 # TODO: PEP compliant docstrings
+# TODO: [External] Implement similar functionality in companion library p2pool-api
 
-import requests, traceback
-from xmrig.logger import log
+import requests, traceback, logging
 from xmrig.exceptions import XMRigAPIError, XMRigAuthorizationError, XMRigConnectionError, XMRigDatabaseError
 from xmrig.db import XMRigDatabase
 from datetime import timedelta
 from json import JSONDecodeError
+
+log = logging.getLogger("xmrig.api")
 
 class XMRigAPI:
     """
@@ -216,7 +219,7 @@ class XMRigAPI:
                 self._update_cache(json_response, endpoint)
                 log.debug(f"{endpoint.capitalize()} endpoint successfully fetched.")
                 if self._db_url is not None:
-                    XMRigDatabase.insert_data_to_db(json_response, self._miner_name, endpoint, self._db_url)
+                    XMRigDatabase._insert_data_to_db(json_response, self._miner_name, endpoint, self._db_url)
                 return True
         except requests.exceptions.JSONDecodeError as e:
             # INFO: Due to a bug in XMRig, the first 15 minutes a miner is running/restarted its backends 

@@ -10,10 +10,10 @@ class TestXMRigDatabase(unittest.TestCase):
     def test_init_db(self, mock_create_engine):
         mock_engine = MagicMock(spec=Engine)
         mock_create_engine.return_value = mock_engine
-        engine = XMRigDatabase.init_db("sqlite:///test.db")
+        engine = XMRigDatabase._init_db("sqlite:///test.db")
         self.assertIsInstance(engine, Engine)
 
-    @patch('xmrig.db.XMRigDatabase.get_db_session')
+    @patch('xmrig.db.XMRigDatabase._get_db_session')
     def test_insert_data_to_db_summary(self, mock_get_db_session):
         mock_session = MagicMock(spec=Session)
         mock_get_db_session.return_value = mock_session
@@ -91,11 +91,11 @@ class TestXMRigDatabase(unittest.TestCase):
             },
             "hugepages": {"enabled": True}
         }
-        XMRigDatabase.insert_data_to_db(json_data, "test_miner", "summary", "sqlite:///test.db")
+        XMRigDatabase._insert_data_to_db(json_data, "test_miner", "summary", "sqlite:///test.db")
         self.assertTrue(mock_session.add.called)
         self.assertTrue(mock_session.commit.called)
 
-    @patch('xmrig.db.XMRigDatabase.get_db_session')
+    @patch('xmrig.db.XMRigDatabase._get_db_session')
     def test_retrieve_data_from_db(self, mock_get_db_session):
         mock_session = MagicMock(spec=Session)
         mock_get_db_session.return_value = mock_session
@@ -104,11 +104,11 @@ class TestXMRigDatabase(unittest.TestCase):
         data = XMRigDatabase.retrieve_data_from_db("sqlite:///test.db", "summary", "test_miner")
         self.assertEqual(data, [{"key": "value"}])
 
-    @patch('xmrig.db.XMRigDatabase.get_db_session')
+    @patch('xmrig.db.XMRigDatabase._get_db_session')
     def test_delete_all_miner_data_from_db(self, mock_get_db_session):
         mock_session = MagicMock(spec=Session)
         mock_get_db_session.return_value = mock_session
-        XMRigDatabase.delete_all_miner_data_from_db("test_miner", "sqlite:///test.db")
+        XMRigDatabase._delete_all_miner_data_from_db("test_miner", "sqlite:///test.db")
         self.assertTrue(mock_session.query.return_value.filter.return_value.delete.called)
         self.assertTrue(mock_session.commit.called)
 

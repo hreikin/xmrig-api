@@ -51,12 +51,12 @@ XMRigManager:
 
 XMRigDatabase:
 
-- init_db: Initializes the database.
+- _init_db: Initializes the database.
 - get_db: Retrieves the database connection.
 - check_table_exists: Checks if a specified table exists in the database.
-- insert_data_to_db: Inserts data into the database.
+- _insert_data_to_db: Inserts data into the database.
 - fallback_to_db: Retrieves data from the database if not available in the cache.
-- delete_all_miner_data_from_db: Deletes all miner-related data from the database.
+- _delete_all_miner_data_from_db: Deletes all miner-related data from the database.
 
 XMRigProperties:
 

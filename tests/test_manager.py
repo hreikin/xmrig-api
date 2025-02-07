@@ -18,7 +18,7 @@ class TestXMRigManager(unittest.TestCase):
         self.manager.add_miner("test_miner", "127.0.0.1", 8080)
         self.assertIn("test_miner", self.manager._miners)
 
-    @patch('xmrig.manager.XMRigDatabase.delete_all_miner_data_from_db')
+    @patch('xmrig.manager.XMRigDatabase._delete_all_miner_data_from_db')
     def test_remove_miner(self, mock_delete_all_miner_data_from_db):
         self.manager._miners["test_miner"] = MagicMock()
         self.manager.remove_miner("test_miner")

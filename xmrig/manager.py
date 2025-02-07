@@ -12,11 +12,12 @@ It includes functionalities for:
 - Listing all managed miners.
 - Deleting all miner-related data from the database.
 """
-import traceback
+import traceback, logging
 from xmrig.api import XMRigAPI
-from xmrig.logger import log
 from xmrig.exceptions import XMRigManagerError
 from xmrig.db import XMRigDatabase
+
+log = logging.getLogger("xmrig.manager")
 
 class XMRigManager:
     """
@@ -40,7 +41,7 @@ class XMRigManager:
         self._api_factory = api_factory
         self._db_url = db_url
         if self._db_url is not None:
-            XMRigDatabase.init_db(self._db_url)
+            XMRigDatabase._init_db(self._db_url)
 
     def add_miner(self, miner_name, ip, port, access_token = None, tls_enabled = False):
         """
@@ -79,7 +80,7 @@ class XMRigManager:
             if miner_name not in self._miners:
                 raise ValueError(f"Miner with name '{miner_name}' does not exist.")
             if self._db_url is not None:
-                XMRigDatabase.delete_all_miner_data_from_db(miner_name, self._db_url)
+                XMRigDatabase._delete_all_miner_data_from_db(miner_name, self._db_url)
             del self._miners[miner_name]
             log.info(f"Miner '{miner_name}' removed from manager.")
         except Exception as e:
