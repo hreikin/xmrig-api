@@ -226,9 +226,9 @@ class XMRigAPI:
         except requests.exceptions.RequestException as e:
             raise XMRigConnectionError(e, traceback.format_exc(), f"An error occurred while connecting to {url_map[endpoint]}:") from e
         except XMRigAuthorizationError as e:
-            raise XMRigAuthorizationError(e, traceback.format_exc(), f"An authorization error occurred updating the {endpoint}, please provide a valid access token:") from e
+            raise XMRigAuthorizationError(e, traceback.format_exc(), f"An authorization error occurred updating the {endpoint} endpoint, please provide a valid access token:") from e
         except Exception as e:
-            raise XMRigAPIError(e, traceback.format_exc(), f"An error occurred updating the {endpoint}:") from e
+            raise XMRigAPIError(e, traceback.format_exc(), f"An error occurred updating the {endpoint} endpoint:") from e
 
     def post_config(self, config):
         """
