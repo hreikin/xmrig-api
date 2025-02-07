@@ -30,7 +30,7 @@ class XMRigAPI:
         _miner_name (str): Unique name for the miner.
         _ip (str): IP address of the XMRig API.
         _port (int): Port of the XMRig API.
-        _access_token (Optional[str]): Access token for authorization.
+        _access_token (str): Access token for authorization.
         _base_url (str): Base URL for the XMRig API.
         _json_rpc_url (str): URL for the JSON RPC.
         _summary_url (str): URL for the summary endpoint.
