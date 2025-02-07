@@ -11,11 +11,6 @@ It includes functionalities for:
 - Fallback to the database if the data is not available in the cached responses.
 """
 
-# // TODO: Add missing options from xmrig documentation for config.json, uncomment the commented out tests that are related
-# // TODO: Update tests to reflect the recent changes
-# // TODO: Change logging, e.g. log = logging.getLogger(__name__) or log = logging.getLogger(__file__) or log = logging.getLogger("xmrig.api")
-# // TODO: Work through methods to make some "private" ?
-# TODO: Update the docstrings to reflect the recent changes
 # TODO: PEP compliant docstrings
 # TODO: [External] Implement similar functionality in companion library p2pool-api
 
@@ -100,7 +95,7 @@ class XMRigAPI:
     
     def _update_cache(self, response, endpoint):
         """
-        Sets the properties for the XMRigAPI instance.
+        Updates the cached data for an endpoint with the supplied response data.
 
         Args:
             response (dict | list): The response data.

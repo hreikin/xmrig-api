@@ -26,7 +26,7 @@ Modules:
 - api: Contains the XMRigAPI class and related functionalities.
 - manager: Contains the XMRigManager class for managing multiple miners.
 - exceptions: Handles custom exceptions.
-- properties: Contains the XMRigProperties class for retrieving and caching properties.
+- models: Contains the Summary, Config and Backend ORM models.
 - db: Contains the XMRigDatabase class for database operations.
 
 Public Functions:
@@ -52,10 +52,8 @@ XMRigManager:
 XMRigDatabase:
 
 - _init_db: Initializes the database.
-- get_db: Retrieves the database connection.
-- check_table_exists: Checks if a specified table exists in the database.
+- _get_db_session: Retrieves the database connection.
 - _insert_data_to_db: Inserts data into the database.
-- fallback_to_db: Retrieves data from the database if not available in the cache.
 - _delete_all_miner_data_from_db: Deletes all miner-related data from the database.
 
 XMRigProperties:
@@ -331,6 +329,18 @@ XMRigAPI:
 
 - _update_cache: Updates the cache with new data.
 - _get_data_from_cache: Retrieves data from the cache.
+- _fallback_to_db: Retrieves data from the database if not available in the cache.
+
+XMRigDatabase:
+
+- _init_db: Initializes the database.
+- _get_db_session: Retrieves the database connection.
+- _insert_data_to_db: Inserts data into the database.
+- _insert_summary_data: Inserts summary data into the database.
+- _insert_config_data: Inserts configuration data into the database.
+- _insert_backend_data: Inserts backend data into the database.
+- _delete_all_miner_data_from_db: Deletes all miner-related data from the database.
+
 
 Exceptions:
 

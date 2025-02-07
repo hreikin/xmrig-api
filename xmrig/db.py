@@ -111,6 +111,18 @@ class XMRigDatabase:
 
     @classmethod
     def _insert_summary_data(cls, session, json_data, miner, cur_time):
+        """
+        Inserts summary data into the database.
+
+        This method extracts various pieces of information from the provided JSON data
+        and creates a Summary object which is then added to the database session.
+
+        Args:
+            session (Session): The database session to add the summary data to.
+            json_data (dict): The JSON data containing the summary information.
+            miner (str): The name of the miner.
+            cur_time (datetime): The current timestamp.
+        """
         resources_data = json_data.get("resources", {})
         memory_data = resources_data.get("memory", {})
         results_data = json_data.get("results", {})
@@ -193,6 +205,18 @@ class XMRigDatabase:
 
     @classmethod
     def _insert_config_data(cls, session, json_data, miner, cur_time):
+        """
+        Inserts configuration data into the database.
+
+        This method extracts various configuration parameters from the provided JSON data
+        and creates a Config object which is then added to the database session.
+
+        Args:
+            session (Session): The database session to add the Config object to.
+            json_data (dict): The JSON data containing configuration parameters.
+            miner (str): The name of the miner.
+            cur_time (datetime): The current timestamp.
+        """
         api_data = json_data.get("api", {})
         http_data = json_data.get("http", {})
         randomx_data = json_data.get("randomx", {})
@@ -290,6 +314,18 @@ class XMRigDatabase:
 
     @classmethod
     def _insert_backends_data(cls, session, json_data, miner, cur_time):
+        """
+        Inserts backend data into the database.
+
+        This method processes JSON data representing backend information and inserts it into the database.
+        It handles both single backend (CPU) and multiple backends (CPU, OpenCL, CUDA).
+
+        Args:
+            session (Session): The database session to use for the insertion.
+            json_data (list): A list of dictionaries containing backend data.
+            miner (str): The name of the miner.
+            cur_time (datetime): The current timestamp.
+        """
         if len(json_data) == 1:
             cpu_backend_data = json_data[0]
             backends = Backends(
