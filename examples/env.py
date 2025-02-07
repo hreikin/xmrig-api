@@ -11,12 +11,12 @@ logging.basicConfig(
 log = logging.getLogger("ExampleLog")
 name_a = "MinerA"
 ip_a = "127.0.0.1"
-port_a = "37841"
+port_a = 37841
 access_token_a = "SECRET"
 tls_enabled_a = False
 name_b = "MinerB"
 ip_b = "127.0.0.1"
-port_b = "37842"
+port_b = 37842
 access_token_b = "SECRET"
 tls_enabled_b = False
 
