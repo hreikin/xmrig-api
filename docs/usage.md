@@ -27,10 +27,16 @@ logging.basicConfig(
     ]
 )
 log = logging.getLogger("ExampleLog")
-
-log.info("###############################################################################################################################")
-log.info("## Please ensure you have a running XMRig instance to connect to and have updated the connection details within the example. ##")
-log.info("###############################################################################################################################")
+name_a = "MinerA"
+ip_a = "127.0.0.1"
+port_a = "37841"
+access_token_a = "SECRET"
+tls_enabled_a = False
+name_b = "MinerB"
+ip_b = "127.0.0.1"
+port_b = "37842"
+access_token_b = "SECRET"
+tls_enabled_b = False
 
 manager = XMRigManager()
 log.info("Adding miners to the manager...")
@@ -41,6 +47,7 @@ miner_a = manager.get_miner(name_a)
 miner_b = manager.get_miner(name_b)
 log.info(f"Retrieved miner: {miner_a._miner_name}")
 log.info(f"Retrieved miner: {miner_b._miner_name}")
+
 # List all miners
 log.info("Listing all miners...")
 log.info(manager.list_miners())
@@ -96,7 +103,7 @@ miner_a.post_config(config)
 log.info(f"Summary data for miner: {miner_b._miner_name}")
 log.info(miner_b.summary)
 log.info(f"Hashrates for miner: {miner_b._miner_name}")
-log.info(miner_b.sum_hashrates)
+log.info(miner_b.sum_hashrate)
 log.info(f"Accepted jobs for miner: {miner_b._miner_name}")
 log.info(miner_b.sum_pool_accepted_jobs)
 log.info(f"Rejected jobs for miner: {miner_b._miner_name}")
