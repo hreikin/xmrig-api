@@ -28,7 +28,7 @@ For more examples, visit the [Examples](examples.md) page. Additionally, you can
 
 ## Planned Features
 
-- **Extended API Coverage**: Support for additional XMRig API endpoints, data and functionalities from other forks, e.g. `xmrig-mo` and `xmrig-proxy`.
+- **Extended API Coverage**: Support for additional XMRig API endpoints, data and functionalities from other forks, e.g. `xmrig-proxy`.
 - **Performance Optimization**: Enhancements to improve the performance and efficiency of the module.
 - **Improved Error Handling**: More robust error handling and recovery mechanisms.
 - **Comprehensive Test Coverage**: A robust test suite for enhanced reliability and easier development.
