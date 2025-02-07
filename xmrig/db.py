@@ -398,7 +398,7 @@ class XMRigDatabase:
         session.add(backends)
     
     @classmethod
-    def retrieve_data_from_db(cls, db_url, table_name, miner_name, selection = "*", start_time = None, end_time = None, limit = 1):
+    def retrieve_data_from_db(cls, db_url, table_name, miner_name = None, selection = "*", start_time = None, end_time = None, limit = 1):
         """
         Retrieves data from the specified database table within the given timeframe.
 
@@ -412,7 +412,7 @@ class XMRigDatabase:
             limit (int, optional): Limit the number of rows retrieved. Defaults to 1.
 
         Returns:
-            list: List of dictionaries containing the retrieved data or "N/A" if the table does not exist.
+            list: List of dictionaries containing the retrieved data or "N/A" if no data is found.
 
         Raises:
             XMRigDatabaseError: If an error occurs while retrieving data from the database.
@@ -435,8 +435,9 @@ class XMRigDatabase:
                 else:
                     query = query.with_entities(getattr(model_class, selection))
 
-            # Apply miner_name filter
-            query = query.filter(model_class.miner_name == miner_name)
+            # Apply miner_name filter if provided
+            if miner_name:
+                query = query.filter(model_class.miner_name == miner_name)
 
             # Apply time filters
             if start_time:
