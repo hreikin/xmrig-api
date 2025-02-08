@@ -423,3 +423,6 @@ class Backends(Base):
     cuda_versions_plugin = Column(String)
     cuda_hashrate = Column(JSON)
     cuda_threads = Column(JSON)
+
+# Define the public interface of the module
+__all__ = ["Summary", "Config", "Backends"]
