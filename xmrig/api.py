@@ -11,8 +11,11 @@ It includes functionalities for:
 - Fallback to the database if the data is not available in the cached responses.
 """
 
+# // TODO: [External] Implement similar functionality in companion library p2pool-api
 # TODO: PEP compliant docstrings
-# TODO: [External] Implement similar functionality in companion library p2pool-api
+# // TODO: Create wrapper for database data retrieval
+# TODO: Create example for accessing database data
+# TODO: Use a default db_url value of "sqlite:///xmrig-api.db" in the constructor, refactor the code to use this default value instead of checking for None
 
 import requests, traceback, logging
 from xmrig.exceptions import XMRigAPIError, XMRigAuthorizationError, XMRigConnectionError, XMRigDatabaseError
@@ -139,7 +142,7 @@ class XMRigAPI:
         except JSONDecodeError as e:
             if self._db_url is not None:
                 try:
-                    return self._fallback_to_db(self._db_url, table_name, selection)
+                    return self._fallback_to_db(table_name, selection)
                 except XMRigDatabaseError as db_e:
                     log.error(f"An error occurred fetching the backends data from the database: {db_e}")
                     data = "N/A"
@@ -148,7 +151,7 @@ class XMRigAPI:
             data = "N/A"
         return data
     
-    def _fallback_to_db(self, db_url, table_name, selection):
+    def _fallback_to_db(self, table_name, selection):
         """
         Fallback to the database if the data is not available in the cache.
 
@@ -158,10 +161,23 @@ class XMRigAPI:
             selection (str): Column to select from the table.
 
         Returns:
+            Any: The retrieved data, or a default string value of "N/A" if not available.
+        """
+        result = XMRigDatabase.retrieve_data_from_db(self._db_url, table_name, self._miner_name, selection)
+        return result[0].get(selection, "N/A") if len(result) > 0 else "N/A"
+    
+    def get_from_db(self, table_name, selection):
+        """
+        Retrieve data from the database.
+
+        Args:
+            table_name (str): Name of the table to retrieve data from.
+            selection (str): Column to select from the table.
+
+        Returns:
             list: List of dictionaries containing the retrieved data.
         """
-        result = XMRigDatabase.retrieve_data_from_db(db_url, table_name, self._miner_name, selection)
-        return result[0].get(selection, "N/A")
+        return XMRigDatabase.retrieve_data_from_db(self._db_url, table_name, self._miner_name, selection)
     
     def set_auth_header(self):
         """
