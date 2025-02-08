@@ -355,6 +355,7 @@ from .api import XMRigAPI
 from .manager import XMRigManager
 from .db import XMRigDatabase
 from .exceptions import XMRigAPIError, XMRigAuthorizationError, XMRigConnectionError, XMRigDatabaseError, XMRigManagerError
+from .models import Summary, Config, Backends
 
 __name__ = "xmrig"
 __version__ = "0.2.4"
@@ -364,4 +365,4 @@ __license__ = "MIT"
 __description__ = "This module provides objects to interact with the XMRig miner API, manage multiple miners, and store collected data in a database."
 __url__ = "https://hreikin.co.uk/xmrig-api"
 
-__all__ = ["XMRigAPI", "XMRigAPIError", "XMRigAuthorizationError", "XMRigConnectionError", "XMRigDatabase", "XMRigDatabaseError", "XMRigManager", "XMRigManagerError", "XMRigProperties"]
+__all__ = ["XMRigAPI", "XMRigAPIError", "XMRigAuthorizationError", "XMRigConnectionError", "XMRigDatabase", "XMRigDatabaseError", "XMRigManager", "XMRigManagerError", "Summary", "Config", "Backends"]
