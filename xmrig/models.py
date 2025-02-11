@@ -1,3 +1,14 @@
+"""
+XMRig Models module.
+
+This module defines the ORM models for the XMRig miner database.
+It includes the following models:
+
+- Summary: Represents the summary data of the miner.
+- Config: Represents the configuration data of the miner.
+- Backends: Represents the backend data of the miner.
+"""
+
 from sqlalchemy import Column, Integer, String, Boolean, Float, JSON, DateTime
 from sqlalchemy.ext.declarative import declarative_base
 from datetime import datetime
