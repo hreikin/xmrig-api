@@ -42,6 +42,10 @@ nav:
       - "XMRigConnectionError": "reference/exceptions/xmrigconnectionerror.md"
       - "XMRigDatabaseError": "reference/exceptions/xmrigdatabaseerror.md"
       - "XMRigManagerError": "reference/exceptions/xmrigmanagererror.md"
+    - "Models":
+      - "Summary": "reference/models/summary.md"
+      - "Backends": "reference/models/backends.md"
+      - "Config": "reference/models/config.md"
   - "Contributing": "CONTRIBUTING.md"
 
 plugins:
