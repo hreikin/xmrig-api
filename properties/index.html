@@ -1,0 +1,2292 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+        <link rel="canonical" href="https://hreikin.github.io/xmrig-api/properties/">
+      
+      
+        <link rel="prev" href="../logger/">
+      
+      
+        <link rel="next" href="../reference/classes/manager/">
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.3">
+    
+    
+      
+        <title>Properties - XMRig-API</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.d7758b05.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/_mkdocstrings.css">
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="black" data-md-color-accent="deep-orange">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#properties" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="XMRig-API" class="md-header__button md-logo" aria-label="XMRig-API" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            XMRig-API
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Properties
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="black" data-md-color-accent="deep-orange"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="black" data-md-color-accent="deep-orange"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/hreikin/xmrig-api" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81"/></svg>
+  </div>
+  <div class="md-source__repository">
+    hreikin/xmrig-api
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="XMRig-API" class="md-nav__button md-logo" aria-label="XMRig-API" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    XMRig-API
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/hreikin/xmrig-api" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81"/></svg>
+  </div>
+  <div class="md-source__repository">
+    hreikin/xmrig-api
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Home
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../usage/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Usage
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../examples/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Examples
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../logger/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Logging
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    Properties
+    
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  <span class="md-ellipsis">
+    Properties
+    
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#availability" class="md-nav__link">
+    <span class="md-ellipsis">
+      Availability
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Reference
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            Reference
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_6_1" id="__nav_6_1_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Classes
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_6_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6_1">
+            <span class="md-nav__icon md-icon"></span>
+            Classes
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/classes/manager/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    XMRigManager
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/classes/api/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    XMRigAPI
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/classes/db/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    XMRigDatabase
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_6_2" id="__nav_6_2_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Exceptions
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_6_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6_2">
+            <span class="md-nav__icon md-icon"></span>
+            Exceptions
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/exceptions/xmrigapierror/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    XMRigAPIError
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/exceptions/xmrigauthorizationerror/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    XMRigAuthorizationError
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/exceptions/xmrigconnectionerror/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    XMRigConnectionError
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/exceptions/xmrigdatabaseerror/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    XMRigDatabaseError
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/exceptions/xmrigmanagererror/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    XMRigManagerError
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_6_3" id="__nav_6_3_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Models
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_6_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6_3">
+            <span class="md-nav__icon md-icon"></span>
+            Models
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/models/summary/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Summary
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/models/backends/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Backends
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/models/config/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Config
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../CONTRIBUTING/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Contributing
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#availability" class="md-nav__link">
+    <span class="md-ellipsis">
+      Availability
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="properties">Properties</h1>
+<p>Many properties have been created to enable you to access any data from any of the endpoint responses. The properties will first check the cache and if the cache is not available for any reason it will fallback to the database, if the property isn't available in either it will return the string "N/A".</p>
+<h2 id="availability">Availability</h2>
+<p>There are currently 264 properties available, however not every property will be available depending on which fork of <code>xmrig</code> you are using. Here is a table that shows which properties are supported by which fork.</p>
+<table>
+<thead>
+<tr>
+<th>Property Name</th>
+<th>XMRig</th>
+<th>XMRig-MO</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>summary</code></td>
+<td>YES</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>backends</code></td>
+<td>YES</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>config</code></td>
+<td>YES</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>sum_id</code></td>
+<td>YES</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>sum_worker_id</code></td>
+<td>YES</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>sum_uptime</code></td>
+<td>YES</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>sum_uptime_readable</code></td>
+<td>YES</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>sum_restricted</code></td>
+<td>YES</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>sum_resources</code></td>
+<td>YES</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>sum_memory_usage</code></td>
+<td>YES</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>sum_free_memory</code></td>
+<td>YES</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>sum_total_memory</code></td>
+<td>YES</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>sum_resident_set_memory</code></td>
+<td>YES</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>sum_load_average</code></td>
+<td>YES</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>sum_hardware_concurrency</code></td>
+<td>YES</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>sum_features</code></td>
+<td>YES</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>sum_results</code></td>
+<td>YES</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>sum_current_difficulty</code></td>
+<td>YES</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>sum_good_shares</code></td>
+<td>YES</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>sum_total_shares</code></td>
+<td>YES</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>sum_avg_time</code></td>
+<td>YES</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>sum_avg_time_ms</code></td>
+<td>YES</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>sum_total_hashes</code></td>
+<td>YES</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>sum_best_results</code></td>
+<td>YES</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>sum_algorithm</code></td>
+<td>YES</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>sum_connection</code></td>
+<td>YES</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>sum_pool_info</code></td>
+<td>YES</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>sum_pool_ip_address</code></td>
+<td>YES</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>sum_pool_uptime</code></td>
+<td>YES</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>sum_pool_uptime_ms</code></td>
+<td>YES</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>sum_pool_ping</code></td>
+<td>YES</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>sum_pool_failures</code></td>
+<td>YES</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>sum_pool_tls</code></td>
+<td>YES</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>sum_pool_tls_fingerprint</code></td>
+<td>YES</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>sum_pool_algo</code></td>
+<td>YES</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>sum_pool_diff</code></td>
+<td>YES</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>sum_pool_accepted_jobs</code></td>
+<td>YES</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>sum_pool_rejected_jobs</code></td>
+<td>YES</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>sum_pool_average_time</code></td>
+<td>YES</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>sum_pool_average_time_ms</code></td>
+<td>YES</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>sum_pool_total_hashes</code></td>
+<td>YES</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>sum_version</code></td>
+<td>YES</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>sum_kind</code></td>
+<td>YES</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>sum_ua</code></td>
+<td>YES</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>sum_cpu_info</code></td>
+<td>YES</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>sum_cpu_brand</code></td>
+<td>YES</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>sum_cpu_family</code></td>
+<td>YES</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>sum_cpu_model</code></td>
+<td>YES</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>sum_cpu_stepping</code></td>
+<td>YES</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>sum_cpu_proc_info</code></td>
+<td>YES</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>sum_cpu_aes</code></td>
+<td>YES</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>sum_cpu_avx2</code></td>
+<td>YES</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>sum_cpu_x64</code></td>
+<td>YES</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>sum_cpu_64_bit</code></td>
+<td>YES</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>sum_cpu_l2</code></td>
+<td>YES</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>sum_cpu_l3</code></td>
+<td>YES</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>sum_cpu_cores</code></td>
+<td>YES</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>sum_cpu_threads</code></td>
+<td>YES</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>sum_cpu_packages</code></td>
+<td>YES</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>sum_cpu_nodes</code></td>
+<td>YES</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>sum_cpu_backend</code></td>
+<td>YES</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>sum_cpu_msr</code></td>
+<td>YES</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>sum_cpu_assembly</code></td>
+<td>YES</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>sum_cpu_arch</code></td>
+<td>YES</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>sum_cpu_flags</code></td>
+<td>YES</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>sum_donate_level</code></td>
+<td>YES</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>sum_paused</code></td>
+<td>YES</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>sum_algorithms</code></td>
+<td>YES</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>sum_hashrate</code></td>
+<td>YES</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>sum_hashrate_total</code></td>
+<td>YES</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>sum_hashrate_10s</code></td>
+<td>YES</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>sum_hashrate_1m</code></td>
+<td>YES</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>sum_hashrate_15m</code></td>
+<td>YES</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>sum_hashrate_highest</code></td>
+<td>YES</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>sum_hugepages</code></td>
+<td>YES</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>enabled_backends</code></td>
+<td>YES</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>be_cpu_type</code></td>
+<td>YES</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>be_cpu_enabled</code></td>
+<td>YES</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>be_cpu_algo</code></td>
+<td>YES</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>be_cpu_profile</code></td>
+<td>YES</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>be_cpu_hw_aes</code></td>
+<td>YES</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>be_cpu_priority</code></td>
+<td>YES</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>be_cpu_msr</code></td>
+<td>YES</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>be_cpu_asm</code></td>
+<td>YES</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>be_cpu_argon2_impl</code></td>
+<td>YES</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>be_cpu_hugepages</code></td>
+<td>YES</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>be_cpu_memory</code></td>
+<td>YES</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>be_cpu_hashrates</code></td>
+<td>YES</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>be_cpu_hashrate_10s</code></td>
+<td>YES</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>be_cpu_hashrate_1m</code></td>
+<td>YES</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>be_cpu_hashrate_15m</code></td>
+<td>YES</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>be_cpu_threads</code></td>
+<td>YES</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>be_cpu_threads_intensity</code></td>
+<td>YES</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>be_cpu_threads_affinity</code></td>
+<td>YES</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>be_cpu_threads_av</code></td>
+<td>YES</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>be_cpu_threads_hashrates</code></td>
+<td>YES</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>be_cpu_threads_hashrates_10s</code></td>
+<td>YES</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>be_cpu_threads_hashrates_1m</code></td>
+<td>YES</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>be_cpu_threads_hashrates_15m</code></td>
+<td>YES</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>be_opencl_type</code></td>
+<td>NO</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>be_opencl_enabled</code></td>
+<td>NO</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>be_opencl_algo</code></td>
+<td>NO</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>be_opencl_profile</code></td>
+<td>NO</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>be_opencl_platform</code></td>
+<td>NO</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>be_opencl_platform_index</code></td>
+<td>NO</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>be_opencl_platform_profile</code></td>
+<td>NO</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>be_opencl_platform_version</code></td>
+<td>NO</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>be_opencl_platform_name</code></td>
+<td>NO</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>be_opencl_platform_vendor</code></td>
+<td>NO</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>be_opencl_platform_extensions</code></td>
+<td>NO</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>be_opencl_hashrates</code></td>
+<td>NO</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>be_opencl_hashrate_10s</code></td>
+<td>NO</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>be_opencl_hashrate_1m</code></td>
+<td>NO</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>be_opencl_hashrate_15m</code></td>
+<td>NO</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>be_opencl_threads</code></td>
+<td>NO</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>be_opencl_threads_index</code></td>
+<td>NO</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>be_opencl_threads_intensity</code></td>
+<td>NO</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>be_opencl_threads_worksize</code></td>
+<td>NO</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>be_opencl_threads_unroll</code></td>
+<td>NO</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>be_opencl_threads_affinity</code></td>
+<td>NO</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>be_opencl_threads_hashrates</code></td>
+<td>NO</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>be_opencl_threads_hashrate_10s</code></td>
+<td>NO</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>be_opencl_threads_hashrate_1m</code></td>
+<td>NO</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>be_opencl_threads_hashrate_15m</code></td>
+<td>NO</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>be_opencl_threads_board</code></td>
+<td>NO</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>be_opencl_threads_name</code></td>
+<td>NO</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>be_opencl_threads_bus_id</code></td>
+<td>NO</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>be_opencl_threads_cu</code></td>
+<td>NO</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>be_opencl_threads_global_mem</code></td>
+<td>NO</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>be_opencl_threads_health</code></td>
+<td>NO</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>be_opencl_threads_health_temp</code></td>
+<td>NO</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>be_opencl_threads_health_power</code></td>
+<td>NO</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>be_opencl_threads_health_clock</code></td>
+<td>NO</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>be_opencl_threads_health_mem_clock</code></td>
+<td>NO</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>be_opencl_threads_health_rpm</code></td>
+<td>NO</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>be_cuda_type</code></td>
+<td>NO</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>be_cuda_enabled</code></td>
+<td>NO</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>be_cuda_algo</code></td>
+<td>NO</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>be_cuda_profile</code></td>
+<td>NO</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>be_cuda_versions</code></td>
+<td>NO</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>be_cuda_runtime</code></td>
+<td>NO</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>be_cuda_driver</code></td>
+<td>NO</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>be_cuda_plugin</code></td>
+<td>NO</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>be_cuda_hashrates</code></td>
+<td>NO</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>be_cuda_hashrate_10s</code></td>
+<td>NO</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>be_cuda_hashrate_1m</code></td>
+<td>NO</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>be_cuda_hashrate_15m</code></td>
+<td>NO</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>be_cuda_threads</code></td>
+<td>NO</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>be_cuda_threads_index</code></td>
+<td>NO</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>be_cuda_threads_blocks</code></td>
+<td>NO</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>be_cuda_threads_bfactor</code></td>
+<td>NO</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>be_cuda_threads_bsleep</code></td>
+<td>NO</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>be_cuda_threads_affinity</code></td>
+<td>NO</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>be_cuda_threads_dataset_host</code></td>
+<td>NO</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>be_cuda_threads_hashrates</code></td>
+<td>NO</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>be_cuda_threads_hashrate_10s</code></td>
+<td>NO</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>be_cuda_threads_hashrate_1m</code></td>
+<td>NO</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>be_cuda_threads_hashrate_15m</code></td>
+<td>NO</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>be_cuda_threads_name</code></td>
+<td>NO</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>be_cuda_threads_bus_id</code></td>
+<td>NO</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>be_cuda_threads_smx</code></td>
+<td>NO</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>be_cuda_threads_arch</code></td>
+<td>NO</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>be_cuda_threads_global_mem</code></td>
+<td>NO</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>be_cuda_threads_clock</code></td>
+<td>NO</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>be_cuda_threads_memory_clock</code></td>
+<td>NO</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>conf_api_property</code></td>
+<td>YES</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>conf_api_id_property</code></td>
+<td>YES</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>conf_api_worker_id_property</code></td>
+<td>YES</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>conf_http_property</code></td>
+<td>YES</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>conf_http_enabled_property</code></td>
+<td>YES</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>conf_http_host_property</code></td>
+<td>YES</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>conf_http_port_property</code></td>
+<td>YES</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>conf_http_access_token_property</code></td>
+<td>YES</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>conf_http_restricted_property</code></td>
+<td>YES</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>conf_autosave_property</code></td>
+<td>YES</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>conf_background_property</code></td>
+<td>YES</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>conf_colors_property</code></td>
+<td>YES</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>conf_title_property</code></td>
+<td>YES</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>conf_randomx_property</code></td>
+<td>YES</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>conf_randomx_init_property</code></td>
+<td>YES</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>conf_randomx_init_avx2_property</code></td>
+<td>YES</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>conf_randomx_mode_property</code></td>
+<td>YES</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>conf_randomx_1gb_pages_property</code></td>
+<td>YES</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>conf_randomx_rdmsr_property</code></td>
+<td>YES</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>conf_randomx_wrmsr_property</code></td>
+<td>YES</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>conf_randomx_cache_qos_property</code></td>
+<td>YES</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>conf_randomx_numa_property</code></td>
+<td>YES</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>conf_randomx_scratchpad_prefetch_mode_property</code></td>
+<td>YES</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>conf_cpu_property</code></td>
+<td>YES</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>conf_cpu_enabled_property</code></td>
+<td>YES</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>conf_cpu_huge_pages_property</code></td>
+<td>YES</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>conf_cpu_huge_pages_jit_property</code></td>
+<td>YES</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>conf_cpu_hw_aes_property</code></td>
+<td>YES</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>conf_cpu_priority_property</code></td>
+<td>YES</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>conf_cpu_memory_pool_property</code></td>
+<td>YES</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>conf_cpu_yield_property</code></td>
+<td>YES</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>conf_cpu_max_threads_hint_property</code></td>
+<td>YES</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>conf_cpu_asm_property</code></td>
+<td>YES</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>conf_cpu_argon2_impl_property</code></td>
+<td>YES</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>conf_opencl_property</code></td>
+<td>YES</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>conf_opencl_enabled_property</code></td>
+<td>YES</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>conf_opencl_cache_property</code></td>
+<td>YES</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>conf_opencl_loader_property</code></td>
+<td>YES</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>conf_opencl_platform_property</code></td>
+<td>YES</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>conf_opencl_adl_property</code></td>
+<td>YES</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>conf_cuda_property</code></td>
+<td>YES</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>conf_cuda_enabled_property</code></td>
+<td>YES</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>conf_cuda_loader_property</code></td>
+<td>YES</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>conf_cuda_nvml_property</code></td>
+<td>YES</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>conf_log_file_property</code></td>
+<td>YES</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>conf_donate_level_property</code></td>
+<td>YES</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>conf_donate_over_proxy_property</code></td>
+<td>YES</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>conf_pools_property</code></td>
+<td>YES</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>conf_pools_algo_property</code></td>
+<td>YES</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>conf_pools_coin_property</code></td>
+<td>YES</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>conf_pools_url_property</code></td>
+<td>YES</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>conf_pools_user_property</code></td>
+<td>YES</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>conf_pools_pass_property</code></td>
+<td>YES</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>conf_pools_rig_id_property</code></td>
+<td>YES</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>conf_pools_nicehash_property</code></td>
+<td>YES</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>conf_pools_keepalive_property</code></td>
+<td>YES</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>conf_pools_enabled_property</code></td>
+<td>YES</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>conf_pools_tls_property</code></td>
+<td>YES</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>conf_pools_sni_property</code></td>
+<td>YES</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>conf_pools_spend_secret_key_property</code></td>
+<td>YES</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>conf_pools_tls_fingerprint_property</code></td>
+<td>YES</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>conf_pools_daemon_property</code></td>
+<td>YES</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>conf_pools_daemon_poll_interval_property</code></td>
+<td>YES</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>conf_pools_daemon_job_timeout_property</code></td>
+<td>YES</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>conf_pools_daemon_zmq_port_property</code></td>
+<td>YES</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>conf_pools_socks5_property</code></td>
+<td>YES</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>conf_pools_self_select_property</code></td>
+<td>YES</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>conf_pools_submit_to_origin_property</code></td>
+<td>YES</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>conf_retries_property</code></td>
+<td>YES</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>conf_retry_pause_property</code></td>
+<td>YES</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>conf_print_time_property</code></td>
+<td>YES</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>conf_health_print_time_property</code></td>
+<td>YES</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>conf_dmi_property</code></td>
+<td>YES</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>conf_syslog_property</code></td>
+<td>YES</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>conf_tls_property</code></td>
+<td>YES</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>conf_tls_enabled_property</code></td>
+<td>YES</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>conf_tls_protocols_property</code></td>
+<td>YES</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>conf_tls_cert_property</code></td>
+<td>YES</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>conf_tls_cert_key_property</code></td>
+<td>YES</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>conf_tls_ciphers_property</code></td>
+<td>YES</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>conf_tls_ciphersuites_property</code></td>
+<td>YES</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>conf_tls_dhparam_property</code></td>
+<td>YES</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>conf_dns_property</code></td>
+<td>YES</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>conf_dns_ipv6_property</code></td>
+<td>YES</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>conf_dns_ttl_property</code></td>
+<td>YES</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>conf_user_agent_property</code></td>
+<td>YES</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>conf_verbose_property</code></td>
+<td>YES</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>conf_watch_property</code></td>
+<td>YES</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>conf_rebench_algo_property</code></td>
+<td>YES</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>conf_bench_algo_time_property</code></td>
+<td>YES</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>conf_pause_on_battery_property</code></td>
+<td>YES</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>conf_pause_on_active_property</code></td>
+<td>YES</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>conf_benchmark_property</code></td>
+<td>YES</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>conf_benchmark_size_property</code></td>
+<td>YES</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>conf_benchmark_algo_property</code></td>
+<td>YES</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>conf_benchmark_submit_property</code></td>
+<td>YES</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>conf_benchmark_verify_property</code></td>
+<td>YES</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>conf_benchmark_seed_property</code></td>
+<td>YES</td>
+<td>YES</td>
+</tr>
+<tr>
+<td><code>conf_benchmark_hash_property</code></td>
+<td>YES</td>
+<td>YES</td>
+</tr>
+</tbody>
+</table>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      MIT License
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+      <div class="md-progress" data-md-component="progress" role="progressbar"></div>
+    
+    
+    <script id="__config" type="application/json">{"base": "..", "features": ["navigation.instant", "navigation.instant.prefetch", "navigation.instant.progress", "content.code.copy"], "search": "../assets/javascripts/workers/search.f8cc74c7.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.f1b6f286.min.js"></script>
+      
+    
+  </body>
+</html>
