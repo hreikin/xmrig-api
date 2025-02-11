@@ -17,6 +17,7 @@ dependencies = [
     "mkdocstrings[python]",
     "requests",
     "SQLAlchemy",
+    "mkdocs-include-markdown-plugin",
 ]
 
 [project.urls]
