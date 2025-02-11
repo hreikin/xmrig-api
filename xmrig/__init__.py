@@ -358,7 +358,7 @@ from .exceptions import XMRigAPIError, XMRigAuthorizationError, XMRigConnectionE
 from .models import Summary, Config, Backends
 
 __name__ = "xmrig"
-__version__ = "0.2.5"
+__version__ = "0.2.6"
 __author__ = "hreikin"
 __email__ = "hreikin@gmail.com"
 __license__ = "MIT"
